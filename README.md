@@ -1,4 +1,4 @@
-# DBOGLOBAL
+# DBOPS
  DBOPS Client & Server Emulator
 
 ## 3rd Party
@@ -8,7 +8,8 @@
 
 ## Requirements
 - DirectX9 SDK
-- Visual Studio 2019
+- Visual Studio 2022
+- Visual Studio 2010 - For Tools
 
 # Info
 - To Set Up Server Go To File: ServerSetUp.txt
