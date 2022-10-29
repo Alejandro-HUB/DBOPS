@@ -1,5 +1,5 @@
 # DBOPS
- DBOPS Client & Server Emulator
+ DBO Client & Server Emulator
 
 ## 3rd Party
 - MySQL 5.7.18 - Required for Server
