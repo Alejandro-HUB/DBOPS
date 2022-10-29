@@ -25,9 +25,9 @@ DEFINITION_MEMORY_POOL(CNtlSobPet)
 
 CNtlSobPet::CNtlSobPet()
 {
-	/*SetFlags(SLFLAG_ADD_UPDATE | SLFLAG_CAN_SKILLUSE | SLFLAG_OBJECT_COLLISION | SLFLAG_LUA_INTERLOCKING | SLFLAG_LUA_TRANSFORM_ENABLE |
-			SLFLAG_TARGET_SELECT_GUI_UPDATE);*/
-	/*SetActorFlags(SLFLAG_ACTOR_HAVE_LIFE | SLFLAG_ACTOR_HAVE_MOVEABLE | SLFLAG_ACTOR_HAVE_BATTLE);*/
+	SetFlags(SLFLAG_ADD_UPDATE | SLFLAG_CAN_SKILLUSE | SLFLAG_OBJECT_COLLISION | SLFLAG_LUA_INTERLOCKING | SLFLAG_LUA_TRANSFORM_ENABLE |
+			SLFLAG_TARGET_SELECT_GUI_UPDATE);
+	SetActorFlags(SLFLAG_ACTOR_HAVE_LIFE | SLFLAG_ACTOR_HAVE_MOVEABLE | SLFLAG_ACTOR_HAVE_BATTLE);
 
 	SetFlags(SLFLAG_ADD_UPDATE | SLFLAG_CAN_SKILLUSE | SLFLAG_CAN_GROUND_FLY | SLFLAG_LUA_INTERLOCKING | 
 		SLFLAG_LUA_TRANSFORM_ENABLE | SLFLAG_TARGET_SELECT_GUI_UPDATE);
@@ -108,21 +108,21 @@ void CNtlSobPet::HandleEvents(RWS::CMsg &pMsg)
 		//// owner setting.
 		if(pSobCreate->bOwnerAvatar)
 		{
-		//	m_pFSMLayer = NTL_NEW CNtlFSMCharActLayer;
-		//	m_pFSMLayer->SetActor(this);
-		//	m_pFSMLayer->Create(SLCONTROLLER_SUMMON_PET); 
+			m_pFSMLayer = NTL_NEW CNtlFSMCharActLayer;
+			m_pFSMLayer->SetActor(this);
+			m_pFSMLayer->Create(SLCONTROLLER_SUMMON_PET); 
 
 			SetServerSyncAvatarType(pSobCreate->uPetBrief.pPetProfile->byAvatarType);
 			SetOwnerID(pSobCreate->uPetBrief.pPetProfile->hOwner);
 
-		//	RwUInt32 uiFlags = GetFlags();
-		//	SetFlags(uiFlags | SLFLAG_SERVER_SENDER);
+			RwUInt32 uiFlags = GetFlags();
+			SetFlags(uiFlags | SLFLAG_SERVER_SENDER);
 		}
 		else
 		{
-		/*	m_pFSMLayer = NTL_NEW CNtlFSMCharActLayer;
+			m_pFSMLayer = NTL_NEW CNtlFSMCharActLayer;
 			m_pFSMLayer->SetActor(this);
-			m_pFSMLayer->Create(SLCONTROLLER_SERVER); */
+			m_pFSMLayer->Create(SLCONTROLLER_SERVER); 
 
 			SetOwnerID(pSobCreate->uPetBrief.pPetBrief->hOwner);
 		}

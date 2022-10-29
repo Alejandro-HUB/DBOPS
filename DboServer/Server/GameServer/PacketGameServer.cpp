@@ -65,9 +65,9 @@
 //--------------------------------------------------------------------------------------//
 //		WHEN RECEIVE INVALID PACKET
 //--------------------------------------------------------------------------------------//
-void CClientSession::OnInvalid(CNtlPacket *pPacket)
+void CClientSession::OnInvalid(CNtlPacket* pPacket)
 {
-	sNTLPACKETHEADER * pHeader = (sNTLPACKETHEADER *)pPacket->GetPacketData();
+	sNTLPACKETHEADER* pHeader = (sNTLPACKETHEADER*)pPacket->GetPacketData();
 
 	//printf("Session %u receive invalid opcode %u \n", GetHandle(), pHeader->wOpCode);
 }
@@ -76,31 +76,31 @@ void CClientSession::OnInvalid(CNtlPacket *pPacket)
 //--------------------------------------------------------------------------------------//
 //		Log into Game Server
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGameEnterReq(CNtlPacket *pPacket)
+void CClientSession::RecvGameEnterReq(CNtlPacket* pPacket)
 {
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GAME_ENTER_REQ * req = (sUG_GAME_ENTER_REQ *)pPacket->GetPacketData();
-	
+	sUG_GAME_ENTER_REQ* req = (sUG_GAME_ENTER_REQ*)pPacket->GetPacketData();
+
 	WORD resultcode = GAME_SUCCESS;
 	//ERR_LOG(LOG_USER, "Account %d connected\n", req->accountId);
 
-	if(req->accountId == 0 || req->charId == 0)
+	if (req->accountId == 0 || req->charId == 0)
 	{
-		ERR_LOG(LOG_USER,"req->charId %d accountId %d invalid \n", req->charId, req->accountId);
+		ERR_LOG(LOG_USER, "req->charId %d accountId %d invalid \n", req->charId, req->accountId);
 		resultcode = GAME_INPUT_PARAMETER_WRONG;
 	}
 	else
 	{
 		CCharacter* pPlayer = g_pObjectManager->FindByAccount(req->accountId);
-		if( pPlayer )
+		if (pPlayer)
 		{
-			ERR_LOG(LOG_USER,"req->charId %u accountId %u ALREADY EXIST \n", req->charId, req->accountId);
+			ERR_LOG(LOG_USER, "req->charId %u accountId %u ALREADY EXIST \n", req->charId, req->accountId);
 			resultcode = GAME_USER_EXIST;
 		}
 	}
 
-	if(resultcode == GAME_SUCCESS)
+	if (resultcode == GAME_SUCCESS)
 	{
 		CPlayer* player = (CPlayer*)g_pObjectManager->CreateCharacter(OBJTYPE_PC, req->charId);
 		if (player)
@@ -119,7 +119,7 @@ void CClientSession::RecvGameEnterReq(CNtlPacket *pPacket)
 
 			//auth check 
 			CNtlPacket pMaster(sizeof(sGM_LOGIN_REQ));
-			sGM_LOGIN_REQ * rMaster = (sGM_LOGIN_REQ *)pMaster.GetPacketData();
+			sGM_LOGIN_REQ* rMaster = (sGM_LOGIN_REQ*)pMaster.GetPacketData();
 			rMaster->wOpCode = GM_LOGIN_REQ;
 			rMaster->accountId = req->accountId;
 			rMaster->handle = player->GetID();
@@ -138,7 +138,7 @@ void CClientSession::RecvGameEnterReq(CNtlPacket *pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_GAME_ENTER_RES));
-		sGU_GAME_ENTER_RES * res = (sGU_GAME_ENTER_RES *)packet.GetPacketData();
+		sGU_GAME_ENTER_RES* res = (sGU_GAME_ENTER_RES*)packet.GetPacketData();
 		res->wOpCode = GU_GAME_ENTER_RES;
 		res->wResultCode = resultcode;
 		app->Send(GetHandle(), &packet);
@@ -151,7 +151,7 @@ void CClientSession::RecvGameEnterReq(CNtlPacket *pPacket)
 //--------------------------------------------------------------------------------------//
 //		Enter World
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvEnterWorld(CNtlPacket * pPacket)
+void CClientSession::RecvEnterWorld(CNtlPacket* pPacket)
 {
 	CGameServer* app = (CGameServer*)g_pApp;
 
@@ -178,7 +178,7 @@ void CClientSession::RecvEnterWorld(CNtlPacket * pPacket)
 		cPlayer->CancelDice();
 
 		CNtlPacket packet(sizeof(sGU_AVATAR_WORLD_INFO));
-		sGU_AVATAR_WORLD_INFO * res = (sGU_AVATAR_WORLD_INFO *)packet.GetPacketData();
+		sGU_AVATAR_WORLD_INFO* res = (sGU_AVATAR_WORLD_INFO*)packet.GetPacketData();
 		res->wOpCode = GU_AVATAR_WORLD_INFO;
 		res->worldInfo.sRuleInfo.byRuleType = GAMERULE_NORMAL;
 
@@ -290,7 +290,7 @@ void CClientSession::RecvEnterWorld(CNtlPacket * pPacket)
 			}
 		}
 
-		ERR_LOG(LOG_USER, "EnterWorld: %f %f %f, bSuccess %i, cPlayer->GetCharStateID() %u", 
+		ERR_LOG(LOG_USER, "EnterWorld: %f %f %f, bSuccess %i, cPlayer->GetCharStateID() %u",
 			res->vCurLoc.x, res->vCurLoc.y, res->vCurLoc.z, bSuccess, cPlayer->GetCharStateID());
 
 		cPlayer->SetWorldID(res->worldInfo.worldID);
@@ -315,7 +315,7 @@ void CClientSession::RecvEnterWorld(CNtlPacket * pPacket)
 		if (cPlayer->GetCurWorldZone())
 		{
 			CNtlPacket pZone(sizeof(sGU_AVATAR_ZONE_INFO));
-			sGU_AVATAR_ZONE_INFO * rZone = (sGU_AVATAR_ZONE_INFO *)pZone.GetPacketData();
+			sGU_AVATAR_ZONE_INFO* rZone = (sGU_AVATAR_ZONE_INFO*)pZone.GetPacketData();
 			rZone->wOpCode = GU_AVATAR_ZONE_INFO;
 			cPlayer->GetCurWorldZone()->CopyToInfo(rZone->zoneInfo);
 			pZone.SetPacketLen(sizeof(sGU_AVATAR_ZONE_INFO));
@@ -329,7 +329,7 @@ void CClientSession::RecvEnterWorld(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet2(sizeof(sGU_ENTER_WORLD_RES));
-	sGU_ENTER_WORLD_RES * res2 = (sGU_ENTER_WORLD_RES *)packet2.GetPacketData();
+	sGU_ENTER_WORLD_RES* res2 = (sGU_ENTER_WORLD_RES*)packet2.GetPacketData();
 	res2->wOpCode = GU_ENTER_WORLD_RES;
 	res2->wResultCode = GAME_SUCCESS;
 	packet2.SetPacketLen(sizeof(sGU_ENTER_WORLD_RES));
@@ -369,7 +369,7 @@ void CClientSession::RecvEnterWorld(CNtlPacket * pPacket)
 	cPlayer->SendCharStateSpawning(cPlayer->GetTeleportType()); //if we dont send spawning, then player will always faint after revivin
 
 	CNtlPacket packetEnd(sizeof(sGU_ENTER_WORLD_COMPLETE));
-	sGU_ENTER_WORLD_COMPLETE * resEnd = (sGU_ENTER_WORLD_COMPLETE *)packetEnd.GetPacketData();
+	sGU_ENTER_WORLD_COMPLETE* resEnd = (sGU_ENTER_WORLD_COMPLETE*)packetEnd.GetPacketData();
 	resEnd->wOpCode = GU_ENTER_WORLD_COMPLETE;
 	packetEnd.SetPacketLen(sizeof(sGU_ENTER_WORLD_COMPLETE));
 	g_pApp->Send(GetHandle(), &packetEnd);
@@ -379,7 +379,7 @@ void CClientSession::RecvEnterWorld(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Character loading complete
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvLoadingCompleteNfy(CNtlPacket * pPacket)
+void CClientSession::RecvLoadingCompleteNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -394,7 +394,7 @@ void CClientSession::RecvLoadingCompleteNfy(CNtlPacket * pPacket)
 
 		// SEND REQUEST TO DB SERVER TO LOAD CASH ITEMS
 		CNtlPacket packet(sizeof(sGQ_CASHITEM_INFO_REQ));
-		sGQ_CASHITEM_INFO_REQ * res = (sGQ_CASHITEM_INFO_REQ *)packet.GetPacketData();
+		sGQ_CASHITEM_INFO_REQ* res = (sGQ_CASHITEM_INFO_REQ*)packet.GetPacketData();
 		res->wOpCode = GQ_CASHITEM_INFO_REQ;
 		res->accountId = cPlayer->GetAccountID();
 		res->charId = cPlayer->GetCharID();
@@ -407,7 +407,7 @@ void CClientSession::RecvLoadingCompleteNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Character ready to spawn
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharReadyToSpawn(CNtlPacket * pPacket)
+void CClientSession::RecvCharReadyToSpawn(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -441,12 +441,12 @@ void CClientSession::RecvCharReadyToSpawn(CNtlPacket * pPacket)
 		g_pExpEvent->LoadEvent(cPlayer);
 		g_pBudokaiManager->LoadBudokaiStateInfo(cPlayer);
 		g_pHoneyBeeEvent->LoadEvent(GetHandle());
-		
+
 		if (cPlayer->GetCurWorld())
 		{
 			if (cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_DOJO) //if enter dojo, then add item
 			{
-				if (CDojo * pDojo = g_pDojoWarManager->GetDojo(cPlayer->GetGuildID()))
+				if (CDojo* pDojo = g_pDojoWarManager->GetDojo(cPlayer->GetGuildID()))
 				{
 					if (cPlayer->GetPlayerItemContainer()->GetItemByIdx(19451) == NULL)
 						g_pItemManager->CreateItem(cPlayer, 19451, 1);
@@ -468,15 +468,15 @@ void CClientSession::RecvCharReadyToSpawn(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CHAR READY FOR COMMUNITY SERVER
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecCharReadyForCommunityServerNfy(CNtlPacket * pPacket)
+void CClientSession::RecCharReadyForCommunityServerNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	CGameServer * app = (CGameServer*)g_pApp;
+	CGameServer* app = (CGameServer*)g_pApp;
 
 	CNtlPacket packet(sizeof(sGT_CHAR_READY_FOR_COMMUNITY_SERVER_NFY));
-	sGT_CHAR_READY_FOR_COMMUNITY_SERVER_NFY * res = (sGT_CHAR_READY_FOR_COMMUNITY_SERVER_NFY *)packet.GetPacketData();
+	sGT_CHAR_READY_FOR_COMMUNITY_SERVER_NFY* res = (sGT_CHAR_READY_FOR_COMMUNITY_SERVER_NFY*)packet.GetPacketData();
 	res->wOpCode = GT_CHAR_READY_FOR_COMMUNITY_SERVER_NFY;
 	res->charId = cPlayer->GetCharID();
 	packet.SetPacketLen(sizeof(sGT_CHAR_READY_FOR_COMMUNITY_SERVER_NFY));
@@ -486,7 +486,7 @@ void CClientSession::RecCharReadyForCommunityServerNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Auth community Server
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvAuthKeyForCumminityServerReq(CNtlPacket * pPacket)
+void CClientSession::RecvAuthKeyForCumminityServerReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -494,89 +494,89 @@ void CClientSession::RecvAuthKeyForCumminityServerReq(CNtlPacket * pPacket)
 	CGameServer* app = (CGameServer*)g_pApp;
 
 	CNtlPacket packet(sizeof(sGT_USER_AUTH_KEY_CREATED_NFY));
-	sGT_USER_AUTH_KEY_CREATED_NFY * res = (sGT_USER_AUTH_KEY_CREATED_NFY *)packet.GetPacketData();
+	sGT_USER_AUTH_KEY_CREATED_NFY* res = (sGT_USER_AUTH_KEY_CREATED_NFY*)packet.GetPacketData();
 	res->wOpCode = GT_USER_AUTH_KEY_CREATED_NFY;
 	res->accountId = cPlayer->GetAccountID();
 	g_pServerInfoManager->GenerateAuthKey(res->abyAuthKey); //generate auth key
-	app->SendTo(app->GetChatServerSession(), &packet );
+	app->SendTo(app->GetChatServerSession(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		TUTORIAL HINT
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTutorialHintReq(CNtlPacket * pPacket)
+void CClientSession::RecvTutorialHintReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_TUTORIAL_HINT_UPDATE_REQ * req = (sUG_TUTORIAL_HINT_UPDATE_REQ *)pPacket->GetPacketData();
-	
+	sUG_TUTORIAL_HINT_UPDATE_REQ* req = (sUG_TUTORIAL_HINT_UPDATE_REQ*)pPacket->GetPacketData();
+
 	CNtlPacket packet(sizeof(sGU_TUTORIAL_HINT_UPDATE_RES));
-	sGU_TUTORIAL_HINT_UPDATE_RES * res = (sGU_TUTORIAL_HINT_UPDATE_RES *)packet.GetPacketData();
+	sGU_TUTORIAL_HINT_UPDATE_RES* res = (sGU_TUTORIAL_HINT_UPDATE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TUTORIAL_HINT_UPDATE_RES;
 	res->wResultCode = GAME_SUCCESS;
 	res->dwTutorialHint = req->dwTutorialHint;
-	packet.SetPacketLen( sizeof(sGU_TUTORIAL_HINT_UPDATE_RES) );
-	g_pApp->Send( GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_TUTORIAL_HINT_UPDATE_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
 	cPlayer->SetTutorialHint(req->dwTutorialHint);
 }
 //--------------------------------------------------------------------------------------//
 //		TUTORIAL CANCEL WAIT
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTutorialWaitCancelReq(CNtlPacket * pPacket)
+void CClientSession::RecvTutorialWaitCancelReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_TUTORIAL_WAIT_CANCEL_REQ * req = (sUG_TUTORIAL_WAIT_CANCEL_REQ *)pPacket->GetPacketData();
-	
+	sUG_TUTORIAL_WAIT_CANCEL_REQ* req = (sUG_TUTORIAL_WAIT_CANCEL_REQ*)pPacket->GetPacketData();
+
 	CNtlPacket packet(sizeof(sGU_TUTORIAL_WAIT_CANCEL_RES));
-	sGU_TUTORIAL_WAIT_CANCEL_RES * res = (sGU_TUTORIAL_WAIT_CANCEL_RES *)packet.GetPacketData();
+	sGU_TUTORIAL_WAIT_CANCEL_RES* res = (sGU_TUTORIAL_WAIT_CANCEL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TUTORIAL_WAIT_CANCEL_RES;
 	res->wResultCode = GAME_SUCCESS;
-	packet.SetPacketLen( sizeof(sGU_TUTORIAL_WAIT_CANCEL_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_TUTORIAL_WAIT_CANCEL_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 //--------------------------------------------------------------------------------------//
 //		TUTORIAL QUIT
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTutorialQuitReq(CNtlPacket * pPacket)
+void CClientSession::RecvTutorialQuitReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_TUTORIAL_PLAY_QUIT_REQ * req = (sUG_TUTORIAL_PLAY_QUIT_REQ *)pPacket->GetPacketData();
+	sUG_TUTORIAL_PLAY_QUIT_REQ* req = (sUG_TUTORIAL_PLAY_QUIT_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_TUTORIAL_PLAY_QUIT_RES));
-	sGU_TUTORIAL_PLAY_QUIT_RES * res = (sGU_TUTORIAL_PLAY_QUIT_RES *)packet.GetPacketData();
+	sGU_TUTORIAL_PLAY_QUIT_RES* res = (sGU_TUTORIAL_PLAY_QUIT_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TUTORIAL_PLAY_QUIT_RES;
 	res->wResultCode = GAME_SUCCESS;
 
 	if (cPlayer->GetTMQ() && cPlayer->GetTMQ()->GetMode() == TIMEQUEST_MODE_INDIVIDUAL) //check if inside tmq and check if inside tutorial
 	{
-		if(cPlayer->GetTMQ()->GetState() != TIMEQUEST_GAME_STATE_END && cPlayer->GetTMQ()->GetState() != TIMEQUEST_GAME_STATE_LEAVE && cPlayer->GetTMQ()->GetState() != TIMEQUEST_GAME_STATE_FAIL && cPlayer->GetTMQ()->GetState() != TIMEQUEST_GAME_STATE_CLOSE)
+		if (cPlayer->GetTMQ()->GetState() != TIMEQUEST_GAME_STATE_END && cPlayer->GetTMQ()->GetState() != TIMEQUEST_GAME_STATE_LEAVE && cPlayer->GetTMQ()->GetState() != TIMEQUEST_GAME_STATE_FAIL && cPlayer->GetTMQ()->GetState() != TIMEQUEST_GAME_STATE_CLOSE)
 			cPlayer->GetTMQ()->SetState(TIMEQUEST_GAME_STATE_LEAVE);
-		else 
+		else
 			res->wResultCode = GAME_FAIL;
 	}
-	else 
+	else
 		res->wResultCode = GAME_FAIL;
-	
+
 	packet.SetPacketLen(sizeof(sGU_TUTORIAL_PLAY_QUIT_RES));
-	g_pApp->Send(GetHandle(), &packet );
+	g_pApp->Send(GetHandle(), &packet);
 }
 
 
 //--------------------------------------------------------------------------------------//
 //		GET RANK BATTLE INFO
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvRankBattleInfoReq(CNtlPacket * pPacket)
+void CClientSession::RecvRankBattleInfoReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_RANKBATTLE_INFO_REQ * req = (sUG_RANKBATTLE_INFO_REQ *)pPacket->GetPacketData();
+	sUG_RANKBATTLE_INFO_REQ* req = (sUG_RANKBATTLE_INFO_REQ*)pPacket->GetPacketData();
 
 	g_pRankbattleManager->LoadRankBattleInfo(cPlayer, req->byBattleMode);
 }
@@ -584,12 +584,12 @@ void CClientSession::RecvRankBattleInfoReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		JOIN RANK BATTLE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvJoinRankBattleReq(CNtlPacket * pPacket)
+void CClientSession::RecvJoinRankBattleReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_RANKBATTLE_JOIN_REQ * req = (sUG_RANKBATTLE_JOIN_REQ *)pPacket->GetPacketData();
+	sUG_RANKBATTLE_JOIN_REQ* req = (sUG_RANKBATTLE_JOIN_REQ*)pPacket->GetPacketData();
 
 	g_pRankbattleManager->JoinRoom(cPlayer, req->rankBattleTblidx, req->hBoardObject);
 }
@@ -597,12 +597,12 @@ void CClientSession::RecvJoinRankBattleReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		LEAVE RANK BATTLE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvLeaveRankBattleReq(CNtlPacket * pPacket)
+void CClientSession::RecvLeaveRankBattleReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_RANKBATTLE_LEAVE_REQ * req = (sUG_RANKBATTLE_LEAVE_REQ *)pPacket->GetPacketData();
+	sUG_RANKBATTLE_LEAVE_REQ* req = (sUG_RANKBATTLE_LEAVE_REQ*)pPacket->GetPacketData();
 
 	g_pRankbattleManager->LeaveRoom(cPlayer, req->rankBattleTblidx);
 }
@@ -610,12 +610,12 @@ void CClientSession::RecvLeaveRankBattleReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char Ready 
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharReady(CNtlPacket * pPacket)
+void CClientSession::RecvCharReady(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_READY * req = (sUG_CHAR_READY *)pPacket->GetPacketData();
+	sUG_CHAR_READY* req = (sUG_CHAR_READY*)pPacket->GetPacketData();
 
 	if (cPlayer->GetCurWorld())
 	{
@@ -644,7 +644,7 @@ void CClientSession::RecvCharReady(CNtlPacket * pPacket)
 			cPlayer->UpdateCurLP(cPlayer->GetMaxLP(), true, false);
 			cPlayer->UpdateCurEP(cPlayer->GetMaxEP(), true, false);
 
-			if (CDojo * pDojo = g_pDojoWarManager->GetDojo(cPlayer->GetGuildID()))
+			if (CDojo* pDojo = g_pDojoWarManager->GetDojo(cPlayer->GetGuildID()))
 			{
 				pDojo->SendSealState(GetHandle());
 			}
@@ -674,7 +674,7 @@ void CClientSession::RecvCharReady(CNtlPacket * pPacket)
 			}
 		}
 	}
-	
+
 	if (cPlayer->GetCharStateID() != CHARSTATE_FALLING) //if dont do this, then char will be unable to attack after spawning with "sendcharstatespawning"
 		cPlayer->StandUpIfPossible(cPlayer->GetCharStateID());
 
@@ -688,12 +688,12 @@ void CClientSession::RecvCharReady(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		REVIVE CHARACTER
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharRevivalReq(CNtlPacket * pPacket)
+void CClientSession::RecvCharRevivalReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_REVIVAL_REQ * req = (sUG_CHAR_REVIVAL_REQ*)pPacket->GetPacketData();
+	sUG_CHAR_REVIVAL_REQ* req = (sUG_CHAR_REVIVAL_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
 
@@ -706,7 +706,7 @@ void CClientSession::RecvCharRevivalReq(CNtlPacket * pPacket)
 	{
 		if (cPlayer->GetCurWorld())
 		{
-			if(cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_RANKBATTLE || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_MINORMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_MAJORMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_FINALMATCH)
+			if (cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_RANKBATTLE || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_MINORMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_MAJORMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_FINALMATCH)
 				wResultcode = GAME_FAIL;
 			else if (cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_DOJO)
 			{
@@ -768,7 +768,7 @@ void CClientSession::RecvCharRevivalReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_CHAR_REVIVAL_RES));
-	sGU_CHAR_REVIVAL_RES * res = (sGU_CHAR_REVIVAL_RES *)packet.GetPacketData();
+	sGU_CHAR_REVIVAL_RES* res = (sGU_CHAR_REVIVAL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_REVIVAL_RES;
 	res->wResultCode = wResultcode;
 	packet.SetPacketLen(sizeof(sGU_CHAR_REVIVAL_RES));
@@ -778,26 +778,26 @@ void CClientSession::RecvCharRevivalReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	Char Move         (THIS FUNCTION CALLED WHEN PLAYER START AND STOP MOVING)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharMove(CNtlPacket * pPacket)
+void CClientSession::RecvCharMove(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
-	sUG_CHAR_MOVE * req = (sUG_CHAR_MOVE*)pPacket->GetPacketData();
+	sUG_CHAR_MOVE* req = (sUG_CHAR_MOVE*)pPacket->GetPacketData();
 
 	if (cPlayer->GetFacingHandle() != INVALID_HOBJECT)
 	{
 		ERR_LOG(LOG_USER, "Player %u received move packet while facing an NPC", cPlayer->GetCharID());
 		return; // error handling
 	}
-	
+
 	if (cPlayer->GetAirState() == AIR_STATE_ON)
 	{
 		ERR_LOG(LOG_USER, "Player %u received move packet while air state", cPlayer->GetCharID());
 		return;
 	}
-	
+
 	if (req->byMoveDirection > NTL_MOVE_R_TURN_R)
 	{
 		ERR_LOG(LOG_USER, "Player %u send wrong movedirection %u", cPlayer->GetCharID(), req->byMoveDirection);
@@ -836,7 +836,7 @@ void CClientSession::RecvCharMove(CNtlPacket * pPacket)
 		if (cPlayer->GetMoveFlag() == NTL_MOVE_FLAG_FLY || cPlayer->GetMoveFlag() == NTL_MOVE_FLAG_FLY_DASH || cPlayer->GetMoveFlag() == NTL_MOVE_FLAG_FLY_ACCEL || cPlayer->GetMoveFlag() == NTL_MOVE_FLAG_FLY_QUICK_DOWN
 			|| cPlayer->GetMoveFlag() == NTL_MOVE_FLAG_JUMP || cPlayer->GetMoveFlag() == NTL_MOVE_FLAG_FALLING)
 		{
-			ERR_LOG(LOG_USER, "Player %u is wrong move flag %u", cPlayer->GetCharID(), cPlayer->GetMoveFlag()); 
+			ERR_LOG(LOG_USER, "Player %u is wrong move flag %u", cPlayer->GetCharID(), cPlayer->GetMoveFlag());
 			return;
 		}
 
@@ -847,7 +847,7 @@ void CClientSession::RecvCharMove(CNtlPacket * pPacket)
 			return;
 		}
 	}
-	
+
 	CNtlVector vLoc;
 	NtlLocationDecompress(&req->vCurLoc, &vLoc.x, &vLoc.y, &vLoc.z);
 
@@ -869,7 +869,7 @@ void CClientSession::RecvCharMove(CNtlPacket * pPacket)
 		{
 			BYTE byNewMoveFlag = cPlayer->GetMoveFlag();
 
-			if(cPlayer->GetMoveFlag() == NTL_MOVE_FLAG_INVALID) // to do: add swimming check
+			if (cPlayer->GetMoveFlag() == NTL_MOVE_FLAG_INVALID) // to do: add swimming check
 				byNewMoveFlag = NTL_MOVE_FLAG_RUN;
 
 			cPlayer->SendCharStateMoving(req->byMoveDirection, byNewMoveFlag, true);
@@ -884,12 +884,12 @@ void CClientSession::RecvCharMove(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char Air Move
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharAirMove(CNtlPacket * pPacket)
+void CClientSession::RecvCharAirMove(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_AIR_MOVE * req = (sUG_CHAR_AIR_MOVE*)pPacket->GetPacketData();
+	sUG_CHAR_AIR_MOVE* req = (sUG_CHAR_AIR_MOVE*)pPacket->GetPacketData();
 
 	if (cPlayer->GetAirState() == AIR_STATE_OFF)
 	{
@@ -912,7 +912,7 @@ void CClientSession::RecvCharAirMove(CNtlPacket * pPacket)
 			return;
 		}
 
-		if (cPlayer->GetMoveFlag() != NTL_MOVE_FLAG_INVALID && 
+		if (cPlayer->GetMoveFlag() != NTL_MOVE_FLAG_INVALID &&
 			(cPlayer->GetMoveFlag() < NTL_MOVE_FLAG_FLY || cPlayer->GetMoveFlag() > NTL_MOVE_FLAG_FLY_ACCEL))
 		{
 			ERR_LOG(LOG_USER, "Player %u is wrong move flag %u", cPlayer->GetCharID(), cPlayer->GetMoveFlag());
@@ -948,7 +948,7 @@ void CClientSession::RecvCharAirMove(CNtlPacket * pPacket)
 		if (vDir.IsInvalid() == false)
 			cPlayer->SetCurDir(vDir);
 
-		if(req->byMoveDirection == NTL_MOVE_NONE)
+		if (req->byMoveDirection == NTL_MOVE_NONE)
 		{
 			cPlayer->SendCharStateStanding();
 		}
@@ -965,14 +965,14 @@ void CClientSession::RecvCharAirMove(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char Destination Move
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharDestMove(CNtlPacket * pPacket)
+void CClientSession::RecvCharDestMove(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_DEST_MOVE * req = (sUG_CHAR_DEST_MOVE*)pPacket->GetPacketData();
+	sUG_CHAR_DEST_MOVE* req = (sUG_CHAR_DEST_MOVE*)pPacket->GetPacketData();
 
 	if (cPlayer->GetStateManager()->CanCharStateTransition(CHARSTATE_DESTMOVE) == false)
 	{
@@ -1007,7 +1007,7 @@ void CClientSession::RecvCharDestMove(CNtlPacket * pPacket)
 		NtlLocationDecompress(&req->vDestLoc, &destloc.x, &destloc.y, &destloc.z);
 
 		CNtlPacket pStatePacket(sizeof(sGU_UPDATE_CHAR_STATE));
-		sGU_UPDATE_CHAR_STATE * res2 = (sGU_UPDATE_CHAR_STATE *)pStatePacket.GetPacketData();
+		sGU_UPDATE_CHAR_STATE* res2 = (sGU_UPDATE_CHAR_STATE*)pStatePacket.GetPacketData();
 		res2->wOpCode = GU_UPDATE_CHAR_STATE;
 		res2->handle = cPlayer->GetID();
 		res2->sCharState.sCharStateBase.byStateID = CHARSTATE_DESTMOVE;
@@ -1041,13 +1041,13 @@ void CClientSession::RecvCharDestMove(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char air move sync
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharAirMoveSync(CNtlPacket * pPacket)
+void CClientSession::RecvCharAirMoveSync(CNtlPacket* pPacket)
 {
-	sUG_CHAR_AIR_MOVE_SYNC * req = (sUG_CHAR_AIR_MOVE_SYNC*)pPacket->GetPacketData();
+	sUG_CHAR_AIR_MOVE_SYNC* req = (sUG_CHAR_AIR_MOVE_SYNC*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
-	
+
 	CNtlVector vLoc;
 	NtlLocationDecompress(&req->vCurLoc, &vLoc.x, &vLoc.y, &vLoc.z);
 
@@ -1062,7 +1062,7 @@ void CClientSession::RecvCharAirMoveSync(CNtlPacket * pPacket)
 		cPlayer->SetCurDir(sDir);
 
 		CNtlPacket packet(sizeof(sGU_CHAR_AIR_MOVE_SYNC));
-		sGU_CHAR_AIR_MOVE_SYNC * res = (sGU_CHAR_AIR_MOVE_SYNC *)packet.GetPacketData();
+		sGU_CHAR_AIR_MOVE_SYNC* res = (sGU_CHAR_AIR_MOVE_SYNC*)packet.GetPacketData();
 		res->wOpCode = GU_CHAR_AIR_MOVE_SYNC;
 		res->handle = cPlayer->GetID();
 		res->vCurDir = req->vCurDir;
@@ -1079,10 +1079,10 @@ void CClientSession::RecvCharAirMoveSync(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//                    
 //		Char location sync                                                                                                                                                               
 //--------------------------------------------------------------------------------------//                            
-void CClientSession::RecvCharLocationSync(CNtlPacket * pPacket)
+void CClientSession::RecvCharLocationSync(CNtlPacket* pPacket)
 {
 	CGameServer* app = (CGameServer*)g_pApp;
-	sUG_CHAR_LOCATION_SYNC * req = (sUG_CHAR_LOCATION_SYNC*)pPacket->GetPacketData();
+	sUG_CHAR_LOCATION_SYNC* req = (sUG_CHAR_LOCATION_SYNC*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -1117,9 +1117,9 @@ void CClientSession::RecvCharLocationSync(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char Change Heading
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharChangeHeading(CNtlPacket * pPacket)
+void CClientSession::RecvCharChangeHeading(CNtlPacket* pPacket)
 {
-	sUG_CHAR_CHANGE_HEADING * req = (sUG_CHAR_CHANGE_HEADING*)pPacket->GetPacketData();
+	sUG_CHAR_CHANGE_HEADING* req = (sUG_CHAR_CHANGE_HEADING*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -1136,9 +1136,9 @@ void CClientSession::RecvCharChangeHeading(CNtlPacket * pPacket)
 	cPlayer->SetLastCameraMoveTick(); // set last camera tick | << ANTI BOT CHECK
 
 	cPlayer->SetCurDir(sDir);
-	
+
 	CNtlPacket packet(sizeof(sGU_CHAR_CHANGE_HEADING));
-	sGU_CHAR_CHANGE_HEADING * res = (sGU_CHAR_CHANGE_HEADING *)packet.GetPacketData();
+	sGU_CHAR_CHANGE_HEADING* res = (sGU_CHAR_CHANGE_HEADING*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_CHANGE_HEADING;
 	res->handle = cPlayer->GetID();
 	res->vNewHeading = req->vCurrentHeading;
@@ -1149,14 +1149,14 @@ void CClientSession::RecvCharChangeHeading(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharMoveCollision(CNtlPacket * pPacket)
+void CClientSession::RecvCharMoveCollision(CNtlPacket* pPacket)
 {
 	CGameServer* app = (CGameServer*)g_pApp;
-	sUG_CHAR_MOVE_COLLISION * req = (sUG_CHAR_MOVE_COLLISION *)pPacket->GetPacketData();
+	sUG_CHAR_MOVE_COLLISION* req = (sUG_CHAR_MOVE_COLLISION*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
-	
+
 	if (cPlayer->GetCollision() == false)
 	{
 		CNtlVector vLoc;
@@ -1168,14 +1168,14 @@ void CClientSession::RecvCharMoveCollision(CNtlPacket * pPacket)
 
 			CNtlVector vDir;
 			NtlDirectionDecompress(&req->vCurDir, &vDir.x, &vDir.y, &vDir.z);
-		
+
 			if (vDir.IsInvalid())
 				return;
 
 			cPlayer->SetCurDir(vDir);
 
 			CNtlPacket packet(sizeof(sGU_CHAR_MOVE_COLLISION));
-			sGU_CHAR_MOVE_COLLISION * res = (sGU_CHAR_MOVE_COLLISION *)packet.GetPacketData();
+			sGU_CHAR_MOVE_COLLISION* res = (sGU_CHAR_MOVE_COLLISION*)packet.GetPacketData();
 			res->wOpCode = GU_CHAR_MOVE_COLLISION;
 			res->handle = cPlayer->GetID();
 			res->vCurLoc = req->vCurLoc;
@@ -1193,11 +1193,11 @@ void CClientSession::RecvCharMoveCollision(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharMoveCollisionEnd(CNtlPacket * pPacket)
+void CClientSession::RecvCharMoveCollisionEnd(CNtlPacket* pPacket)
 {
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_MOVE_COLLISION_END * req = (sUG_CHAR_MOVE_COLLISION_END *)pPacket->GetPacketData();
+	sUG_CHAR_MOVE_COLLISION_END* req = (sUG_CHAR_MOVE_COLLISION_END*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -1212,7 +1212,7 @@ void CClientSession::RecvCharMoveCollisionEnd(CNtlPacket * pPacket)
 			cPlayer->SetCollision(false);
 
 			CNtlPacket packet(sizeof(sGU_CHAR_MOVE_COLLISION_END));
-			sGU_CHAR_MOVE_COLLISION_END * res = (sGU_CHAR_MOVE_COLLISION_END *)packet.GetPacketData();
+			sGU_CHAR_MOVE_COLLISION_END* res = (sGU_CHAR_MOVE_COLLISION_END*)packet.GetPacketData();
 			res->wOpCode = GU_CHAR_MOVE_COLLISION_END;
 			res->handle = cPlayer->GetID();
 			res->vCurLoc = req->vCurLoc;
@@ -1229,7 +1229,7 @@ void CClientSession::RecvCharMoveCollisionEnd(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharStandingSlip(CNtlPacket * pPacket)
+void CClientSession::RecvCharStandingSlip(CNtlPacket* pPacket)
 {
 	//sUG_CHAR_STANDING_SLIP * req = (sUG_CHAR_STANDING_SLIP *)pPacket->GetPacketData();
 }
@@ -1237,7 +1237,7 @@ void CClientSession::RecvCharStandingSlip(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharStandingSlipEnd(CNtlPacket * pPacket)
+void CClientSession::RecvCharStandingSlipEnd(CNtlPacket* pPacket)
 {
 	//sUG_CHAR_STANDING_SLIP_END * req = (sUG_CHAR_STANDING_SLIP_END *)pPacket->GetPacketData();
 }
@@ -1246,14 +1246,14 @@ void CClientSession::RecvCharStandingSlipEnd(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char Jump
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharJump(CNtlPacket * pPacket)
+void CClientSession::RecvCharJump(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_JUMP * req = (sUG_CHAR_JUMP*)pPacket->GetPacketData();
+	sUG_CHAR_JUMP* req = (sUG_CHAR_JUMP*)pPacket->GetPacketData();
 
 	//printf("sUG_CHAR_JUMP: byMoveDirection = %u \n", req->byMoveDirection);
 
@@ -1265,28 +1265,28 @@ void CClientSession::RecvCharJump(CNtlPacket * pPacket)
 
 	switch (req->byMoveDirection)
 	{
-		case NTL_MOVE_NONE: // jump up
-		case NTL_MOVE_F: //jump front
-		case NTL_MOVE_B: // jump back
-		case NTL_MOVE_L: //jump left
-		case NTL_MOVE_R: // jump right
-		case NTL_MOVE_TURN_L:	// jump up & turn left
-		case NTL_MOVE_TURN_R:	// jump up & turn right
-		case NTL_MOVE_L_TURN_L_JUMP:
-		case NTL_MOVE_L_TURN_R_JUMP:
-		case NTL_MOVE_R_TURN_L_JUMP:
-		case NTL_MOVE_R_TURN_R_JUMP:
-		case NTL_MOVE_F_TURN_L_JUMP:		// Forward + Turning Left + Jump
-		case NTL_MOVE_F_TURN_R_JUMP:		// Forward + Turning Right + Jump
-		case NTL_MOVE_B_TURN_L_JUMP:		// Backward + Turning Left + Jump
-		case NTL_MOVE_B_TURN_R_JUMP:		// Backward + Turning Right + Jump
-			break;
+	case NTL_MOVE_NONE: // jump up
+	case NTL_MOVE_F: //jump front
+	case NTL_MOVE_B: // jump back
+	case NTL_MOVE_L: //jump left
+	case NTL_MOVE_R: // jump right
+	case NTL_MOVE_TURN_L:	// jump up & turn left
+	case NTL_MOVE_TURN_R:	// jump up & turn right
+	case NTL_MOVE_L_TURN_L_JUMP:
+	case NTL_MOVE_L_TURN_R_JUMP:
+	case NTL_MOVE_R_TURN_L_JUMP:
+	case NTL_MOVE_R_TURN_R_JUMP:
+	case NTL_MOVE_F_TURN_L_JUMP:		// Forward + Turning Left + Jump
+	case NTL_MOVE_F_TURN_R_JUMP:		// Forward + Turning Right + Jump
+	case NTL_MOVE_B_TURN_L_JUMP:		// Backward + Turning Left + Jump
+	case NTL_MOVE_B_TURN_R_JUMP:		// Backward + Turning Right + Jump
+		break;
 
-		default:
-		{
-			ERR_LOG(LOG_USER, "Player %u send wrong move-direction %u", cPlayer->GetCharID(), req->byMoveDirection);
-			return;
-		}
+	default:
+	{
+		ERR_LOG(LOG_USER, "Player %u send wrong move-direction %u", cPlayer->GetCharID(), req->byMoveDirection);
+		return;
+	}
 	}
 
 	// check aspect state
@@ -1314,7 +1314,7 @@ void CClientSession::RecvCharJump(CNtlPacket * pPacket)
 			ERR_LOG(LOG_USER, "Player %u tried jumping into air while moving", cPlayer->GetCharID());
 			return;
 		}
-		
+
 		if (req->byMoveDirection != cPlayer->GetMoveDirection())
 		{
 			BYTE byFixedDir = Dbo_MoveDirectionToJumpDirection(cPlayer->GetMoveDirection(), NTL_MOVE_NONE);
@@ -1379,7 +1379,7 @@ void CClientSession::RecvCharJump(CNtlPacket * pPacket)
 			cPlayer->GetJumpHeading().CopyTo(svHeading.x, svHeading.y, svHeading.z);
 
 			CNtlPacket packet(sizeof(sGU_CHAR_JUMP));
-			sGU_CHAR_JUMP * res = (sGU_CHAR_JUMP *)packet.GetPacketData();
+			sGU_CHAR_JUMP* res = (sGU_CHAR_JUMP*)packet.GetPacketData();
 			res->wOpCode = GU_CHAR_JUMP;
 			res->handle = cPlayer->GetID();
 			NtlDirectionCompress(&res->vJumpDir, svHeading.x, svHeading.y, svHeading.z);
@@ -1397,12 +1397,12 @@ void CClientSession::RecvCharJump(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char Jump END
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharJumpEnd(CNtlPacket * pPacket)
+void CClientSession::RecvCharJumpEnd(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_JUMP_END * req = (sUG_CHAR_JUMP_END*)pPacket->GetPacketData();
+	sUG_CHAR_JUMP_END* req = (sUG_CHAR_JUMP_END*)pPacket->GetPacketData();
 
 	if (cPlayer->GetMoveFlag() != NTL_MOVE_FLAG_JUMP)// check if char is jumping
 	{
@@ -1419,7 +1419,7 @@ void CClientSession::RecvCharJumpEnd(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_CHAR_JUMP_END));
-	sGU_CHAR_JUMP_END * res = (sGU_CHAR_JUMP_END *)packet.GetPacketData();
+	sGU_CHAR_JUMP_END* res = (sGU_CHAR_JUMP_END*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_JUMP_END;
 	res->handle = cPlayer->GetID();
 	packet.SetPacketLen(sizeof(sGU_CHAR_JUMP_END));
@@ -1429,14 +1429,14 @@ void CClientSession::RecvCharJumpEnd(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char AIR Jump
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharAirJump(CNtlPacket * pPacket)
+void CClientSession::RecvCharAirJump(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_AIR_JUMP * req = (sUG_CHAR_AIR_JUMP*)pPacket->GetPacketData();
+	sUG_CHAR_AIR_JUMP* req = (sUG_CHAR_AIR_JUMP*)pPacket->GetPacketData();
 
 	QWORD qwCondition = cPlayer->GetStateManager()->GetConditionState();
 	WORD wResultCode = GAME_FAIL;
@@ -1475,7 +1475,7 @@ void CClientSession::RecvCharAirJump(CNtlPacket * pPacket)
 		ERR_LOG(LOG_USER, "Player %u is in free battle", cPlayer->GetCharID());
 		wResultCode = GAME_GAMERULE_REG_CANT_PLAY_IN_FREEBATTLE;
 	}
-	else if(cPlayer->GetStateManager()->CanCharStateTransition(CHARSTATE_AIR_JUMP) == false) // check state
+	else if (cPlayer->GetStateManager()->CanCharStateTransition(CHARSTATE_AIR_JUMP) == false) // check state
 	{
 		ERR_LOG(LOG_USER, "Player %u cant go to CHARSTATE_AIR_JUMP with current state %u", cPlayer->GetCharID(), cPlayer->GetCharStateID());
 	}
@@ -1503,7 +1503,7 @@ void CClientSession::RecvCharAirJump(CNtlPacket * pPacket)
 			cPlayer->SetCurDir(sDir);
 
 		CNtlPacket packet(sizeof(sGU_UPDATE_CHAR_STATE));
-		sGU_UPDATE_CHAR_STATE * res = (sGU_UPDATE_CHAR_STATE*)packet.GetPacketData();
+		sGU_UPDATE_CHAR_STATE* res = (sGU_UPDATE_CHAR_STATE*)packet.GetPacketData();
 		res->handle = cPlayer->GetID();
 		res->wOpCode = GU_UPDATE_CHAR_STATE;
 		res->sCharState.sCharStateBase.byStateID = CHARSTATE_AIR_JUMP;
@@ -1529,9 +1529,9 @@ void CClientSession::RecvCharAirJump(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Change Char Direction on floating
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharChangeDirOnFloating(CNtlPacket * pPacket)
+void CClientSession::RecvCharChangeDirOnFloating(CNtlPacket* pPacket)
 {
-	sUG_CHAR_CHANGE_DIRECTION_ON_FLOATING * req = (sUG_CHAR_CHANGE_DIRECTION_ON_FLOATING*)pPacket->GetPacketData();
+	sUG_CHAR_CHANGE_DIRECTION_ON_FLOATING* req = (sUG_CHAR_CHANGE_DIRECTION_ON_FLOATING*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -1545,116 +1545,116 @@ void CClientSession::RecvCharChangeDirOnFloating(CNtlPacket * pPacket)
 
 	switch (cPlayer->GetMoveDirection())
 	{
-		case NTL_MOVE_NONE:
-		case NTL_MOVE_TURN_L:
-		case NTL_MOVE_TURN_R:
+	case NTL_MOVE_NONE:
+	case NTL_MOVE_TURN_L:
+	case NTL_MOVE_TURN_R:
+	{
+		if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_TURN_L || req->byMoveDirection == NTL_MOVE_TURN_R)
 		{
-			if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_TURN_L || req->byMoveDirection == NTL_MOVE_TURN_R)
-			{
-				cPlayer->SetMoveDirection(req->byMoveDirection);
-			}
-			else
-			{
-				ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u", cPlayer->GetCharID(), req->byMoveDirection);
-				return;
-			}
+			cPlayer->SetMoveDirection(req->byMoveDirection);
 		}
-		break;
-		case NTL_MOVE_F:
-		case NTL_MOVE_F_TURN_L:
-		case NTL_MOVE_F_TURN_R:
-		case NTL_MOVE_F_TURN_L_JUMP:
-		case NTL_MOVE_F_TURN_R_JUMP:
+		else
 		{
-			if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_F)
-			{
-				cPlayer->SetMoveDirection(NTL_MOVE_F);
-			}
-			else if (req->byMoveDirection == NTL_MOVE_F_TURN_L || req->byMoveDirection == NTL_MOVE_F_TURN_R
-				|| req->byMoveDirection == NTL_MOVE_F_TURN_L_JUMP || req->byMoveDirection == NTL_MOVE_F_TURN_R_JUMP)
-			{
-				cPlayer->SetMoveDirection(req->byMoveDirection);
-			}
-			else
-			{
-				ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u", cPlayer->GetCharID(), req->byMoveDirection);
-				return;
-			}
-		}
-		break;
-
-		case NTL_MOVE_B:
-		case NTL_MOVE_B_TURN_L:
-		case NTL_MOVE_B_TURN_R:
-		case NTL_MOVE_B_TURN_L_JUMP:
-		case NTL_MOVE_B_TURN_R_JUMP:
-		{
-			if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_B)
-			{
-				cPlayer->SetMoveDirection(NTL_MOVE_B);
-			}
-			else if (req->byMoveDirection == NTL_MOVE_B_TURN_L || req->byMoveDirection == NTL_MOVE_B_TURN_R
-				|| req->byMoveDirection == NTL_MOVE_B_TURN_L_JUMP || req->byMoveDirection == NTL_MOVE_B_TURN_R_JUMP)
-			{
-				cPlayer->SetMoveDirection(req->byMoveDirection);
-			}
-			else
-			{
-				ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u. Current move diration: %u", cPlayer->GetCharID(), req->byMoveDirection, cPlayer->GetMoveDirection());
-				return;
-			}
-		}
-		break;
-		case NTL_MOVE_L:
-		case NTL_MOVE_L_TURN_L:
-		case NTL_MOVE_L_TURN_R:
-		case NTL_MOVE_L_TURN_L_JUMP:
-		case NTL_MOVE_L_TURN_R_JUMP:
-		{
-			if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_L)
-			{
-				cPlayer->SetMoveDirection(NTL_MOVE_L);
-			}
-			else if (req->byMoveDirection == NTL_MOVE_L_TURN_L || req->byMoveDirection == NTL_MOVE_L_TURN_R
-				|| req->byMoveDirection == NTL_MOVE_L_TURN_L_JUMP || req->byMoveDirection == NTL_MOVE_L_TURN_R_JUMP)
-			{
-				cPlayer->SetMoveDirection(req->byMoveDirection);
-			}
-			else
-			{
-				ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u", cPlayer->GetCharID(), req->byMoveDirection);
-				return;
-			}
-		}
-		break;
-		case NTL_MOVE_R:
-		case NTL_MOVE_R_TURN_L:
-		case NTL_MOVE_R_TURN_R:
-		case NTL_MOVE_R_TURN_L_JUMP:
-		case NTL_MOVE_R_TURN_R_JUMP:
-		{
-			if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_R)
-			{
-				cPlayer->SetMoveDirection(NTL_MOVE_R);
-			}
-			else if (req->byMoveDirection == NTL_MOVE_R_TURN_L || req->byMoveDirection == NTL_MOVE_R_TURN_R
-				|| req->byMoveDirection == NTL_MOVE_R_TURN_L_JUMP || req->byMoveDirection == NTL_MOVE_R_TURN_R_JUMP)
-			{
-				cPlayer->SetMoveDirection(req->byMoveDirection);
-			}
-			else
-			{
-				ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u", cPlayer->GetCharID(), req->byMoveDirection);
-				return;
-			}
-		}
-		break;
-
-		default:
-		{
-			ERR_LOG(LOG_USER, "Player %u has wrong move direction %u, new move direction %u", cPlayer->GetCharID(), cPlayer->GetMoveDirection(), req->byMoveDirection);
+			ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u", cPlayer->GetCharID(), req->byMoveDirection);
 			return;
 		}
+	}
+	break;
+	case NTL_MOVE_F:
+	case NTL_MOVE_F_TURN_L:
+	case NTL_MOVE_F_TURN_R:
+	case NTL_MOVE_F_TURN_L_JUMP:
+	case NTL_MOVE_F_TURN_R_JUMP:
+	{
+		if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_F)
+		{
+			cPlayer->SetMoveDirection(NTL_MOVE_F);
+		}
+		else if (req->byMoveDirection == NTL_MOVE_F_TURN_L || req->byMoveDirection == NTL_MOVE_F_TURN_R
+			|| req->byMoveDirection == NTL_MOVE_F_TURN_L_JUMP || req->byMoveDirection == NTL_MOVE_F_TURN_R_JUMP)
+		{
+			cPlayer->SetMoveDirection(req->byMoveDirection);
+		}
+		else
+		{
+			ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u", cPlayer->GetCharID(), req->byMoveDirection);
+			return;
+		}
+	}
+	break;
+
+	case NTL_MOVE_B:
+	case NTL_MOVE_B_TURN_L:
+	case NTL_MOVE_B_TURN_R:
+	case NTL_MOVE_B_TURN_L_JUMP:
+	case NTL_MOVE_B_TURN_R_JUMP:
+	{
+		if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_B)
+		{
+			cPlayer->SetMoveDirection(NTL_MOVE_B);
+		}
+		else if (req->byMoveDirection == NTL_MOVE_B_TURN_L || req->byMoveDirection == NTL_MOVE_B_TURN_R
+			|| req->byMoveDirection == NTL_MOVE_B_TURN_L_JUMP || req->byMoveDirection == NTL_MOVE_B_TURN_R_JUMP)
+		{
+			cPlayer->SetMoveDirection(req->byMoveDirection);
+		}
+		else
+		{
+			ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u. Current move diration: %u", cPlayer->GetCharID(), req->byMoveDirection, cPlayer->GetMoveDirection());
+			return;
+		}
+	}
+	break;
+	case NTL_MOVE_L:
+	case NTL_MOVE_L_TURN_L:
+	case NTL_MOVE_L_TURN_R:
+	case NTL_MOVE_L_TURN_L_JUMP:
+	case NTL_MOVE_L_TURN_R_JUMP:
+	{
+		if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_L)
+		{
+			cPlayer->SetMoveDirection(NTL_MOVE_L);
+		}
+		else if (req->byMoveDirection == NTL_MOVE_L_TURN_L || req->byMoveDirection == NTL_MOVE_L_TURN_R
+			|| req->byMoveDirection == NTL_MOVE_L_TURN_L_JUMP || req->byMoveDirection == NTL_MOVE_L_TURN_R_JUMP)
+		{
+			cPlayer->SetMoveDirection(req->byMoveDirection);
+		}
+		else
+		{
+			ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u", cPlayer->GetCharID(), req->byMoveDirection);
+			return;
+		}
+	}
+	break;
+	case NTL_MOVE_R:
+	case NTL_MOVE_R_TURN_L:
+	case NTL_MOVE_R_TURN_R:
+	case NTL_MOVE_R_TURN_L_JUMP:
+	case NTL_MOVE_R_TURN_R_JUMP:
+	{
+		if (req->byMoveDirection == NTL_MOVE_NONE || req->byMoveDirection == NTL_MOVE_R)
+		{
+			cPlayer->SetMoveDirection(NTL_MOVE_R);
+		}
+		else if (req->byMoveDirection == NTL_MOVE_R_TURN_L || req->byMoveDirection == NTL_MOVE_R_TURN_R
+			|| req->byMoveDirection == NTL_MOVE_R_TURN_L_JUMP || req->byMoveDirection == NTL_MOVE_R_TURN_R_JUMP)
+		{
+			cPlayer->SetMoveDirection(req->byMoveDirection);
+		}
+		else
+		{
+			ERR_LOG(LOG_USER, "Player %u has requested wrong move direction %u", cPlayer->GetCharID(), req->byMoveDirection);
+			return;
+		}
+	}
+	break;
+
+	default:
+	{
+		ERR_LOG(LOG_USER, "Player %u has wrong move direction %u, new move direction %u", cPlayer->GetCharID(), cPlayer->GetMoveDirection(), req->byMoveDirection);
+		return;
+	}
 	}
 
 	CNtlVector sDir;
@@ -1664,7 +1664,7 @@ void CClientSession::RecvCharChangeDirOnFloating(CNtlPacket * pPacket)
 		cPlayer->SetCurDir(sDir);
 
 	CNtlPacket packet(sizeof(sGU_CHAR_CHANGE_DIRECTION_ON_FLOATING));
-	sGU_CHAR_CHANGE_DIRECTION_ON_FLOATING * res = (sGU_CHAR_CHANGE_DIRECTION_ON_FLOATING *)packet.GetPacketData();
+	sGU_CHAR_CHANGE_DIRECTION_ON_FLOATING* res = (sGU_CHAR_CHANGE_DIRECTION_ON_FLOATING*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_CHANGE_DIRECTION_ON_FLOATING;
 	res->hSubject = cPlayer->GetID();
 	res->byMoveDirection = req->byMoveDirection;
@@ -1674,12 +1674,12 @@ void CClientSession::RecvCharChangeDirOnFloating(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char falling
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharFalling(CNtlPacket * pPacket)
+void CClientSession::RecvCharFalling(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_FALLING * req = (sUG_CHAR_FALLING*)pPacket->GetPacketData();
+	sUG_CHAR_FALLING* req = (sUG_CHAR_FALLING*)pPacket->GetPacketData();
 
 	if (req->byMoveDirection >= NTL_MOVE_COUNT)
 	{
@@ -1700,11 +1700,11 @@ void CClientSession::RecvCharFalling(CNtlPacket * pPacket)
 		if (sDir.IsInvalid() == false)
 			cPlayer->SetCurDir(sDir);
 
-		if(req->bIsFalling)
+		if (req->bIsFalling)
 		{
 			cPlayer->SendCharStateFalling(req->byMoveDirection);
 		}
-		else if(cPlayer->GetCharStateID() == CHARSTATE_FALLING)
+		else if (cPlayer->GetCharStateID() == CHARSTATE_FALLING)
 		{
 			cPlayer->SendCharStateStanding(false);
 		}
@@ -1718,14 +1718,14 @@ void CClientSession::RecvCharFalling(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char AIR falling called when flying to ground
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharAirFalling(CNtlPacket * pPacket)
+void CClientSession::RecvCharAirFalling(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_AIR_FALLING * req = (sUG_CHAR_AIR_FALLING*)pPacket->GetPacketData();
+	sUG_CHAR_AIR_FALLING* req = (sUG_CHAR_AIR_FALLING*)pPacket->GetPacketData();
 
 	if (req->byMoveDirection != NTL_MOVE_NONE)
 	{
@@ -1755,14 +1755,14 @@ void CClientSession::RecvCharAirFalling(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//                    
 //		CHAR AIR END
 //--------------------------------------------------------------------------------------//                            
-void CClientSession::RecvCharAirEnd(CNtlPacket * pPacket)
+void CClientSession::RecvCharAirEnd(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_AIR_END * req = (sUG_CHAR_AIR_END*)pPacket->GetPacketData();
+	sUG_CHAR_AIR_END* req = (sUG_CHAR_AIR_END*)pPacket->GetPacketData();
 
 	if (cPlayer->GetAirState() == AIR_STATE_OFF)
 	{
@@ -1782,7 +1782,7 @@ void CClientSession::RecvCharAirEnd(CNtlPacket * pPacket)
 			cPlayer->SetCurDir(sDir);
 
 		CNtlPacket packet(sizeof(sGU_UPDATE_CHAR_STATE));
-		sGU_UPDATE_CHAR_STATE * res = (sGU_UPDATE_CHAR_STATE *)packet.GetPacketData();
+		sGU_UPDATE_CHAR_STATE* res = (sGU_UPDATE_CHAR_STATE*)packet.GetPacketData();
 		res->wOpCode = GU_UPDATE_CHAR_STATE;
 		res->handle = cPlayer->GetID();
 		res->sCharState.sCharStateBase.byStateID = CHARSTATE_STANDING;
@@ -1808,12 +1808,12 @@ void CClientSession::RecvCharAirEnd(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		face target
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharTargetFacing(CNtlPacket * pPacket)
+void CClientSession::RecvCharTargetFacing(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_TARGET_FACING * req = (sUG_CHAR_TARGET_FACING*)pPacket->GetPacketData();
+	sUG_CHAR_TARGET_FACING* req = (sUG_CHAR_TARGET_FACING*)pPacket->GetPacketData();
 
 	if (req->hTarget != INVALID_HOBJECT)
 	{
@@ -1858,17 +1858,17 @@ void CClientSession::RecvCharTargetFacing(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		target info
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharTargetInfo(CNtlPacket * pPacket)
+void CClientSession::RecvCharTargetInfo(CNtlPacket* pPacket)
 {
-	sUG_CHAR_TARGET_INFO * req = (sUG_CHAR_TARGET_INFO*)pPacket->GetPacketData();
-	
+	sUG_CHAR_TARGET_INFO* req = (sUG_CHAR_TARGET_INFO*)pPacket->GetPacketData();
+
 	//cPlayer->SetTargetUniqueID(req->hTarget);
 	//NTL_PRINT(PRINT_APP,"UG_CHAR_TARGET_INFO TARGET UNIQUE ID %i ", req->hTarget);
 }
 //--------------------------------------------------------------------------------------//
 //		Send game leave request
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGameLeaveReq(CNtlPacket * pPacket)
+void CClientSession::RecvGameLeaveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -1876,7 +1876,7 @@ void CClientSession::RecvGameLeaveReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvCharServerChangeReq(CNtlPacket * pPacket)
+void CClientSession::RecvCharServerChangeReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -1886,7 +1886,7 @@ void CClientSession::RecvCharServerChangeReq(CNtlPacket * pPacket)
 	if (cPlayer->GetServerTeleportInfo().worldId != INVALID_WORLDID)
 	{
 		CNtlPacket packet(sizeof(sGM_CHAR_SERVER_TELEPORT_REQ));
-		sGM_CHAR_SERVER_TELEPORT_REQ * res = (sGM_CHAR_SERVER_TELEPORT_REQ *)packet.GetPacketData();
+		sGM_CHAR_SERVER_TELEPORT_REQ* res = (sGM_CHAR_SERVER_TELEPORT_REQ*)packet.GetPacketData();
 		res->wOpCode = GM_CHAR_SERVER_TELEPORT_REQ;
 		res->accountId = cPlayer->GetAccountID();
 		res->destServerChannelId = cPlayer->GetServerTeleportInfo().serverChannelId;
@@ -1905,117 +1905,117 @@ void CClientSession::RecvCharServerChangeReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Exit game (Exit)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGameExitReq(CNtlPacket * pPacket)
+void CClientSession::RecvGameExitReq(CNtlPacket* pPacket)
 {
 	CNtlPacket packet2(sizeof(sGU_GAME_EXIT_RES));
-	sGU_GAME_EXIT_RES * res2 = (sGU_GAME_EXIT_RES *)packet2.GetPacketData();
+	sGU_GAME_EXIT_RES* res2 = (sGU_GAME_EXIT_RES*)packet2.GetPacketData();
 	res2->wOpCode = GU_GAME_EXIT_RES;
-	packet2.SetPacketLen( sizeof(sGU_GAME_EXIT_RES) );
-	g_pApp->Send( GetHandle(), &packet2 );
+	packet2.SetPacketLen(sizeof(sGU_GAME_EXIT_RES));
+	g_pApp->Send(GetHandle(), &packet2);
 }
 
 //--------------------------------------------------------------------------------------//
 //		Char exit to char server (Log Out)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharExitReq(CNtlPacket * pPacket)
+void CClientSession::RecvCharExitReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-//	WORD wResultcode = GAME_SUCCESS;
+	//	WORD wResultcode = GAME_SUCCESS;
 
-	//if (cPlayer->GetCombatMode())
-	//	wResultcode = GAME_CHAR_IS_WRONG_STATE;
+		//if (cPlayer->GetCombatMode())
+		//	wResultcode = GAME_CHAR_IS_WRONG_STATE;
 
 
-	//if (wResultcode == GAME_SUCCESS)
+		//if (wResultcode == GAME_SUCCESS)
 	{
 		CNtlPacket packet(sizeof(sGM_MOVE_REQ));
-		sGM_MOVE_REQ* res = (sGM_MOVE_REQ *)packet.GetPacketData();
+		sGM_MOVE_REQ* res = (sGM_MOVE_REQ*)packet.GetPacketData();
 		res->wOpCode = GM_MOVE_REQ;
 		res->accountId = cPlayer->GetAccountID();
 		packet.SetPacketLen(sizeof(sGM_MOVE_REQ));
 		app->SendTo(app->GetMasterServerSession(), &packet);
 	}
-//	else
-//	{
-//		CNtlPacket packet(sizeof(sGU_CHAR_EXIT_RES));
-//		sGU_CHAR_EXIT_RES* res = (sGU_CHAR_EXIT_RES *)packet.GetPacketData();
-//		res->wOpCode = GU_CHAR_EXIT_RES;
-//		res->wResultCode = wResultcode;
-	//	packet.SetPacketLen(sizeof(sGU_CHAR_EXIT_RES));
-	//	app->Send(GetHandle(), &packet);
-//	}
+	//	else
+	//	{
+	//		CNtlPacket packet(sizeof(sGU_CHAR_EXIT_RES));
+	//		sGU_CHAR_EXIT_RES* res = (sGU_CHAR_EXIT_RES *)packet.GetPacketData();
+	//		res->wOpCode = GU_CHAR_EXIT_RES;
+	//		res->wResultCode = wResultcode;
+		//	packet.SetPacketLen(sizeof(sGU_CHAR_EXIT_RES));
+		//	app->Send(GetHandle(), &packet);
+	//	}
 }
 
 //--------------------------------------------------------------------------------------//
 //		SWITCH CHANNEL REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvChangeChannelReq(CNtlPacket * pPacket)
+void CClientSession::RecvChangeChannelReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_CHANNEL_CHANGE_REQ * req = (sUG_CHAR_CHANNEL_CHANGE_REQ*)pPacket->GetPacketData();
+	sUG_CHAR_CHANNEL_CHANGE_REQ* req = (sUG_CHAR_CHANNEL_CHANGE_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_FAIL;
 	CGameServer* app = (CGameServer*)g_pApp;
 
-/*	if(cPlayer->IsGameMaster() == false) //check if player is game master
-		wResultcode = GAME_FAIL;
-	else*/ if(cPlayer->IsStanding() == false)
-		wResultcode = GAME_CHAR_IS_WRONG_STATE;
-	else if (cPlayer->GetCombatMode())
-		wResultcode = GAME_CHAR_IS_WRONG_STATE;
-	else if(cPlayer->GetCurWorld() == NULL || cPlayer->GetCurWorld()->GetTbldat()->bDynamic) //dont allow to change channel if not inside a world or inside dynamic world
-		wResultcode = GAME_FAIL;
-	else if(req->destServerChannelId == app->GetGsChannel())
-		wResultcode = GAME_WRONG_SERVER_CHANNEL_HAS_BEEN_SPECIFIED;
-	else if(app->GetGsChannel() == DOJO_CHANNEL_INDEX)
-		wResultcode = GAME_FAIL;
-	else
-	{
-		sSERVER_CHANNEL_INFO* pChannel = g_pServerInfoManager->GetServerChannelInfo(app->GetGsServerId(), req->destServerChannelId);
-		if (pChannel == NULL)
-			wResultcode = GAME_WRONG_SERVER_CHANNEL_HAS_BEEN_SPECIFIED;
-		else if (pChannel->byServerStatus != DBO_SERVER_STATUS_UP || pChannel->bIsVisible == false)
-			wResultcode = GAME_SERVER_LOCKED;
-		else if (pChannel->dwLoad >= pChannel->dwMaxLoad)
-			wResultcode = GAME_CANNOT_CONNECT_TARGET_CHANNEL_FULL;
-		else if (strcmp(pChannel->sChannelBuff.szServerChannelName, "DEV") == 0 && cPlayer->IsGameMaster() == false)
-			wResultcode = GAME_SERVER_LOCKED;
+	/*	if(cPlayer->IsGameMaster() == false) //check if player is game master
+			wResultcode = GAME_FAIL;
+		else*/ if (cPlayer->IsStanding() == false)
+	wResultcode = GAME_CHAR_IS_WRONG_STATE;
+		else if (cPlayer->GetCombatMode())
+	wResultcode = GAME_CHAR_IS_WRONG_STATE;
+		else if (cPlayer->GetCurWorld() == NULL || cPlayer->GetCurWorld()->GetTbldat()->bDynamic) //dont allow to change channel if not inside a world or inside dynamic world
+	wResultcode = GAME_FAIL;
+		else if (req->destServerChannelId == app->GetGsChannel())
+	wResultcode = GAME_WRONG_SERVER_CHANNEL_HAS_BEEN_SPECIFIED;
+		else if (app->GetGsChannel() == DOJO_CHANNEL_INDEX)
+	wResultcode = GAME_FAIL;
 		else
 		{
-			CNtlPacket packet2(sizeof(sGM_PLAYER_SWITCH_CHANNEL_REQ));
-			sGM_PLAYER_SWITCH_CHANNEL_REQ * res2 = (sGM_PLAYER_SWITCH_CHANNEL_REQ *)packet2.GetPacketData();
-			res2->wOpCode = GM_PLAYER_SWITCH_CHANNEL_REQ;
-			res2->accountId = cPlayer->GetAccountID();
-			res2->serverChannelId = app->GetGsChannel();
-			res2->serverId = app->GetGsServerId();
-			res2->destServerChannelId = req->destServerChannelId;
-			packet2.SetPacketLen(sizeof(sGM_PLAYER_SWITCH_CHANNEL_REQ));
-			app->SendTo(app->GetMasterServerSession(), &packet2);
+			sSERVER_CHANNEL_INFO* pChannel = g_pServerInfoManager->GetServerChannelInfo(app->GetGsServerId(), req->destServerChannelId);
+			if (pChannel == NULL)
+				wResultcode = GAME_WRONG_SERVER_CHANNEL_HAS_BEEN_SPECIFIED;
+			else if (pChannel->byServerStatus != DBO_SERVER_STATUS_UP || pChannel->bIsVisible == false)
+				wResultcode = GAME_SERVER_LOCKED;
+			else if (pChannel->dwLoad >= pChannel->dwMaxLoad)
+				wResultcode = GAME_CANNOT_CONNECT_TARGET_CHANNEL_FULL;
+			else if (strcmp(pChannel->sChannelBuff.szServerChannelName, "DEV") == 0 && cPlayer->IsGameMaster() == false)
+				wResultcode = GAME_SERVER_LOCKED;
+			else
+			{
+				CNtlPacket packet2(sizeof(sGM_PLAYER_SWITCH_CHANNEL_REQ));
+				sGM_PLAYER_SWITCH_CHANNEL_REQ* res2 = (sGM_PLAYER_SWITCH_CHANNEL_REQ*)packet2.GetPacketData();
+				res2->wOpCode = GM_PLAYER_SWITCH_CHANNEL_REQ;
+				res2->accountId = cPlayer->GetAccountID();
+				res2->serverChannelId = app->GetGsChannel();
+				res2->serverId = app->GetGsServerId();
+				res2->destServerChannelId = req->destServerChannelId;
+				packet2.SetPacketLen(sizeof(sGM_PLAYER_SWITCH_CHANNEL_REQ));
+				app->SendTo(app->GetMasterServerSession(), &packet2);
 
-			return;
+				return;
+			}
 		}
-	}
 
-	CNtlPacket packet(sizeof(sGU_CHAR_CHANNEL_CHANGE_RES));
-	sGU_CHAR_CHANNEL_CHANGE_RES * res = (sGU_CHAR_CHANNEL_CHANGE_RES *)packet.GetPacketData();
-	res->wOpCode = GU_CHAR_CHANNEL_CHANGE_RES;
-	res->wResultCode = wResultcode;
-	packet.SetPacketLen(sizeof(sGU_CHAR_CHANNEL_CHANGE_RES));
-	app->Send(GetHandle(), &packet);
+		CNtlPacket packet(sizeof(sGU_CHAR_CHANNEL_CHANGE_RES));
+		sGU_CHAR_CHANNEL_CHANGE_RES* res = (sGU_CHAR_CHANNEL_CHANGE_RES*)packet.GetPacketData();
+		res->wOpCode = GU_CHAR_CHANNEL_CHANGE_RES;
+		res->wResultCode = wResultcode;
+		packet.SetPacketLen(sizeof(sGU_CHAR_CHANNEL_CHANGE_RES));
+		app->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		SELECT TARGET
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharTargetSelect(CNtlPacket * pPacket)
+void CClientSession::RecvCharTargetSelect(CNtlPacket* pPacket)
 {
-	sUG_CHAR_TARGET_SELECT * req = (sUG_CHAR_TARGET_SELECT*)pPacket->GetPacketData();
+	sUG_CHAR_TARGET_SELECT* req = (sUG_CHAR_TARGET_SELECT*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
@@ -2028,9 +2028,9 @@ void CClientSession::RecvCharTargetSelect(CNtlPacket * pPacket)
 				return;
 		}
 
-	//	printf("RecvCharTargetSelect: req->hTarget: %u \n", req->hTarget);
+		//	printf("RecvCharTargetSelect: req->hTarget: %u \n", req->hTarget);
 
-		if(req->hTarget == INVALID_HOBJECT || g_pObjectManager->GetObjectA(req->hTarget) || cPlayer->GetCurWorld()->FindStaticObject(req->hTarget))
+		if (req->hTarget == INVALID_HOBJECT || g_pObjectManager->GetObjectA(req->hTarget) || cPlayer->GetCurWorld()->FindStaticObject(req->hTarget))
 			cPlayer->ChangeTarget(req->hTarget);
 	}
 }
@@ -2039,13 +2039,13 @@ void CClientSession::RecvCharTargetSelect(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char sit down
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharSitDown(CNtlPacket * pPacket)
+void CClientSession::RecvCharSitDown(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_TOGG_SITDOWN * req = (sUG_CHAR_TOGG_SITDOWN*)pPacket->GetPacketData();
-	
+	sUG_CHAR_TOGG_SITDOWN* req = (sUG_CHAR_TOGG_SITDOWN*)pPacket->GetPacketData();
+
 	if (req->bSitDown)
 	{
 		BYTE byAspectStateID = cPlayer->GetAspectStateId();
@@ -2076,9 +2076,9 @@ void CClientSession::RecvCharSitDown(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char togg fight
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharToggFight(CNtlPacket * pPacket)
+void CClientSession::RecvCharToggFight(CNtlPacket* pPacket)
 {
-	sUG_CHAR_TOGG_FIGHTING * req = (sUG_CHAR_TOGG_FIGHTING *)pPacket->GetPacketData();
+	sUG_CHAR_TOGG_FIGHTING* req = (sUG_CHAR_TOGG_FIGHTING*)pPacket->GetPacketData();
 
 	if (cPlayer && cPlayer->IsInitialized())
 		cPlayer->ChangeFightMode(req->bFightMode);
@@ -2088,12 +2088,12 @@ void CClientSession::RecvCharToggFight(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CHAR START MAIL
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMailStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvMailStartReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MAIL_START_REQ * req = (sUG_MAIL_START_REQ*)pPacket->GetPacketData();
+	sUG_MAIL_START_REQ* req = (sUG_MAIL_START_REQ*)pPacket->GetPacketData();
 
 	//ERR_LOG(LOG_USER, "User %u load mails. hObject %u byPartsType %u\n", cPlayer->GetCharID(), req->hObject, req->byPartsType);
 
@@ -2103,25 +2103,25 @@ void CClientSession::RecvMailStartReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvMailLoadReq(CNtlPacket * pPacket)
+void	CClientSession::RecvMailLoadReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_MAIL_LOAD_REQ * req = (sUG_MAIL_LOAD_REQ*)pPacket->GetPacketData();
+	sUG_MAIL_LOAD_REQ* req = (sUG_MAIL_LOAD_REQ*)pPacket->GetPacketData();
 
 }
 //--------------------------------------------------------------------------------------//
 //		reload mail
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvMailReloadReq(CNtlPacket * pPacket)
+void	CClientSession::RecvMailReloadReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MAIL_RELOAD_REQ * req = (sUG_MAIL_RELOAD_REQ*)pPacket->GetPacketData();
+	sUG_MAIL_RELOAD_REQ* req = (sUG_MAIL_RELOAD_REQ*)pPacket->GetPacketData();
 
 	cPlayer->ManualReloadMails(req->hObject);
 }
@@ -2129,19 +2129,19 @@ void	CClientSession::RecvMailReloadReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		read mails
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvMailReadReq(CNtlPacket * pPacket)
+void	CClientSession::RecvMailReadReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MAIL_READ_REQ * req = (sUG_MAIL_READ_REQ*)pPacket->GetPacketData();
+	sUG_MAIL_READ_REQ* req = (sUG_MAIL_READ_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
 	sMAIL_NEW_PROFILE* mail = cPlayer->GetMail(req->mailID);
 
 	CNtlPacket packet(sizeof(sGU_MAIL_READ_RES));
-	sGU_MAIL_READ_RES * res = (sGU_MAIL_READ_RES *)packet.GetPacketData();
+	sGU_MAIL_READ_RES* res = (sGU_MAIL_READ_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MAIL_READ_RES;
 	res->hObject = req->hObject;
 	res->mailID = req->mailID;
@@ -2155,7 +2155,7 @@ void	CClientSession::RecvMailReadReq(CNtlPacket * pPacket)
 		if (mail->bIsRead == false)
 		{
 			CNtlPacket pQry(sizeof(sGQ_MAIL_READ_REQ));
-			sGQ_MAIL_READ_REQ * qRes = (sGQ_MAIL_READ_REQ *)pQry.GetPacketData();
+			sGQ_MAIL_READ_REQ* qRes = (sGQ_MAIL_READ_REQ*)pQry.GetPacketData();
 			qRes->wOpCode = GQ_MAIL_READ_REQ;
 			qRes->handle = cPlayer->GetID();
 			qRes->hObject = req->hObject;
@@ -2169,21 +2169,21 @@ void	CClientSession::RecvMailReadReq(CNtlPacket * pPacket)
 	}
 	else
 		res->wResultCode = GAME_MAIL_NOT_FOUND;
-	
+
 	packet.SetPacketLen(sizeof(sGU_MAIL_READ_RES));
 	g_pApp->Send(GetHandle(), &packet);
 }
 //--------------------------------------------------------------------------------------//
 //		send mails
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
+void	CClientSession::RecvMailSendReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_MAIL_SEND_REQ * req = (sUG_MAIL_SEND_REQ*)pPacket->GetPacketData();
+	sUG_MAIL_SEND_REQ* req = (sUG_MAIL_SEND_REQ*)pPacket->GetPacketData();
 
 	ITEMID itemid = 0;
 	WORD sendmailres = GAME_SUCCESS;
@@ -2277,7 +2277,7 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 	}
 
 	CItem* item = NULL;
-	if (req->byMailType == eMAIL_TYPE_ITEM || req->byMailType == eMAIL_TYPE_ITEM_ZENNY || req->byMailType ==  eMAIL_TYPE_ITEM_ZENNY_REQ)
+	if (req->byMailType == eMAIL_TYPE_ITEM || req->byMailType == eMAIL_TYPE_ITEM_ZENNY || req->byMailType == eMAIL_TYPE_ITEM_ZENNY_REQ)
 	{
 		if (IsInvenContainer(req->sItemData.byPlace))
 		{
@@ -2291,11 +2291,11 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 		}
 		else sendmailres = GAME_FAIL;
 	}
-	
+
 	if (sendmailres == GAME_SUCCESS)
 	{
 		CNtlPacket pQry(sizeof(sGQ_MAIL_SEND_REQ));
-		sGQ_MAIL_SEND_REQ * qRes = (sGQ_MAIL_SEND_REQ *)pQry.GetPacketData();
+		sGQ_MAIL_SEND_REQ* qRes = (sGQ_MAIL_SEND_REQ*)pQry.GetPacketData();
 		qRes->wOpCode = GQ_MAIL_SEND_REQ;
 		qRes->handle = cPlayer->GetID();
 		qRes->hObject = req->hObject;
@@ -2322,10 +2322,10 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 		return;
 	}
 
-	_end:
+_end:
 
 	CNtlPacket packet(sizeof(sGU_MAIL_SEND_RES));
-	sGU_MAIL_SEND_RES * res = (sGU_MAIL_SEND_RES *)packet.GetPacketData();
+	sGU_MAIL_SEND_RES* res = (sGU_MAIL_SEND_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MAIL_SEND_RES;
 	res->hObject = req->hObject;
 	res->wResultCode = sendmailres;
@@ -2336,17 +2336,17 @@ void	CClientSession::RecvMailSendReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		delete mails
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvMailDelReq(CNtlPacket * pPacket)
+void	CClientSession::RecvMailDelReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_MAIL_DEL_REQ * req = (sUG_MAIL_DEL_REQ*)pPacket->GetPacketData();
-	
+	sUG_MAIL_DEL_REQ* req = (sUG_MAIL_DEL_REQ*)pPacket->GetPacketData();
+
 	CNtlPacket packet(sizeof(sGU_MAIL_DEL_RES));
-	sGU_MAIL_DEL_RES * res = (sGU_MAIL_DEL_RES *)packet.GetPacketData();
+	sGU_MAIL_DEL_RES* res = (sGU_MAIL_DEL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MAIL_DEL_RES;
 	res->hObject = req->hObject;
 	res->wResultCode = GAME_SUCCESS;
@@ -2356,7 +2356,7 @@ void	CClientSession::RecvMailDelReq(CNtlPacket * pPacket)
 		if (mail->bIsRead == false || mail->bIsLock == false)
 		{
 			CNtlPacket pQry(sizeof(sGQ_MAIL_DEL_REQ));
-			sGQ_MAIL_DEL_REQ * qRes = (sGQ_MAIL_DEL_REQ *)pQry.GetPacketData();
+			sGQ_MAIL_DEL_REQ* qRes = (sGQ_MAIL_DEL_REQ*)pQry.GetPacketData();
 			qRes->wOpCode = GQ_MAIL_DEL_REQ;
 			qRes->charID = cPlayer->GetCharID();
 			qRes->mailID = req->mailID;
@@ -2378,14 +2378,14 @@ void	CClientSession::RecvMailDelReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		receive item with mail
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvMailItemReceiveReq(CNtlPacket * pPacket)
+void	CClientSession::RecvMailItemReceiveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_MAIL_ITEM_RECEIVE_REQ * req = (sUG_MAIL_ITEM_RECEIVE_REQ*)pPacket->GetPacketData();
+	sUG_MAIL_ITEM_RECEIVE_REQ* req = (sUG_MAIL_ITEM_RECEIVE_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_SUCCESS;
 
@@ -2402,7 +2402,31 @@ void	CClientSession::RecvMailItemReceiveReq(CNtlPacket * pPacket)
 
 		switch (mail->byMailType)
 		{
-			case eMAIL_TYPE_ITEM: //receive item
+		case eMAIL_TYPE_ITEM: //receive item
+		{
+			inv = cPlayer->GetPlayerItemContainer()->GetEmptyInventory();
+			if (inv.first == INVALID_BYTE)
+			{
+				wResultCode = GAME_ITEM_INVEN_FULL;
+			}
+		}
+		break;
+		case eMAIL_TYPE_ZENNY: //receive zeni
+		case eMAIL_TYPE_ITEM_ZENNY: //receive item and zeni
+		{
+			if (mail->dwZenny == INVALID_DWORD) //check zeni
+			{
+				wResultCode = GAME_MAIL_INVALID_ZENNY;
+			}
+			else if (mail->dwZenny > 0)
+			{
+				if (!cPlayer->CanReceiveZeni(mail->dwZenny))
+				{
+					wResultCode = GAME_ZENNY_OVER;
+				}
+			}
+
+			if (mail->byMailType == eMAIL_TYPE_ITEM_ZENNY)
 			{
 				inv = cPlayer->GetPlayerItemContainer()->GetEmptyInventory();
 				if (inv.first == INVALID_BYTE)
@@ -2410,55 +2434,31 @@ void	CClientSession::RecvMailItemReceiveReq(CNtlPacket * pPacket)
 					wResultCode = GAME_ITEM_INVEN_FULL;
 				}
 			}
-			break;
-			case eMAIL_TYPE_ZENNY: //receive zeni
-			case eMAIL_TYPE_ITEM_ZENNY: //receive item and zeni
+		}
+		break;
+		case eMAIL_TYPE_ITEM_ZENNY_REQ: //request zeni(send zeni to mail-sender) and give item as reward
+		case eMAIL_TYPE_ZENNY_REQ: //request zeni(send zeni to mail-sender)
+		{
+			if (mail->bySenderType != eMAIL_SENDER_TYPE_RETURN) // only need to check zeni if NOT returned.
 			{
-				if (mail->dwZenny == INVALID_DWORD) //check zeni
+				if (cPlayer->GetZeni() < mail->dwZenny) //check if enough zeni
 				{
 					wResultCode = GAME_MAIL_INVALID_ZENNY;
 				}
-				else if (mail->dwZenny > 0)
-				{
-					if (!cPlayer->CanReceiveZeni(mail->dwZenny))
-					{
-						wResultCode = GAME_ZENNY_OVER;
-					}
-				}
-				
-				if (mail->byMailType == eMAIL_TYPE_ITEM_ZENNY)
-				{
-					inv = cPlayer->GetPlayerItemContainer()->GetEmptyInventory();
-					if (inv.first == INVALID_BYTE)
-					{
-						wResultCode = GAME_ITEM_INVEN_FULL;
-					}
-				}
 			}
-			break;
-			case eMAIL_TYPE_ITEM_ZENNY_REQ: //request zeni(send zeni to mail-sender) and give item as reward
-			case eMAIL_TYPE_ZENNY_REQ: //request zeni(send zeni to mail-sender)
+
+			if (mail->byMailType == eMAIL_TYPE_ITEM_ZENNY_REQ)
 			{
-				if (mail->bySenderType != eMAIL_SENDER_TYPE_RETURN) // only need to check zeni if NOT returned.
+				inv = cPlayer->GetPlayerItemContainer()->GetEmptyInventory();
+				if (inv.first == INVALID_BYTE)
 				{
-					if (cPlayer->GetZeni() < mail->dwZenny) //check if enough zeni
-					{
-						wResultCode = GAME_MAIL_INVALID_ZENNY;
-					}
-				}
-
-				if (mail->byMailType == eMAIL_TYPE_ITEM_ZENNY_REQ)
-				{
-					inv = cPlayer->GetPlayerItemContainer()->GetEmptyInventory();
-					if (inv.first == INVALID_BYTE)
-					{
-						wResultCode = GAME_ITEM_INVEN_FULL;
-					}
+					wResultCode = GAME_ITEM_INVEN_FULL;
 				}
 			}
-			break;
+		}
+		break;
 
-			default: break;
+		default: break;
 		}
 
 		if (wResultCode == GAME_SUCCESS)
@@ -2469,7 +2469,7 @@ void	CClientSession::RecvMailItemReceiveReq(CNtlPacket * pPacket)
 				cPlayer->GetPlayerItemContainer()->AddReservedInventory(inv.first, inv.second);
 
 			CNtlPacket pQry(sizeof(sGQ_MAIL_ITEM_RECEIVE_REQ));
-			sGQ_MAIL_ITEM_RECEIVE_REQ * qRes = (sGQ_MAIL_ITEM_RECEIVE_REQ *)pQry.GetPacketData();
+			sGQ_MAIL_ITEM_RECEIVE_REQ* qRes = (sGQ_MAIL_ITEM_RECEIVE_REQ*)pQry.GetPacketData();
 			qRes->wOpCode = GQ_MAIL_ITEM_RECEIVE_REQ;
 			qRes->byMailType = mail->byMailType;
 			qRes->charID = cPlayer->GetCharID();
@@ -2490,7 +2490,7 @@ void	CClientSession::RecvMailItemReceiveReq(CNtlPacket * pPacket)
 END:
 
 	CNtlPacket packet(sizeof(sGU_MAIL_ITEM_RECEIVE_RES));
-	sGU_MAIL_ITEM_RECEIVE_RES * res = (sGU_MAIL_ITEM_RECEIVE_RES *)packet.GetPacketData();
+	sGU_MAIL_ITEM_RECEIVE_RES* res = (sGU_MAIL_ITEM_RECEIVE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MAIL_ITEM_RECEIVE_RES;
 	res->hObject = req->hObject;
 	res->wResultCode = wResultCode;
@@ -2502,17 +2502,17 @@ END:
 //--------------------------------------------------------------------------------------//
 //		delete multiple mails //dont know if this still exist
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvCharMailMultiDelReq(CNtlPacket * pPacket)
+void	CClientSession::RecvCharMailMultiDelReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_MAIL_MULTI_DEL_REQ * req = (sUG_MAIL_MULTI_DEL_REQ*)pPacket->GetPacketData();
+	sUG_MAIL_MULTI_DEL_REQ* req = (sUG_MAIL_MULTI_DEL_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_MAIL_MULTI_DEL_RES));
-	sGU_MAIL_MULTI_DEL_RES * res = (sGU_MAIL_MULTI_DEL_RES *)packet.GetPacketData();
+	sGU_MAIL_MULTI_DEL_RES* res = (sGU_MAIL_MULTI_DEL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MAIL_MULTI_DEL_RES;
 	res->wResultCode = GAME_SUCCESS;
 	res->hObject = req->hObject;
@@ -2527,7 +2527,7 @@ void	CClientSession::RecvCharMailMultiDelReq(CNtlPacket * pPacket)
 				if (mail->bIsRead == false || mail->bIsLock == false)
 				{
 					CNtlPacket pQry(sizeof(sGQ_MAIL_DEL_REQ));
-					sGQ_MAIL_DEL_REQ * qRes = (sGQ_MAIL_DEL_REQ *)pQry.GetPacketData();
+					sGQ_MAIL_DEL_REQ* qRes = (sGQ_MAIL_DEL_REQ*)pQry.GetPacketData();
 					qRes->wOpCode = GQ_MAIL_DEL_REQ;
 					qRes->charID = cPlayer->GetCharID();
 					qRes->mailID = req->aMailID[i];
@@ -2543,7 +2543,7 @@ void	CClientSession::RecvCharMailMultiDelReq(CNtlPacket * pPacket)
 			}
 		}
 
-		if(res->byCount == 0)
+		if (res->byCount == 0)
 		{
 			res->wResultCode = GAME_FAIL;
 		}
@@ -2559,17 +2559,17 @@ void	CClientSession::RecvCharMailMultiDelReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		lock mail
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvMailLockReq(CNtlPacket * pPacket)
+void	CClientSession::RecvMailLockReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_MAIL_LOCK_REQ * req = (sUG_MAIL_LOCK_REQ*)pPacket->GetPacketData();
+	sUG_MAIL_LOCK_REQ* req = (sUG_MAIL_LOCK_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_MAIL_LOCK_RES));
-	sGU_MAIL_LOCK_RES * res = (sGU_MAIL_LOCK_RES *)packet.GetPacketData();
+	sGU_MAIL_LOCK_RES* res = (sGU_MAIL_LOCK_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MAIL_LOCK_RES;
 	res->hObject = req->hObject;
 
@@ -2582,7 +2582,7 @@ void	CClientSession::RecvMailLockReq(CNtlPacket * pPacket)
 		if (mail->bIsLock != req->bIsLock)
 		{
 			CNtlPacket pQry(sizeof(sGQ_MAIL_LOCK_REQ));
-			sGQ_MAIL_LOCK_REQ * qRes = (sGQ_MAIL_LOCK_REQ *)pQry.GetPacketData();
+			sGQ_MAIL_LOCK_REQ* qRes = (sGQ_MAIL_LOCK_REQ*)pQry.GetPacketData();
 			qRes->wOpCode = GQ_MAIL_LOCK_REQ;
 			qRes->handle = cPlayer->GetID();
 			qRes->hObject = req->hObject;
@@ -2606,15 +2606,15 @@ void	CClientSession::RecvMailLockReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		RETURN MAIL
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvCharMailReturnReq(CNtlPacket * pPacket)
+void	CClientSession::RecvCharMailReturnReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_MAIL_RETURN_REQ * req = (sUG_MAIL_RETURN_REQ*)pPacket->GetPacketData();
-	
+	sUG_MAIL_RETURN_REQ* req = (sUG_MAIL_RETURN_REQ*)pPacket->GetPacketData();
+
 	WORD wResultcode = GAME_SUCCESS;
 
 	if (sMAIL_NEW_PROFILE* mail = cPlayer->GetMail(req->mailID))
@@ -2626,7 +2626,7 @@ void	CClientSession::RecvCharMailReturnReq(CNtlPacket * pPacket)
 				mail->bIsLock = true; //set temp lock because return can fail.
 
 				CNtlPacket pQry(sizeof(sGQ_MAIL_RETURN_REQ));
-				sGQ_MAIL_RETURN_REQ * qRes = (sGQ_MAIL_RETURN_REQ *)pQry.GetPacketData();
+				sGQ_MAIL_RETURN_REQ* qRes = (sGQ_MAIL_RETURN_REQ*)pQry.GetPacketData();
 				qRes->wOpCode = GQ_MAIL_RETURN_REQ;
 				qRes->handle = cPlayer->GetID();
 				qRes->hObject = req->hObject;
@@ -2644,7 +2644,7 @@ void	CClientSession::RecvCharMailReturnReq(CNtlPacket * pPacket)
 	else wResultcode = GAME_MAIL_NOT_FOUND;
 
 	CNtlPacket packet(sizeof(sGU_MAIL_RETURN_RES));
-	sGU_MAIL_RETURN_RES * res = (sGU_MAIL_RETURN_RES *)packet.GetPacketData();
+	sGU_MAIL_RETURN_RES* res = (sGU_MAIL_RETURN_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MAIL_RETURN_RES;
 	res->hObject = req->hObject;
 	res->mailID = req->mailID;
@@ -2655,28 +2655,28 @@ void	CClientSession::RecvCharMailReturnReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		char away req
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvCharAwayReq(CNtlPacket * pPacket)
+void	CClientSession::RecvCharAwayReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_AWAY_REQ * req = (sUG_CHAR_AWAY_REQ*)pPacket->GetPacketData();
-	
+	sUG_CHAR_AWAY_REQ* req = (sUG_CHAR_AWAY_REQ*)pPacket->GetPacketData();
+
 	CNtlPacket packet(sizeof(sGU_CHAR_AWAY_RES));
-	sGU_CHAR_AWAY_RES * res = (sGU_CHAR_AWAY_RES *)packet.GetPacketData();
+	sGU_CHAR_AWAY_RES* res = (sGU_CHAR_AWAY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_AWAY_RES;
 	res->wResultCode = GAME_SUCCESS;
 	res->bIsAway = req->bIsAway;
-	packet.SetPacketLen( sizeof(sGU_CHAR_AWAY_RES) );
-	g_pApp->Send( GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_CHAR_AWAY_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
 	//update database
 	if (cPlayer->IsMailAway() != req->bIsAway)
 	{
 		CNtlPacket pQry(sizeof(sGQ_CHAR_AWAY_REQ));
-		sGQ_CHAR_AWAY_REQ * qRes = (sGQ_CHAR_AWAY_REQ *)pQry.GetPacketData();
+		sGQ_CHAR_AWAY_REQ* qRes = (sGQ_CHAR_AWAY_REQ*)pQry.GetPacketData();
 		qRes->wOpCode = GQ_CHAR_AWAY_REQ;
 		qRes->handle = cPlayer->GetID();
 		qRes->charID = cPlayer->GetCharID();
@@ -2690,9 +2690,9 @@ void	CClientSession::RecvCharAwayReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		char follow move
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharFollowMove(CNtlPacket * pPacket)
+void CClientSession::RecvCharFollowMove(CNtlPacket* pPacket)
 {
-	sUG_CHAR_FOLLOW_MOVE * req = (sUG_CHAR_FOLLOW_MOVE*)pPacket->GetPacketData();
+	sUG_CHAR_FOLLOW_MOVE* req = (sUG_CHAR_FOLLOW_MOVE*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized() || cPlayer->GetCurWorld() == NULL)
 		return;
@@ -2725,50 +2725,50 @@ void CClientSession::RecvCharFollowMove(CNtlPacket * pPacket)
 	// check if we can move to target
 	switch (byGameRuleType)
 	{
-		case GAMERULE_DOJO:
+	case GAMERULE_DOJO:
+	{
+		if (req->byMovementReason == DBO_MOVE_FOLLOW_FRIENDLY)// dont allow friendly follow in dojo
 		{
-			if (req->byMovementReason == DBO_MOVE_FOLLOW_FRIENDLY)// dont allow friendly follow in dojo
-			{
-				ERR_LOG(LOG_USER, "Player %u tried friendly-follow in dojo", cPlayer->GetCharID());
-				return;
-			}
-
-			// to do: check if battle active
+			ERR_LOG(LOG_USER, "Player %u tried friendly-follow in dojo", cPlayer->GetCharID());
+			return;
 		}
-		break;
-		case GAMERULE_RANKBATTLE:
-		{
-			if (req->byMovementReason == DBO_MOVE_FOLLOW_FRIENDLY) // dont allow friendly follow in ranking
-			{
-				ERR_LOG(LOG_USER, "Player %u tried friendly-follow in ranking", cPlayer->GetCharID());
-				return;
-			}
 
-			// to do: check if battle active
-		}
-		break;
-
-		case GAMERULE_MINORMATCH:
-		case GAMERULE_MAJORMATCH:
-		case GAMERULE_FINALMATCH:
-		{
-			if (req->byMovementReason == DBO_MOVE_FOLLOW_FRIENDLY)// dont allow friendly follow in budokai
-			{
-				ERR_LOG(LOG_USER, "Player %u tried friendly-follow in budokai", cPlayer->GetCharID());
-				return;
-			}
-
-			// to do: check if battle active
-		}
-		break;
-
-		default:
-		{
-
-		}
-		break;
+		// to do: check if battle active
 	}
-	
+	break;
+	case GAMERULE_RANKBATTLE:
+	{
+		if (req->byMovementReason == DBO_MOVE_FOLLOW_FRIENDLY) // dont allow friendly follow in ranking
+		{
+			ERR_LOG(LOG_USER, "Player %u tried friendly-follow in ranking", cPlayer->GetCharID());
+			return;
+		}
+
+		// to do: check if battle active
+	}
+	break;
+
+	case GAMERULE_MINORMATCH:
+	case GAMERULE_MAJORMATCH:
+	case GAMERULE_FINALMATCH:
+	{
+		if (req->byMovementReason == DBO_MOVE_FOLLOW_FRIENDLY)// dont allow friendly follow in budokai
+		{
+			ERR_LOG(LOG_USER, "Player %u tried friendly-follow in budokai", cPlayer->GetCharID());
+			return;
+		}
+
+		// to do: check if battle active
+	}
+	break;
+
+	default:
+	{
+
+	}
+	break;
+	}
+
 	sVECTOR3 newdestloc;
 
 	CCharacter* pChar = g_pObjectManager->GetChar(req->hTarget);
@@ -2800,13 +2800,13 @@ void CClientSession::RecvCharFollowMove(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		char follow move air
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharAirFollowMove(CNtlPacket * pPacket)
+void CClientSession::RecvCharAirFollowMove(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_AIR_FOLLOW_MOVE * req = (sUG_CHAR_AIR_FOLLOW_MOVE*)pPacket->GetPacketData();
-	
+	sUG_CHAR_AIR_FOLLOW_MOVE* req = (sUG_CHAR_AIR_FOLLOW_MOVE*)pPacket->GetPacketData();
+
 	CCharacter* pChar = g_pObjectManager->GetChar(req->hTarget);
 	if (pChar == NULL || pChar->IsInitialized() == false)
 		return;
@@ -2831,10 +2831,10 @@ void CClientSession::RecvCharAirFollowMove(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		char follow move sync
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharFollowMoveSync(CNtlPacket * pPacket)
+void CClientSession::RecvCharFollowMoveSync(CNtlPacket* pPacket)
 {
-	sUG_CHAR_FOLLOW_MOVE_SYNC * req = (sUG_CHAR_FOLLOW_MOVE_SYNC*)pPacket->GetPacketData();
-	
+	sUG_CHAR_FOLLOW_MOVE_SYNC* req = (sUG_CHAR_FOLLOW_MOVE_SYNC*)pPacket->GetPacketData();
+
 	//CNtlPacket packet(sizeof(sGU_CHAR_FOLLOW_MOVE_SYNC));
 	//sGU_CHAR_FOLLOW_MOVE_SYNC * res = (sGU_CHAR_FOLLOW_MOVE_SYNC *)packet.GetPacketData();
 	//res->wOpCode = GU_CHAR_FOLLOW_MOVE_SYNC;
@@ -2846,14 +2846,14 @@ void CClientSession::RecvCharFollowMoveSync(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Create Guild
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGuildCreateReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildCreateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_CREATE_REQ * req = (sUG_GUILD_CREATE_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_CREATE_REQ* req = (sUG_GUILD_CREATE_REQ*)pPacket->GetPacketData();
 
 	std::string guildname = Ntl_WC2MB(req->wszGuildName);
 	WORD result = GAME_SUCCESS;
@@ -2868,37 +2868,37 @@ void CClientSession::RecvGuildCreateReq(CNtlPacket * pPacket)
 		result = GAME_GUILD_GUILD_MANAGER_IS_TOO_FAR;
 	else if (guildname.length() < NTL_MIN_SIZE_GUILD_NAME || guildname.length() > NTL_MAX_SIZE_GUILD_NAME)	//check guild name length
 		result = GAME_GUILD_NOT_PROPER_GUILD_NAME_LENGTH;
-	else if(cPlayer->GetGuildID() > 0)								//check if has guild
+	else if (cPlayer->GetGuildID() > 0)								//check if has guild
 		result = COMMUNITY_GUILD_YOU_ARE_ALREADY_IN_A_GUILD;
-	else if(cPlayer->GetZeni() < DBO_ZENNY_FOR_NEW_GUILD)			//check if enough zeni
+	else if (cPlayer->GetZeni() < DBO_ZENNY_FOR_NEW_GUILD)			//check if enough zeni
 		result = GAME_GUILD_NEED_MORE_ZENNY_FOR_NEW_GUILD;
-	else if(cPlayer->GetLevel() < DBO_LEVEL_FOR_NEW_GUILD)
+	else if (cPlayer->GetLevel() < DBO_LEVEL_FOR_NEW_GUILD)
 		result = GAME_CHAR_LEVEL_FAIL;
 	else if (guildname.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890") != std::string::npos)	//check guild name
 		result = GAME_GUILD_GUILD_NAME_HAS_INVALID_CHARACTER;
-	else if(cPlayer->GetParty() == NULL)	//check if has no party
+	else if (cPlayer->GetParty() == NULL)	//check if has no party
 		result = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
-	else if(cPlayer->GetParty()->GetPartyMemberCount() < NTL_MAX_MEMBER_IN_PARTY) //check if party member count less than max member count
+	else if (cPlayer->GetParty()->GetPartyMemberCount() < NTL_MAX_MEMBER_IN_PARTY) //check if party member count less than max member count
 		result = COMMUNITY_GUILD_NEED_MORE_PARTY_MEMBER_FOR_NEW_GUILD;
 	else if (cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID()) //check if player is not party leader
 		result = GAME_COMMON_YOU_ARE_NOT_A_PARTY_LEADER;
-	else if(cPlayer->GetParty()->IsMemberInsideGuild()) //check if a party member already inside a guild
+	else if (cPlayer->GetParty()->IsMemberInsideGuild()) //check if a party member already inside a guild
 		result = COMMUNITY_GUILD_NEED_MORE_PARTY_MEMBER_FOR_NEW_GUILD;
 
-	if(result == GAME_SUCCESS)
+	if (result == GAME_SUCCESS)
 	{
 		CNtlPacket cPacket(sizeof(sGT_GUILD_CREATE));
-		sGT_GUILD_CREATE * cRes = (sGT_GUILD_CREATE *)cPacket.GetPacketData();
+		sGT_GUILD_CREATE* cRes = (sGT_GUILD_CREATE*)cPacket.GetPacketData();
 		cRes->wOpCode = GT_GUILD_CREATE;
 		cRes->creatorCharId = cPlayer->GetCharID();
-		NTL_SAFE_WCSCPY(cRes->wszGuildName, req->wszGuildName );
-		cPacket.SetPacketLen( sizeof(sGT_GUILD_CREATE) );
+		NTL_SAFE_WCSCPY(cRes->wszGuildName, req->wszGuildName);
+		cPacket.SetPacketLen(sizeof(sGT_GUILD_CREATE));
 		app->SendTo(app->GetChatServerSession(), &cPacket); //Send to chat server
 	}
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_GUILD_CREATE_RES));
-		sGU_GUILD_CREATE_RES * res = (sGU_GUILD_CREATE_RES *)packet.GetPacketData();
+		sGU_GUILD_CREATE_RES* res = (sGU_GUILD_CREATE_RES*)packet.GetPacketData();
 		res->wOpCode = GU_GUILD_CREATE_RES;
 		res->wResultCode = result;
 		packet.SetPacketLen(sizeof(sGU_GUILD_CREATE_RES));
@@ -2912,19 +2912,19 @@ void CClientSession::RecvGuildCreateReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		INVITE Guild
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGuildInviteReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildInviteReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_INVITE_REQ * req = (sUG_GUILD_INVITE_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_INVITE_REQ* req = (sUG_GUILD_INVITE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGU_GUILD_INVITE_RES));
-	sGU_GUILD_INVITE_RES * res = (sGU_GUILD_INVITE_RES *)packet.GetPacketData();
+	sGU_GUILD_INVITE_RES* res = (sGU_GUILD_INVITE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GUILD_INVITE_RES;
 
 	if (cPlayer->GetGuildID() > 0) //check if player has guild
@@ -2939,7 +2939,7 @@ void CClientSession::RecvGuildInviteReq(CNtlPacket * pPacket)
 				if (NtlGetDistance(cPlayer->GetCurLoc(), target->GetCurLoc()) < 50.0f) //check target range
 				{
 					CNtlPacket cPacket(sizeof(sGT_GUILD_INVITE_REQ));
-					sGT_GUILD_INVITE_REQ * cRes = (sGT_GUILD_INVITE_REQ *)cPacket.GetPacketData();
+					sGT_GUILD_INVITE_REQ* cRes = (sGT_GUILD_INVITE_REQ*)cPacket.GetPacketData();
 					cRes->wOpCode = GT_GUILD_INVITE_REQ;
 					cRes->invitorCharId = cPlayer->GetCharID();
 					cRes->targetCharId = target->GetCharID();
@@ -2956,7 +2956,7 @@ void CClientSession::RecvGuildInviteReq(CNtlPacket * pPacket)
 		else resultcode = GAME_TARGET_NOT_FOUND;
 	}
 	else resultcode = GAME_GUILD_NO_GUILD_FOUND;
-	
+
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_GUILD_INVITE_RES));
 	app->Send(GetHandle(), &packet);
@@ -2965,14 +2965,14 @@ void CClientSession::RecvGuildInviteReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		ADD GUILD FUNCTION REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvAddGuildFunctionReq(CNtlPacket * pPacket)
+void CClientSession::RecvAddGuildFunctionReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 	WORD resultcode = GAME_SUCCESS;
-	sUG_GUILD_FUNCTION_ADD_REQ * req = (sUG_GUILD_FUNCTION_ADD_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_FUNCTION_ADD_REQ* req = (sUG_GUILD_FUNCTION_ADD_REQ*)pPacket->GetPacketData();
 
 	CNpc* pNpc = g_pObjectManager->GetNpc(req->hGuildManagerNpc);
 	eDBO_GUILD_FUNCTION eGuildFunction = static_cast<eDBO_GUILD_FUNCTION>(req->byFunction);
@@ -3001,7 +3001,7 @@ void CClientSession::RecvAddGuildFunctionReq(CNtlPacket * pPacket)
 				else
 				{
 					CNtlPacket cPacket(sizeof(sGT_GUILD_FUNCTION_ADD_REQ));
-					sGT_GUILD_FUNCTION_ADD_REQ * cRes = (sGT_GUILD_FUNCTION_ADD_REQ *)cPacket.GetPacketData();
+					sGT_GUILD_FUNCTION_ADD_REQ* cRes = (sGT_GUILD_FUNCTION_ADD_REQ*)cPacket.GetPacketData();
 					cRes->wOpCode = GT_GUILD_FUNCTION_ADD_REQ;
 					cRes->masterCharId = cPlayer->GetCharID();
 					cRes->byFunction = req->byFunction;
@@ -3018,7 +3018,7 @@ void CClientSession::RecvAddGuildFunctionReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_GUILD_FUNCTION_ADD_RES));
-	sGU_GUILD_FUNCTION_ADD_RES * res = (sGU_GUILD_FUNCTION_ADD_RES *)packet.GetPacketData();
+	sGU_GUILD_FUNCTION_ADD_RES* res = (sGU_GUILD_FUNCTION_ADD_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GUILD_FUNCTION_ADD_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_GUILD_FUNCTION_ADD_RES));
@@ -3028,62 +3028,62 @@ void CClientSession::RecvAddGuildFunctionReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		GUILD DONATE ZENNY
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGuildGiveZeniReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildGiveZeniReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_GIVE_ZENNY * req = (sUG_GUILD_GIVE_ZENNY*)pPacket->GetPacketData();
-	
+	sUG_GUILD_GIVE_ZENNY* req = (sUG_GUILD_GIVE_ZENNY*)pPacket->GetPacketData();
+
 	WORD resultcode = GAME_SUCCESS;
 
 	DWORD dwZeni = req->dwZenny;
 
 	CNpc* pNpc = g_pObjectManager->GetNpc(req->hGuildManagerNpc);
-	
+
 	if (pNpc == NULL) //check if npc exist
 		resultcode = GAME_GUILD_NO_GUILD_MANAGER_NPC_FOUND;
 	else if (pNpc->GetTbldat()->byJob != NPC_JOB_GUILD_MANAGER) //check if npc is a guild manager
 		resultcode = GAME_GUILD_NOT_GUILD_MANAGER_NPC;
 	else if (!cPlayer->IsInRange(pNpc, DBO_DISTANCE_CHECK_TOLERANCE)) //check if npc is in distance
 		resultcode = GAME_GUILD_GUILD_MANAGER_IS_TOO_FAR;
-	else if(cPlayer->GetZeni() < dwZeni) //check if has enough zeni
+	else if (cPlayer->GetZeni() < dwZeni) //check if has enough zeni
 		resultcode = GAME_GUILD_GIVE_ZENNY_NOT_MATCHED;
-	else if(cPlayer->GetGuildID() == 0) //check if has guild
+	else if (cPlayer->GetGuildID() == 0) //check if has guild
 		resultcode = GAME_GUILD_NO_GUILD_FOUND;
 	else
 	{
 		CNtlPacket cPacket(sizeof(sGT_GUILD_GIVE_ZENNY_REQ));
-		sGT_GUILD_GIVE_ZENNY_REQ * cRes = (sGT_GUILD_GIVE_ZENNY_REQ *)cPacket.GetPacketData();
+		sGT_GUILD_GIVE_ZENNY_REQ* cRes = (sGT_GUILD_GIVE_ZENNY_REQ*)cPacket.GetPacketData();
 		cRes->wOpCode = GT_GUILD_GIVE_ZENNY_REQ;
 		cRes->charId = cPlayer->GetCharID();
 		cRes->dwZenny = dwZeni;
-		cPacket.SetPacketLen( sizeof(sGT_GUILD_GIVE_ZENNY_REQ) );
+		cPacket.SetPacketLen(sizeof(sGT_GUILD_GIVE_ZENNY_REQ));
 		app->SendTo(app->GetChatServerSession(), &cPacket); //Send to chat server
 
 		return;
 	}
 
-	
+
 	CNtlPacket packet(sizeof(sGU_GUILD_GIVE_ZENNY_RES));
-	sGU_GUILD_GIVE_ZENNY_RES * res = (sGU_GUILD_GIVE_ZENNY_RES *)packet.GetPacketData();
+	sGU_GUILD_GIVE_ZENNY_RES* res = (sGU_GUILD_GIVE_ZENNY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GUILD_GIVE_ZENNY_RES;
 	res->wResultCode = resultcode;
-	packet.SetPacketLen( sizeof(sGU_GUILD_GIVE_ZENNY_RES) );
-	app->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_GUILD_GIVE_ZENNY_RES));
+	app->Send(GetHandle(), &packet);
 }
 
 
-void CClientSession::RecvGuildBankStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildBankStartReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_BANK_START_REQ * req = (sUG_GUILD_BANK_START_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_BANK_START_REQ* req = (sUG_GUILD_BANK_START_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_SUCCESS;
 
@@ -3102,14 +3102,14 @@ void CClientSession::RecvGuildBankStartReq(CNtlPacket * pPacket)
 		wResultCode = GAME_FAIL;
 	else if (cPlayer->GetGuildID() == 0)
 		wResultCode = GAME_GUILD_NOT_EXIST;
-	else if(cPlayer->GetPlayerItemContainer()->IsUsingGuildBank() == true)
+	else if (cPlayer->GetPlayerItemContainer()->IsUsingGuildBank() == true)
 		wResultCode = GAME_FAIL;
 	else
 	{
 		//send open guild bank request to character server
 
 		CNtlPacket packetChat(sizeof(sGT_GUILD_BANK_START_REQ));
-		sGT_GUILD_BANK_START_REQ * resChat = (sGT_GUILD_BANK_START_REQ *)packetChat.GetPacketData();
+		sGT_GUILD_BANK_START_REQ* resChat = (sGT_GUILD_BANK_START_REQ*)packetChat.GetPacketData();
 		resChat->wOpCode = GT_GUILD_BANK_START_REQ;
 		resChat->hNpcHandle = req->handle;
 		resChat->charId = cPlayer->GetCharID();
@@ -3120,7 +3120,7 @@ void CClientSession::RecvGuildBankStartReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_GUILD_BANK_START_RES));
-	sGU_GUILD_BANK_START_RES * res = (sGU_GUILD_BANK_START_RES *)packet.GetPacketData();
+	sGU_GUILD_BANK_START_RES* res = (sGU_GUILD_BANK_START_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GUILD_BANK_START_RES;
 	res->wResultCode = wResultCode;
 	res->handle = req->handle;
@@ -3129,18 +3129,18 @@ void CClientSession::RecvGuildBankStartReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvGuildBankMoveReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildBankMoveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_BANK_MOVE_REQ * req = (sUG_GUILD_BANK_MOVE_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_BANK_MOVE_REQ* req = (sUG_GUILD_BANK_MOVE_REQ*)pPacket->GetPacketData();
 	WORD item_move_res = GAME_SUCCESS;
 
 	CNtlPacket pQry(sizeof(sGQ_GUILD_BANK_MOVE_REQ));
-	sGQ_GUILD_BANK_MOVE_REQ * rQry = (sGQ_GUILD_BANK_MOVE_REQ *)pQry.GetPacketData();
+	sGQ_GUILD_BANK_MOVE_REQ* rQry = (sGQ_GUILD_BANK_MOVE_REQ*)pQry.GetPacketData();
 	rQry->wOpCode = GQ_GUILD_BANK_MOVE_REQ;
 	rQry->handle = cPlayer->GetID();
 	rQry->charId = cPlayer->GetCharID();
@@ -3244,7 +3244,7 @@ void CClientSession::RecvGuildBankMoveReq(CNtlPacket * pPacket)
 		}
 
 		//check if guild bag pos is valid
-		if(IsGuildContainer(req->byDestPlace) && req->byDestPos >= NTL_MAX_GUILD_ITEM_SLOT)
+		if (IsGuildContainer(req->byDestPlace) && req->byDestPos >= NTL_MAX_GUILD_ITEM_SLOT)
 		{
 			item_move_res = GAME_ITEM_POSITION_FAIL;
 			goto END;
@@ -3327,7 +3327,7 @@ void CClientSession::RecvGuildBankMoveReq(CNtlPacket * pPacket)
 						src_item->SetRestrictState(rQry->bySrcRestrictState);
 
 						CNtlPacket packetItemUpdate(sizeof(sGU_ITEM_UPDATE));
-						sGU_ITEM_UPDATE * resIU = (sGU_ITEM_UPDATE *)packetItemUpdate.GetPacketData();
+						sGU_ITEM_UPDATE* resIU = (sGU_ITEM_UPDATE*)packetItemUpdate.GetPacketData();
 						resIU->wOpCode = GU_ITEM_UPDATE;
 						resIU->handle = src_item->GetID();
 						resIU->sItemData = src_item->GetItemData();
@@ -3377,7 +3377,7 @@ void CClientSession::RecvGuildBankMoveReq(CNtlPacket * pPacket)
 
 END:
 	CNtlPacket packet(sizeof(sGU_GUILD_BANK_MOVE_RES));
-	sGU_GUILD_BANK_MOVE_RES * res = (sGU_GUILD_BANK_MOVE_RES *)packet.GetPacketData();
+	sGU_GUILD_BANK_MOVE_RES* res = (sGU_GUILD_BANK_MOVE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GUILD_BANK_MOVE_RES;
 	res->handle = req->handle;
 	res->wResultCode = item_move_res;
@@ -3386,18 +3386,18 @@ END:
 }
 
 
-void CClientSession::RecvGuildBankMoveStackReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildBankMoveStackReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_BANK_MOVE_STACK_REQ * req = (sUG_GUILD_BANK_MOVE_STACK_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_BANK_MOVE_STACK_REQ* req = (sUG_GUILD_BANK_MOVE_STACK_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGQ_GUILD_BANK_MOVE_STACK_REQ));
-	sGQ_GUILD_BANK_MOVE_STACK_REQ * res = (sGQ_GUILD_BANK_MOVE_STACK_REQ *)packet.GetPacketData();
+	sGQ_GUILD_BANK_MOVE_STACK_REQ* res = (sGQ_GUILD_BANK_MOVE_STACK_REQ*)packet.GetPacketData();
 	res->wOpCode = GQ_GUILD_BANK_MOVE_STACK_REQ;
 	res->handle = cPlayer->GetID();
 	res->hNpcHandle = req->handle;
@@ -3524,7 +3524,7 @@ void CClientSession::RecvGuildBankMoveStackReq(CNtlPacket * pPacket)
 	{
 	END:
 		CNtlPacket packetEnd(sizeof(sGU_GUILD_BANK_MOVE_STACK_RES));
-		sGU_GUILD_BANK_MOVE_STACK_RES * resEnd = (sGU_GUILD_BANK_MOVE_STACK_RES *)packetEnd.GetPacketData();
+		sGU_GUILD_BANK_MOVE_STACK_RES* resEnd = (sGU_GUILD_BANK_MOVE_STACK_RES*)packetEnd.GetPacketData();
 		resEnd->wOpCode = GU_GUILD_BANK_MOVE_STACK_RES;
 		resEnd->wResultCode = resultcode;
 		g_pApp->Send(GetHandle(), &packetEnd);
@@ -3532,7 +3532,7 @@ void CClientSession::RecvGuildBankMoveStackReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvGuildBankEndReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildBankEndReq(CNtlPacket* pPacket)
 {
 	CGameServer* app = (CGameServer*)g_pApp;
 
@@ -3544,7 +3544,7 @@ void CClientSession::RecvGuildBankEndReq(CNtlPacket * pPacket)
 		//send notification to character server
 
 		CNtlPacket packetChat(sizeof(sGT_GUILD_BANK_END_NFY));
-		sGT_GUILD_BANK_END_NFY * resChat = (sGT_GUILD_BANK_END_NFY *)packetChat.GetPacketData();
+		sGT_GUILD_BANK_END_NFY* resChat = (sGT_GUILD_BANK_END_NFY*)packetChat.GetPacketData();
 		resChat->wOpCode = GT_GUILD_BANK_END_NFY;
 		resChat->charId = cPlayer->GetCharID();
 		packetChat.SetPacketLen(sizeof(sGT_GUILD_BANK_END_NFY));
@@ -3553,7 +3553,7 @@ void CClientSession::RecvGuildBankEndReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_BANK_END_RES));
-		sGU_BANK_END_RES * res = (sGU_BANK_END_RES *)packet.GetPacketData();
+		sGU_BANK_END_RES* res = (sGU_BANK_END_RES*)packet.GetPacketData();
 		res->wOpCode = GU_BANK_END_RES;
 		res->wResultCode = GAME_FAIL;
 		packet.SetPacketLen(sizeof(sGU_BANK_END_RES));
@@ -3562,14 +3562,14 @@ void CClientSession::RecvGuildBankEndReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvGuildBankZeniReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildBankZeniReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_BANK_ZENNY_REQ * req = (sUG_GUILD_BANK_ZENNY_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_BANK_ZENNY_REQ* req = (sUG_GUILD_BANK_ZENNY_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_SUCCESS;
 
@@ -3599,32 +3599,32 @@ void CClientSession::RecvGuildBankZeniReq(CNtlPacket * pPacket)
 	else if (cPlayer->GetPlayerItemContainer()->IsUsingGuildBank() == false) //check if is not using guild bank
 		wResultCode = GAME_FAIL;
 
-	else if(req->dwZenny == 0 || req->dwZenny == INVALID_DWORD)
+	else if (req->dwZenny == 0 || req->dwZenny == INVALID_DWORD)
 		wResultCode = GAME_FAIL;
 
-	else if(req->bIsSave && req->dwZenny > cPlayer->GetZeni())  //´save zeni | check if player has enough zeni
+	else if (req->bIsSave && req->dwZenny > cPlayer->GetZeni())  //´save zeni | check if player has enough zeni
 		wResultCode = GAME_FAIL;
 
-	else if(req->bIsSave && (NTL_CHAR_MAX_SAVE_ZENNY < cPlayer->GetPlayerItemContainer()->GetGuildBankZeni() + req->dwZenny || cPlayer->GetPlayerItemContainer()->GetGuildBankZeni() + req->dwZenny == INVALID_DWORD)) //save zeni | check if zeni over
+	else if (req->bIsSave && (NTL_CHAR_MAX_SAVE_ZENNY < cPlayer->GetPlayerItemContainer()->GetGuildBankZeni() + req->dwZenny || cPlayer->GetPlayerItemContainer()->GetGuildBankZeni() + req->dwZenny == INVALID_DWORD)) //save zeni | check if zeni over
 		wResultCode = GAME_ZENNY_OVER;
 
-	else if(req->bIsSave == false && req->dwZenny > cPlayer->GetPlayerItemContainer()->GetGuildBankZeni()) // take zeni | check if enough zeni in bank
+	else if (req->bIsSave == false && req->dwZenny > cPlayer->GetPlayerItemContainer()->GetGuildBankZeni()) // take zeni | check if enough zeni in bank
 		wResultCode = GAME_FAIL;
 
-	else if(req->bIsSave == false && cPlayer->CanReceiveZeni(req->dwZenny) == false) // take zeni | check if zeni over
+	else if (req->bIsSave == false && cPlayer->CanReceiveZeni(req->dwZenny) == false) // take zeni | check if zeni over
 		wResultCode = GAME_ZENNY_OVER;
 
 	else
 	{
 		CNtlPacket packetQry(sizeof(sGQ_GUILD_BANK_ZENNY_REQ));
-		sGQ_GUILD_BANK_ZENNY_REQ * resQry = (sGQ_GUILD_BANK_ZENNY_REQ *)packetQry.GetPacketData();
+		sGQ_GUILD_BANK_ZENNY_REQ* resQry = (sGQ_GUILD_BANK_ZENNY_REQ*)packetQry.GetPacketData();
 		resQry->wOpCode = GQ_GUILD_BANK_ZENNY_REQ;
 		resQry->handle = cPlayer->GetID();
 		resQry->npchandle = req->handle;
 		resQry->guildID = cPlayer->GetGuildID();
 		resQry->dwZenny = req->dwZenny;
 		resQry->bIsSave = req->bIsSave;
-	//	resQry->byType = req->byt
+		//	resQry->byType = req->byt
 		resQry->charId = cPlayer->GetCharID();
 		packetQry.SetPacketLen(sizeof(sGQ_GUILD_BANK_ZENNY_REQ));
 		g_pApp->SendTo(app->GetQueryServerSession(), &packetQry);
@@ -3633,7 +3633,7 @@ void CClientSession::RecvGuildBankZeniReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_GUILD_BANK_ZENNY_RES));
-	sGU_GUILD_BANK_ZENNY_RES * res = (sGU_GUILD_BANK_ZENNY_RES *)packet.GetPacketData();
+	sGU_GUILD_BANK_ZENNY_RES* res = (sGU_GUILD_BANK_ZENNY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GUILD_BANK_ZENNY_RES;
 	res->wResultCode = wResultCode;
 	res->handle = req->handle;
@@ -3645,14 +3645,14 @@ void CClientSession::RecvGuildBankZeniReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CREATE GUILD MARK
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGuildCreateMarkReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildCreateMarkReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_CREATE_MARK_REQ * req = (sUG_GUILD_CREATE_MARK_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_CREATE_MARK_REQ* req = (sUG_GUILD_CREATE_MARK_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -3663,7 +3663,7 @@ void CClientSession::RecvGuildCreateMarkReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket cPacket(sizeof(sGT_GUILD_CREATE_MARK_REQ));
-		sGT_GUILD_CREATE_MARK_REQ * cRes = (sGT_GUILD_CREATE_MARK_REQ *)cPacket.GetPacketData();
+		sGT_GUILD_CREATE_MARK_REQ* cRes = (sGT_GUILD_CREATE_MARK_REQ*)cPacket.GetPacketData();
 		cRes->wOpCode = GT_GUILD_CREATE_MARK_REQ;
 		cRes->charId = cPlayer->GetCharID();
 		memcpy(&cRes->sMark, &req->sMark, sizeof(sDBO_GUILD_MARK));
@@ -3674,7 +3674,7 @@ void CClientSession::RecvGuildCreateMarkReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_GUILD_CREATE_MARK_RES));
-	sGU_GUILD_CREATE_MARK_RES * res = (sGU_GUILD_CREATE_MARK_RES *)packet.GetPacketData();
+	sGU_GUILD_CREATE_MARK_RES* res = (sGU_GUILD_CREATE_MARK_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GUILD_CREATE_MARK_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_GUILD_CREATE_MARK_RES));
@@ -3683,14 +3683,14 @@ void CClientSession::RecvGuildCreateMarkReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE GUILD MARK
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGuildChangeMarkReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildChangeMarkReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_CHANGE_MARK_REQ * req = (sUG_GUILD_CHANGE_MARK_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_CHANGE_MARK_REQ* req = (sUG_GUILD_CHANGE_MARK_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -3701,7 +3701,7 @@ void CClientSession::RecvGuildChangeMarkReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket cPacket(sizeof(sGT_GUILD_CHANGE_MARK_REQ));
-		sGT_GUILD_CHANGE_MARK_REQ * cRes = (sGT_GUILD_CHANGE_MARK_REQ *)cPacket.GetPacketData();
+		sGT_GUILD_CHANGE_MARK_REQ* cRes = (sGT_GUILD_CHANGE_MARK_REQ*)cPacket.GetPacketData();
 		cRes->wOpCode = GT_GUILD_CHANGE_MARK_REQ;
 		cRes->charId = cPlayer->GetCharID();
 		memcpy(&cRes->sMark, &req->sMark, sizeof(sDBO_GUILD_MARK));
@@ -3711,23 +3711,23 @@ void CClientSession::RecvGuildChangeMarkReq(CNtlPacket * pPacket)
 
 		return;
 	}
-	
+
 	CNtlPacket packet(sizeof(sGU_GUILD_CHANGE_MARK_RES));
-	sGU_GUILD_CHANGE_MARK_RES * res = (sGU_GUILD_CHANGE_MARK_RES *)packet.GetPacketData();
+	sGU_GUILD_CHANGE_MARK_RES* res = (sGU_GUILD_CHANGE_MARK_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GUILD_CHANGE_MARK_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_GUILD_CHANGE_MARK_RES));
 	app->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvGuildChangeNameReq(CNtlPacket * pPacket)
+void CClientSession::RecvGuildChangeNameReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_GUILD_CHANGE_NAME_REQ * req = (sUG_GUILD_CHANGE_NAME_REQ*)pPacket->GetPacketData();
+	sUG_GUILD_CHANGE_NAME_REQ* req = (sUG_GUILD_CHANGE_NAME_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 	CItem* pItem = NULL;
@@ -3760,7 +3760,7 @@ void CClientSession::RecvGuildChangeNameReq(CNtlPacket * pPacket)
 	if (resultcode == GAME_SUCCESS)
 	{
 		CNtlPacket cPacket(sizeof(sGT_GUILD_CHANGE_NAME_REQ));
-		sGT_GUILD_CHANGE_NAME_REQ * cRes = (sGT_GUILD_CHANGE_NAME_REQ *)cPacket.GetPacketData();
+		sGT_GUILD_CHANGE_NAME_REQ* cRes = (sGT_GUILD_CHANGE_NAME_REQ*)cPacket.GetPacketData();
 		cRes->wOpCode = GT_GUILD_CHANGE_NAME_REQ;
 		cRes->charId = cPlayer->GetCharID();
 		NTL_SAFE_WCSCPY(cRes->wszGuildName, req->wszGuildName);
@@ -3773,7 +3773,7 @@ void CClientSession::RecvGuildChangeNameReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_GUILD_CHANGE_NAME_RES));
-		sGU_GUILD_CHANGE_NAME_RES * res = (sGU_GUILD_CHANGE_NAME_RES *)packet.GetPacketData();
+		sGU_GUILD_CHANGE_NAME_RES* res = (sGU_GUILD_CHANGE_NAME_RES*)packet.GetPacketData();
 		res->wOpCode = GU_GUILD_CHANGE_NAME_RES;
 		res->wResultCode = resultcode;
 		packet.SetPacketLen(sizeof(sGU_GUILD_CHANGE_NAME_RES));
@@ -3785,19 +3785,19 @@ void CClientSession::RecvGuildChangeNameReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Create Party
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCreatePartyReq(CNtlPacket * pPacket)
+void CClientSession::RecvCreatePartyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_PARTY_CREATE_REQ * req = (sUG_PARTY_CREATE_REQ*)pPacket->GetPacketData();
+	sUG_PARTY_CREATE_REQ* req = (sUG_PARTY_CREATE_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_PARTY_CREATE_RES));
-	sGU_PARTY_CREATE_RES * res = (sGU_PARTY_CREATE_RES *)packet.GetPacketData();
+	sGU_PARTY_CREATE_RES* res = (sGU_PARTY_CREATE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_CREATE_RES;
-	
+
 	char* chname = Ntl_WC2MB(req->wszPartyName);
 	std::string charname = chname;
 
@@ -3809,11 +3809,11 @@ void CClientSession::RecvCreatePartyReq(CNtlPacket * pPacket)
 		res->wResultCode = CHARACTER_BLOCK_STRING_INCLUDED;
 	else if (app->GetGsChannel() == DOJO_CHANNEL_INDEX)
 		res->wResultCode = GAME_FAIL;
-	else if(cPlayer->GetParty() == NULL)
+	else if (cPlayer->GetParty() == NULL)
 	{
 		wmemcpy(res->wszPartyName, req->wszPartyName, NTL_MAX_SIZE_PARTY_NAME + 1);
 
-		CParty * party = g_pPartyManager->CreateParty(cPlayer, req->wszPartyName);
+		CParty* party = g_pPartyManager->CreateParty(cPlayer, req->wszPartyName);
 		if (party)
 		{
 			res->wResultCode = GAME_SUCCESS;
@@ -3822,15 +3822,15 @@ void CClientSession::RecvCreatePartyReq(CNtlPacket * pPacket)
 		else res->wResultCode = GAME_PARTY_NOT_CREATED_FOR_SOME_REASON;
 	}
 	else res->wResultCode = GAME_PARTY_ALREADY_IN_PARTY;
-	
-	packet.SetPacketLen( sizeof(sGU_PARTY_CREATE_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+
+	packet.SetPacketLen(sizeof(sGU_PARTY_CREATE_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		Disband Party
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvDisbandPartyReq(CNtlPacket * pPacket)
+void CClientSession::RecvDisbandPartyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -3849,7 +3849,7 @@ void CClientSession::RecvDisbandPartyReq(CNtlPacket * pPacket)
 		g_pPartyManager->DisbandParty(cPlayer->GetParty());
 
 	CNtlPacket packet(sizeof(sGU_PARTY_DISBAND_RES));
-	sGU_PARTY_DISBAND_RES * res = (sGU_PARTY_DISBAND_RES *)packet.GetPacketData();
+	sGU_PARTY_DISBAND_RES* res = (sGU_PARTY_DISBAND_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_DISBAND_RES;
 	res->wResultCode = wResultCode;
 	packet.SetPacketLen(sizeof(sGU_PARTY_DISBAND_RES));
@@ -3859,19 +3859,19 @@ void CClientSession::RecvDisbandPartyReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Send party invite request
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyInviteReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyInviteReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PARTY_INVITE_REQ * req = (sUG_PARTY_INVITE_REQ*)pPacket->GetPacketData();
+	sUG_PARTY_INVITE_REQ* req = (sUG_PARTY_INVITE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_FAIL;
 	CPlayer* target = NULL;
 
 	//Invite player
 	CNtlPacket packet(sizeof(sGU_PARTY_INVITE_RES));
-	sGU_PARTY_INVITE_RES * res = (sGU_PARTY_INVITE_RES *)packet.GetPacketData();
+	sGU_PARTY_INVITE_RES* res = (sGU_PARTY_INVITE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_INVITE_RES;
 	res->partyID = cPlayer->GetPartyID();
 
@@ -3911,65 +3911,65 @@ void CClientSession::RecvPartyInviteReq(CNtlPacket * pPacket)
 	else resultcode = GAME_PARTYMATCHING_ANY_MEMBER_IN_DYNAMIC_WORLD;
 
 	res->wResultCode = resultcode;
-	packet.SetPacketLen( sizeof(sGU_PARTY_INVITE_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_PARTY_INVITE_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
-	if(resultcode == GAME_SUCCESS)
+	if (resultcode == GAME_SUCCESS)
 	{
 		CNtlPacket packet2(sizeof(sGU_PARTY_INVITE_NFY));
-		sGU_PARTY_INVITE_NFY * res2 = (sGU_PARTY_INVITE_NFY *)packet2.GetPacketData();
+		sGU_PARTY_INVITE_NFY* res2 = (sGU_PARTY_INVITE_NFY*)packet2.GetPacketData();
 		res2->wOpCode = GU_PARTY_INVITE_NFY;
-		wcscpy_s(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName() );
-		packet2.SetPacketLen( sizeof(sGU_PARTY_INVITE_NFY));
-		g_pApp->Send( target->GetClientSessionID(), &packet2 );
+		wcscpy_s(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
+		packet2.SetPacketLen(sizeof(sGU_PARTY_INVITE_NFY));
+		g_pApp->Send(target->GetClientSessionID(), &packet2);
 	}
 }
 //--------------------------------------------------------------------------------------//
 //		Send party invite request (char id)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyInviteCharIdReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyInviteCharIdReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PARTY_INVITE_CHARID_REQ * req = (sUG_PARTY_INVITE_CHARID_REQ*)pPacket->GetPacketData();
-	
+	sUG_PARTY_INVITE_CHARID_REQ* req = (sUG_PARTY_INVITE_CHARID_REQ*)pPacket->GetPacketData();
+
 	WORD resultcode = GAME_FAIL;
 	CPlayer* target = NULL;
 
 	//Invite player
 	CNtlPacket packet(sizeof(sGU_PARTY_INVITE_RES));
-	sGU_PARTY_INVITE_RES * res = (sGU_PARTY_INVITE_RES *)packet.GetPacketData();
+	sGU_PARTY_INVITE_RES* res = (sGU_PARTY_INVITE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_INVITE_RES;
 	res->partyID = cPlayer->GetPartyID();
 
 	if (cPlayer->GetTMQ() == NULL && cPlayer->GetTLQ() == NULL && cPlayer->GetCCBD() == NULL)
 	{
 		target = g_pObjectManager->FindByChar(req->targetCharId);
-		if(target)
+		if (target)
 		{
 			resultcode = target->CanJoinParty();
-			if(resultcode == GAME_SUCCESS)
+			if (resultcode == GAME_SUCCESS)
 			{
-				if(cPlayer->GetParty() != NULL)
+				if (cPlayer->GetParty() != NULL)
 				{
-					if(cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID() )
+					if (cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID())
 						resultcode = GAME_PARTY_ONLY_ALLOWED_TO_PARTY_LEADER;
 					else
 					{
 						resultcode = GAME_SUCCESS;
 						wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
-						target->SetIsPartyInvite(true);	
-						target->SetPartyInviteID(res->partyID);	
+						target->SetIsPartyInvite(true);
+						target->SetPartyInviteID(res->partyID);
 						target->SetPartyInvitedByID(cPlayer->GetCharID());
 					}
 				}
 				else
 				{
 					resultcode = GAME_SUCCESS;
-					wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName() );
-					target->SetIsPartyInvite(true);	
-					target->SetPartyInviteID(res->partyID);	
+					wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
+					target->SetIsPartyInvite(true);
+					target->SetPartyInviteID(res->partyID);
 					target->SetPartyInvitedByID(cPlayer->GetCharID());
 				}
 			}
@@ -3979,35 +3979,35 @@ void CClientSession::RecvPartyInviteCharIdReq(CNtlPacket * pPacket)
 	else resultcode = GAME_PARTYMATCHING_ANY_MEMBER_IN_DYNAMIC_WORLD;
 
 	res->wResultCode = resultcode;
-	packet.SetPacketLen( sizeof(sGU_PARTY_INVITE_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_PARTY_INVITE_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
-	if(resultcode == GAME_SUCCESS)
+	if (resultcode == GAME_SUCCESS)
 	{
 		CNtlPacket packet2(sizeof(sGU_PARTY_INVITE_NFY));
-		sGU_PARTY_INVITE_NFY * res2 = (sGU_PARTY_INVITE_NFY *)packet2.GetPacketData();
+		sGU_PARTY_INVITE_NFY* res2 = (sGU_PARTY_INVITE_NFY*)packet2.GetPacketData();
 		res2->wOpCode = GU_PARTY_INVITE_NFY;
 		wcscpy_s(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
-		packet2.SetPacketLen( sizeof(sGU_PARTY_INVITE_NFY));
-		g_pApp->Send(target->GetClientSessionID(), &packet2 );
+		packet2.SetPacketLen(sizeof(sGU_PARTY_INVITE_NFY));
+		g_pApp->Send(target->GetClientSessionID(), &packet2);
 	}
 }
 //--------------------------------------------------------------------------------------//
 //		Send party invite request (char name)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyInviteCharNameReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyInviteCharNameReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PARTY_INVITE_CHAR_NAME_REQ * req = (sUG_PARTY_INVITE_CHAR_NAME_REQ*)pPacket->GetPacketData();
-	
+	sUG_PARTY_INVITE_CHAR_NAME_REQ* req = (sUG_PARTY_INVITE_CHAR_NAME_REQ*)pPacket->GetPacketData();
+
 	WORD resultcode = GAME_FAIL;
 	CPlayer* target = NULL;
-	
+
 	//Invite player
 	CNtlPacket packet(sizeof(sGU_PARTY_INVITE_RES));
-	sGU_PARTY_INVITE_RES * res = (sGU_PARTY_INVITE_RES *)packet.GetPacketData();
+	sGU_PARTY_INVITE_RES* res = (sGU_PARTY_INVITE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_INVITE_RES;
 	res->partyID = cPlayer->GetPartyID();
 
@@ -4025,21 +4025,21 @@ void CClientSession::RecvPartyInviteCharNameReq(CNtlPacket * pPacket)
 	else if (cPlayer->GetTMQ() == NULL && cPlayer->GetTLQ() == NULL && cPlayer->GetCCBD() == NULL)
 	{
 		target = g_pObjectManager->FindByName(req->wszTargetName);
-		if(target)
+		if (target)
 		{
 			resultcode = target->CanJoinParty();
-			if(resultcode == GAME_SUCCESS)
+			if (resultcode == GAME_SUCCESS)
 			{
-				if(cPlayer->GetParty() != NULL)
+				if (cPlayer->GetParty() != NULL)
 				{
-					if(cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID() )
+					if (cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID())
 						resultcode = GAME_PARTY_ONLY_ALLOWED_TO_PARTY_LEADER;
 					else
 					{
 						resultcode = GAME_SUCCESS;
-						wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName() );
-						target->SetIsPartyInvite(true);	
-						target->SetPartyInviteID(res->partyID);	
+						wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
+						target->SetIsPartyInvite(true);
+						target->SetPartyInviteID(res->partyID);
 						target->SetPartyInvitedByID(cPlayer->GetCharID());
 					}
 				}
@@ -4047,8 +4047,8 @@ void CClientSession::RecvPartyInviteCharNameReq(CNtlPacket * pPacket)
 				{
 					resultcode = GAME_SUCCESS;
 					wcscpy_s(res->wszTargetName, NTL_MAX_SIZE_CHAR_NAME + 1, target->GetCharName());
-					target->SetIsPartyInvite(true);	
-					target->SetPartyInviteID(res->partyID);	
+					target->SetIsPartyInvite(true);
+					target->SetPartyInviteID(res->partyID);
 					target->SetPartyInvitedByID(cPlayer->GetCharID());
 				}
 			}
@@ -4058,33 +4058,33 @@ void CClientSession::RecvPartyInviteCharNameReq(CNtlPacket * pPacket)
 	else resultcode = GAME_PARTYMATCHING_ANY_MEMBER_IN_DYNAMIC_WORLD;
 
 	res->wResultCode = resultcode;
-	packet.SetPacketLen( sizeof(sGU_PARTY_INVITE_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_PARTY_INVITE_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
 	Ntl_CleanUpHeapString(chname);
 
-	if(resultcode == GAME_SUCCESS)
+	if (resultcode == GAME_SUCCESS)
 	{
 		CNtlPacket packet2(sizeof(sGU_PARTY_INVITE_NFY));
-		sGU_PARTY_INVITE_NFY * res2 = (sGU_PARTY_INVITE_NFY *)packet2.GetPacketData();
+		sGU_PARTY_INVITE_NFY* res2 = (sGU_PARTY_INVITE_NFY*)packet2.GetPacketData();
 		res2->wOpCode = GU_PARTY_INVITE_NFY;
 		wcscpy_s(res2->wszInvitorPcName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
-		packet2.SetPacketLen( sizeof(sGU_PARTY_INVITE_NFY));
-		g_pApp->Send( target->GetClientSessionID(), &packet2 );
+		packet2.SetPacketLen(sizeof(sGU_PARTY_INVITE_NFY));
+		g_pApp->Send(target->GetClientSessionID(), &packet2);
 	}
 }
 //--------------------------------------------------------------------------------------//
 //		Party invitation response
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
+void CClientSession::RecvPartyResponse(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PARTY_RESPONSE_INVITATION * req = (sUG_PARTY_RESPONSE_INVITATION*)pPacket->GetPacketData();
+	sUG_PARTY_RESPONSE_INVITATION* req = (sUG_PARTY_RESPONSE_INVITATION*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_PARTY_RESPONSE_INVITATION_RES));
-	sGU_PARTY_RESPONSE_INVITATION_RES * res = (sGU_PARTY_RESPONSE_INVITATION_RES *)packet.GetPacketData();
+	sGU_PARTY_RESPONSE_INVITATION_RES* res = (sGU_PARTY_RESPONSE_INVITATION_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_RESPONSE_INVITATION_RES;
 	res->wResultCode = GAME_FAIL;
 
@@ -4104,7 +4104,7 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 							//check if a party already exist. if not then create one and make invitor to leader
 							if (invitor->GetParty() == NULL && cPlayer->GetPartyID() == INVALID_PARTYID)
 							{
-								CParty * party = g_pPartyManager->CreateParty(invitor, L"Unnamed", true);
+								CParty* party = g_pPartyManager->CreateParty(invitor, L"Unnamed", true);
 								if (party)
 								{
 									if (party->AddPartyMember(cPlayer) == true)
@@ -4116,7 +4116,7 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 							}
 							else
 							{
-								CParty * party = g_pPartyManager->GetParty(invitor->GetPartyID());
+								CParty* party = g_pPartyManager->GetParty(invitor->GetPartyID());
 								if (party)
 								{
 									if (party->GetPartyLeaderID() == invitor->GetID())
@@ -4145,7 +4145,7 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 				else if (req->byResponse == NTL_INVITATION_RESPONSE_DECLINE)
 				{
 					CNtlPacket packet2(sizeof(sGU_PARTY_INVITATION_DECLINED_NFY));
-					sGU_PARTY_INVITATION_DECLINED_NFY * res2 = (sGU_PARTY_INVITATION_DECLINED_NFY *)packet2.GetPacketData();
+					sGU_PARTY_INVITATION_DECLINED_NFY* res2 = (sGU_PARTY_INVITATION_DECLINED_NFY*)packet2.GetPacketData();
 					res2->wOpCode = GU_PARTY_INVITATION_DECLINED_NFY;
 					wcscpy_s(res2->wszPlayerName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
 					packet2.SetPacketLen(sizeof(sGU_PARTY_INVITATION_DECLINED_NFY));
@@ -4156,7 +4156,7 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 				else // req->byResponse == NTL_INVITATION_RESPONSE_EXPIRE
 				{
 					CNtlPacket packet2(sizeof(sGU_PARTY_INVITATION_EXPIRED_NFY));
-					sGU_PARTY_INVITATION_EXPIRED_NFY * res2 = (sGU_PARTY_INVITATION_EXPIRED_NFY *)packet2.GetPacketData();
+					sGU_PARTY_INVITATION_EXPIRED_NFY* res2 = (sGU_PARTY_INVITATION_EXPIRED_NFY*)packet2.GetPacketData();
 					res2->wOpCode = GU_PARTY_INVITATION_EXPIRED_NFY;
 					wcscpy_s(res2->wszPlayerName, NTL_MAX_SIZE_CHAR_NAME + 1, cPlayer->GetCharName());
 					packet2.SetPacketLen(sizeof(sGU_PARTY_INVITATION_EXPIRED_NFY));
@@ -4173,13 +4173,13 @@ void CClientSession::RecvPartyResponse(CNtlPacket * pPacket)
 	cPlayer->SetIsPartyInvite(false);
 	cPlayer->SetPartyInviteID(INVALID_PARTYID);
 
-	packet.SetPacketLen( sizeof(sGU_PARTY_RESPONSE_INVITATION_RES) );
-	g_pApp->Send( GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_PARTY_RESPONSE_INVITATION_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 //--------------------------------------------------------------------------------------//
 //		Leave Party
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyLeaveReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyLeaveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4190,7 +4190,7 @@ void CClientSession::RecvPartyLeaveReq(CNtlPacket * pPacket)
 	{
 		if (cPlayer->HasEventType(EVENT_TELEPORT_PROPOSAL))
 			resultcode = GAME_PARTY_LEAVING_IS_NOT_ALLOWED;
-		else if(cPlayer->GetCurWorld() == NULL || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_RANKBATTLE)
+		else if (cPlayer->GetCurWorld() == NULL || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_RANKBATTLE)
 			resultcode = GAME_TIMEQUEST_CANNOT_LEAVE_IN_PARTY_WHEN_PLAYING_RANKBATTLE;
 		else if (cPlayer->GetTMQ())
 			resultcode = GAME_FAIL;
@@ -4200,7 +4200,7 @@ void CClientSession::RecvPartyLeaveReq(CNtlPacket * pPacket)
 	else resultcode = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
 
 	CNtlPacket packet(sizeof(sGU_PARTY_LEAVE_RES));
-	sGU_PARTY_LEAVE_RES * res = (sGU_PARTY_LEAVE_RES *)packet.GetPacketData();
+	sGU_PARTY_LEAVE_RES* res = (sGU_PARTY_LEAVE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_LEAVE_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_PARTY_DISBAND_RES));
@@ -4209,33 +4209,33 @@ void CClientSession::RecvPartyLeaveReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE PARTY LEADER
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvChangePartyLeaderReq(CNtlPacket * pPacket)
+void CClientSession::RecvChangePartyLeaderReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PARTY_CHANGE_LEADER_REQ * req = (sUG_PARTY_CHANGE_LEADER_REQ*)pPacket->GetPacketData();
+	sUG_PARTY_CHANGE_LEADER_REQ* req = (sUG_PARTY_CHANGE_LEADER_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_PARTY_CHANGE_LEADER_RES));
-	sGU_PARTY_CHANGE_LEADER_RES * res = (sGU_PARTY_CHANGE_LEADER_RES *)packet.GetPacketData();
+	sGU_PARTY_CHANGE_LEADER_RES* res = (sGU_PARTY_CHANGE_LEADER_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_CHANGE_LEADER_RES;
 	res->wResultCode = GAME_SUCCESS;
 	res->hNewLeader = req->hTargetMember;
-	packet.SetPacketLen( sizeof(sGU_PARTY_CHANGE_LEADER_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_PARTY_CHANGE_LEADER_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
-	if(cPlayer->GetParty())
+	if (cPlayer->GetParty())
 		cPlayer->GetParty()->UpdatePartyLeader(req->hTargetMember);
 }
 //--------------------------------------------------------------------------------------//
 //		KICK PARTY MEMBER
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvKickPartyMemberReq(CNtlPacket * pPacket)
+void CClientSession::RecvKickPartyMemberReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PARTY_KICK_OUT_REQ * req = (sUG_PARTY_KICK_OUT_REQ*)pPacket->GetPacketData();
+	sUG_PARTY_KICK_OUT_REQ* req = (sUG_PARTY_KICK_OUT_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -4258,28 +4258,28 @@ void CClientSession::RecvKickPartyMemberReq(CNtlPacket * pPacket)
 	else resultcode = GAME_PARTY_NO_SUCH_A_PLAYER_IN_THE_PARTY;
 
 	CNtlPacket packet(sizeof(sGU_PARTY_KICK_OUT_RES));
-	sGU_PARTY_KICK_OUT_RES * res = (sGU_PARTY_KICK_OUT_RES *)packet.GetPacketData();
+	sGU_PARTY_KICK_OUT_RES* res = (sGU_PARTY_KICK_OUT_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_KICK_OUT_RES;
 	res->wResultCode = resultcode;
 	res->hTargetMember = req->hTargetMember;
-	packet.SetPacketLen( sizeof(sGU_PARTY_KICK_OUT_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_PARTY_KICK_OUT_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
-	if(resultcode == GAME_SUCCESS)
+	if (resultcode == GAME_SUCCESS)
 		cPlayer->GetParty()->KickPartyMember(target);
 }
 //--------------------------------------------------------------------------------------//
 //		SHARE PARTY TARGET
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyShareTargetReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyShareTargetReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PARTY_SHARETARGET_REQ * req = (sUG_PARTY_SHARETARGET_REQ*)pPacket->GetPacketData();
+	sUG_PARTY_SHARETARGET_REQ* req = (sUG_PARTY_SHARETARGET_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_PARTY_SHARETARGET_RES));
-	sGU_PARTY_SHARETARGET_RES * res = (sGU_PARTY_SHARETARGET_RES *)packet.GetPacketData();
+	sGU_PARTY_SHARETARGET_RES* res = (sGU_PARTY_SHARETARGET_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_SHARETARGET_RES;
 	res->wResultCode = GAME_SUCCESS;
 
@@ -4294,27 +4294,27 @@ void CClientSession::RecvPartyShareTargetReq(CNtlPacket * pPacket)
 	}
 	else res->wResultCode = GAME_PARTY_YOU_ARE_NOT_IN_PARTY;
 
-	packet.SetPacketLen( sizeof(sGU_PARTY_SHARETARGET_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_PARTY_SHARETARGET_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
 }
 //--------------------------------------------------------------------------------------//
 //		CHANGE PARTY ITEM LOOTING METHOD
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyChangeItemLootMethodReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyChangeItemLootMethodReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	sUG_PARTY_CHANGE_ITEM_LOOTING_METHOD_REQ* req = (sUG_PARTY_CHANGE_ITEM_LOOTING_METHOD_REQ*)pPacket->GetPacketData();
-	
+
 	WORD wRes = GAME_SUCCESS;
 
 	if (cPlayer->GetParty() == NULL)
 		wRes = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
-	else if(cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID())
+	else if (cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID())
 		wRes = GAME_COMMON_YOU_ARE_NOT_A_PARTY_LEADER;
-	else if(req->byLootingMethod > NTL_PARTY_ITEM_LOOTING_LAST)
+	else if (req->byLootingMethod > NTL_PARTY_ITEM_LOOTING_LAST)
 		wRes = GAME_PARTY_UNKNOWN_ITEM_LOOTING_METHOD;
 	else
 		cPlayer->GetParty()->SetItemLootingMethod(req->byLootingMethod);
@@ -4330,7 +4330,7 @@ void CClientSession::RecvPartyChangeItemLootMethodReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CHANGE PARTY ZENI LOOTING METHOD
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyChangeZeniLootMethodReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyChangeZeniLootMethodReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4359,7 +4359,7 @@ void CClientSession::RecvPartyChangeZeniLootMethodReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CHANGE PARTY ITEM RANK LOOTING
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyChangeItemLottingankMethodReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyChangeItemLottingankMethodReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4387,7 +4387,7 @@ void CClientSession::RecvPartyChangeItemLottingankMethodReq(CNtlPacket * pPacket
 }
 
 
-void CClientSession::RecvItemDiceReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemDiceReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4398,9 +4398,9 @@ void CClientSession::RecvItemDiceReq(CNtlPacket * pPacket)
 
 	if (cPlayer->GetParty() == NULL)
 		wRes = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
-	else if(req->byDice < DBO_ITEM_DICE_DICE || req->byDice > DBO_ITEM_DICE_CANCELED)
+	else if (req->byDice < DBO_ITEM_DICE_DICE || req->byDice > DBO_ITEM_DICE_CANCELED)
 		wRes = GAME_ITEM_DICE_FAIL_INVALID_DICE;
-	else if(cPlayer->HasItemDice() == false)
+	else if (cPlayer->HasItemDice() == false)
 		wRes = GAME_ITEM_DICE_FAIL_NOT_FIND;
 	else
 	{
@@ -4434,7 +4434,7 @@ void CClientSession::RecvItemDiceReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		INIT PARTY DUNGEON
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvInitPartyDungeonReq(CNtlPacket * pPacket)
+void CClientSession::RecvInitPartyDungeonReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4458,7 +4458,7 @@ void CClientSession::RecvInitPartyDungeonReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE PARTY DUNGEON DIFFICULTY
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPartyChangeDiffReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartyChangeDiffReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4471,11 +4471,11 @@ void CClientSession::RecvPartyChangeDiffReq(CNtlPacket * pPacket)
 		wRes = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
 	else if (cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID())
 		wRes = GAME_COMMON_YOU_ARE_NOT_A_PARTY_LEADER;
-	else if(req->eDiff > PARTY_DUNGEON_STATE_LAST)
+	else if (req->eDiff > PARTY_DUNGEON_STATE_LAST)
 		wRes = GAME_FAIL;
 	else
 		cPlayer->GetParty()->SetDungeonDiff(req->eDiff);
-	
+
 	CNtlPacket packet(sizeof(sGU_PARTY_DUNGEON_DIFF_RES));
 	sGU_PARTY_DUNGEON_DIFF_RES* res = (sGU_PARTY_DUNGEON_DIFF_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PARTY_DUNGEON_DIFF_RES;
@@ -4490,7 +4490,7 @@ void CClientSession::RecvPartyChangeDiffReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		START PARTY MATCHING
 
-void CClientSession::RecPartyMatchingRegisterReq(CNtlPacket * pPacket)
+void CClientSession::RecPartyMatchingRegisterReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4500,7 +4500,7 @@ void CClientSession::RecPartyMatchingRegisterReq(CNtlPacket * pPacket)
 	g_pPartyMatching->Register(cPlayer, req->byDifficulty, req->byDungeonType, req->byRegionType, req->hItem, req->rankBattleWorldTblidx);
 }
 
-void CClientSession::RecPartyMatchingJoinReq(CNtlPacket * pPacket)
+void CClientSession::RecPartyMatchingJoinReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4510,7 +4510,7 @@ void CClientSession::RecPartyMatchingJoinReq(CNtlPacket * pPacket)
 	g_pPartyMatching->Join(cPlayer, req->partyId, req->byDungeonType, req->byRegionType);
 }
 
-void CClientSession::RecPartyMatchingRoleplayReq(CNtlPacket * pPacket)
+void CClientSession::RecPartyMatchingRoleplayReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4520,7 +4520,7 @@ void CClientSession::RecPartyMatchingRoleplayReq(CNtlPacket * pPacket)
 
 }
 
-void CClientSession::RecPartyMatchingUnregisterReq(CNtlPacket * pPacket)
+void CClientSession::RecPartyMatchingUnregisterReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4530,7 +4530,7 @@ void CClientSession::RecPartyMatchingUnregisterReq(CNtlPacket * pPacket)
 	g_pPartyMatching->Unregister(cPlayer);
 }
 
-void CClientSession::RecPartyMatchingListReq(CNtlPacket * pPacket)
+void CClientSession::RecPartyMatchingListReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4540,7 +4540,7 @@ void CClientSession::RecPartyMatchingListReq(CNtlPacket * pPacket)
 	g_pPartyMatching->LoadPartyMatchingList(cPlayer, req->byPageNumber, req->bySelectDungeonType, req->bySelectRegion);
 }
 
-void CClientSession::RecPartyMatchingInfoReq(CNtlPacket * pPacket)
+void CClientSession::RecPartyMatchingInfoReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4550,7 +4550,7 @@ void CClientSession::RecPartyMatchingInfoReq(CNtlPacket * pPacket)
 	g_pPartyMatching->GetPartyInfo(cPlayer, req->partyId, req->byDungeonType, req->byRegionType);
 }
 
-void CClientSession::RecPartyMatchingEnterDungeonReq(CNtlPacket * pPacket)
+void CClientSession::RecPartyMatchingEnterDungeonReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4558,7 +4558,7 @@ void CClientSession::RecPartyMatchingEnterDungeonReq(CNtlPacket * pPacket)
 	sUG_PARTY_MATCHING_ENTER_DUNGEON_REQ* req = (sUG_PARTY_MATCHING_ENTER_DUNGEON_REQ*)pPacket->GetPacketData();
 }
 
-void CClientSession::RecPartyMatchingEnterDungeonAgreeNfy(CNtlPacket * pPacket)
+void CClientSession::RecPartyMatchingEnterDungeonAgreeNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -4576,17 +4576,17 @@ void CClientSession::RecPartyMatchingEnterDungeonAgreeNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Character bind to world
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharBindReq(CNtlPacket * pPacket)
+void CClientSession::RecvCharBindReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_BIND_REQ * req = (sUG_CHAR_BIND_REQ*)pPacket->GetPacketData();
+	sUG_CHAR_BIND_REQ* req = (sUG_CHAR_BIND_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_SUCCESS;
 	CTriggerObject* pPopoObject = NULL;
 
-	if(cPlayer->GetBindObjectTblidx() == req->bindObjectTblidx)
+	if (cPlayer->GetBindObjectTblidx() == req->bindObjectTblidx)
 		wResultCode = GAME_FAIL;
 	else if (cPlayer->GetCurWorld() == NULL)
 		wResultCode = GAME_WORLD_NOT_FOUND;
@@ -4598,7 +4598,7 @@ void CClientSession::RecvCharBindReq(CNtlPacket * pPacket)
 			wResultCode = GAME_TARGET_NOT_FOUND;
 		else if (!cPlayer->IsInRange(pPopoObject->GetCurLoc(), DBO_DISTANCE_CHECK_TOLERANCE))
 			wResultCode = GAME_TARGET_TOO_FAR;
-		else if(BIT_FLAG_TEST(pPopoObject->GetFunc(), eDBO_TRIGGER_OBJECT_FUNC_BIND) == false)
+		else if (BIT_FLAG_TEST(pPopoObject->GetFunc(), eDBO_TRIGGER_OBJECT_FUNC_BIND) == false)
 			wResultCode = GAME_TARGET_HAS_NOT_FUNCTION;
 
 	}
@@ -4606,13 +4606,13 @@ void CClientSession::RecvCharBindReq(CNtlPacket * pPacket)
 	CGameServer* app = (CGameServer*)g_pApp;
 
 	CNtlPacket packet(sizeof(sGU_CHAR_BIND_RES));
-	sGU_CHAR_BIND_RES * res = (sGU_CHAR_BIND_RES *)packet.GetPacketData();
+	sGU_CHAR_BIND_RES* res = (sGU_CHAR_BIND_RES*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_BIND_RES;
 	res->wResultCode = wResultCode;
 	res->byBindType = DBO_BIND_TYPE_POPO_STONE;
 	res->bindObjectTblidx = req->bindObjectTblidx;
 	res->bindWorldId = cPlayer->GetWorldID();
-	app->Send(GetHandle(), &packet );
+	app->Send(GetHandle(), &packet);
 
 	if (wResultCode == GAME_SUCCESS)
 	{
@@ -4627,7 +4627,7 @@ void CClientSession::RecvCharBindReq(CNtlPacket * pPacket)
 		dir.z = cPlayer->GetCurDir().z;
 
 		CNtlPacket packetQry(sizeof(sGQ_PC_UPDATE_BIND_REQ));
-		sGQ_PC_UPDATE_BIND_REQ * resQry = (sGQ_PC_UPDATE_BIND_REQ *)packetQry.GetPacketData();
+		sGQ_PC_UPDATE_BIND_REQ* resQry = (sGQ_PC_UPDATE_BIND_REQ*)packetQry.GetPacketData();
 		resQry->wOpCode = GQ_PC_UPDATE_BIND_REQ;
 		resQry->charId = cPlayer->GetCharID();
 		resQry->handle = cPlayer->GetID();
@@ -4654,29 +4654,29 @@ void CClientSession::RecvCharBindReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		PORTAL ADD REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPortalAddReq(CNtlPacket * pPacket)
+void CClientSession::RecvPortalAddReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_PORTAL_ADD_REQ* req = (sUG_PORTAL_ADD_REQ *)pPacket->GetPacketData();
+	sUG_PORTAL_ADD_REQ* req = (sUG_PORTAL_ADD_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_PORTAL_ADD_RES));
-	sGU_PORTAL_ADD_RES * res = (sGU_PORTAL_ADD_RES *)packet.GetPacketData();
+	sGU_PORTAL_ADD_RES* res = (sGU_PORTAL_ADD_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PORTAL_ADD_RES;
 	res->wResultCode = GAME_SUCCESS;
 	res->hNpcHandle = req->handle;
-	
+
 	CNpc* pNpc = g_pObjectManager->GetNpc(req->handle);
-	if(pNpc)
+	if (pNpc)
 	{
 		if (!cPlayer->IsInRange(pNpc->GetCurLoc(), DBO_DISTANCE_CHECK_TOLERANCE * DBO_DISTANCE_CHECK_TOLERANCE))
 			res->wResultCode = GAME_TARGET_TOO_FAR;
 		else if (pNpc->GetTbldat()->byJob != NPC_JOB_PORTAL_MAN)
 			res->wResultCode = GAME_TARGET_TOO_FAR;
-		else if(cPlayer->HasPortalPoint((PORTALID)pNpc->GetTbldat()->contentsTblidx))
+		else if (cPlayer->HasPortalPoint((PORTALID)pNpc->GetTbldat()->contentsTblidx))
 			res->wResultCode = GAME_PORTAL_ARLEADY_ADDED;
 		else
 		{
@@ -4684,11 +4684,11 @@ void CClientSession::RecvPortalAddReq(CNtlPacket * pPacket)
 			if (pPortalData)
 			{
 				res->PortalID = (PORTALID)pPortalData->tblidx;
-				
+
 				cPlayer->AddPortalPoint(res->PortalID);
 
 				CNtlPacket packetQry(sizeof(sGQ_PORTAL_ADD_REQ));
-				sGQ_PORTAL_ADD_REQ * resQry = (sGQ_PORTAL_ADD_REQ *)packetQry.GetPacketData();
+				sGQ_PORTAL_ADD_REQ* resQry = (sGQ_PORTAL_ADD_REQ*)packetQry.GetPacketData();
 				resQry->wOpCode = GQ_PORTAL_ADD_REQ;
 				resQry->hNpcHandle = req->handle;
 				resQry->charID = cPlayer->GetCharID();
@@ -4709,18 +4709,18 @@ void CClientSession::RecvPortalAddReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		TELEPORT USING PORTAL
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvPortalReq(CNtlPacket * pPacket)
+void CClientSession::RecvPortalReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PORTAL_REQ* req = (sUG_PORTAL_REQ *)pPacket->GetPacketData();
+	sUG_PORTAL_REQ* req = (sUG_PORTAL_REQ*)pPacket->GetPacketData();
 
-	sPORTAL_TBLDAT* pPortalTblData = (sPORTAL_TBLDAT*) g_pTableContainer->GetPortalTable()->FindData( req->byPoint+1 );
+	sPORTAL_TBLDAT* pPortalTblData = (sPORTAL_TBLDAT*)g_pTableContainer->GetPortalTable()->FindData(req->byPoint + 1);
 	CNtlVector dir, loc;
 
 	CNtlPacket packet(sizeof(sGU_PORTAL_RES));
-	sGU_PORTAL_RES * res = (sGU_PORTAL_RES *)packet.GetPacketData();
+	sGU_PORTAL_RES* res = (sGU_PORTAL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PORTAL_RES;
 	res->hNpcHandle = req->handle;
 	res->wResultCode = GAME_SUCCESS;
@@ -4761,30 +4761,30 @@ void CClientSession::RecvPortalReq(CNtlPacket * pPacket)
 
 	if (res->wResultCode == GAME_SUCCESS)
 		cPlayer->StartTeleport(loc, dir, pPortalTblData->worldId, TELEPORT_TYPE_NPC_PORTAL);
-			
+
 }
 //--------------------------------------------------------------------------------------//
 //		TELEPORT
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharTeleportReq(CNtlPacket * pPacket)
+void CClientSession::RecvCharTeleportReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_TELEPORT_REQ* req = (sUG_CHAR_TELEPORT_REQ *)pPacket->GetPacketData();
+	sUG_CHAR_TELEPORT_REQ* req = (sUG_CHAR_TELEPORT_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
 
 	CNtlPacket packet(sizeof(sGU_CHAR_TELEPORT_RES));
-	sGU_CHAR_TELEPORT_RES * res = (sGU_CHAR_TELEPORT_RES *)packet.GetPacketData();
+	sGU_CHAR_TELEPORT_RES* res = (sGU_CHAR_TELEPORT_RES*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_TELEPORT_RES;
 	res->bIsToMoveAnotherServer = cPlayer->GetTeleportAnotherServer();
 	res->bSyncDirectPlay = cPlayer->GetTeleportSyncDirectPlay();
 	res->spawnDirectPlay = cPlayer->GetTeleportDirectPlay();
 	res->wResultCode = GAME_SUCCESS;
 
-	if(cPlayer->GetTeleportWorldID() == INVALID_WORLDID)
+	if (cPlayer->GetTeleportWorldID() == INVALID_WORLDID)
 		res->wResultCode = GAME_FAIL;
 	else if (cPlayer->GetStateManager()->CanCharStateTransition(CHARSTATE_TELEPORTING) == false) //check if can go into teleport state
 		res->wResultCode = GAME_CHAR_IS_WRONG_STATE;
@@ -4800,13 +4800,13 @@ void CClientSession::RecvCharTeleportReq(CNtlPacket * pPacket)
 	else
 	{
 		CWorld* pWorld = app->GetGameMain()->GetWorldManager()->FindWorld(cPlayer->GetTeleportWorldID());
-		if(pWorld)
+		if (pWorld)
 		{
 			bool bIsInRange = cPlayer->IsInRange(cPlayer->GetTeleportLoc(), NTL_MAX_RADIUS_OF_VISIBLE_AREA + 50.f);
 			cPlayer->GetTeleportLoc().CopyTo(res->vNewLoc);
 			cPlayer->GetTeleportDir().CopyTo(res->vNewDir);
 
-		//	printf("cPlayer->GetTeleportWorldID() %u, pWorld->GetIdx() %u, %f %f\n", cPlayer->GetTeleportWorldID(), pWorld->GetIdx(), cPlayer->GetCurLoc().x, cPlayer->GetTeleportLoc().x);
+			//	printf("cPlayer->GetTeleportWorldID() %u, pWorld->GetIdx() %u, %f %f\n", cPlayer->GetTeleportWorldID(), pWorld->GetIdx(), cPlayer->GetCurLoc().x, cPlayer->GetTeleportLoc().x);
 
 			if (cPlayer->GetWorldID() != cPlayer->GetTeleportWorldID() || bIsInRange == true) // if we move different world or not further than 100m then send world info. Otherwise loading screen forever
 			{
@@ -4815,7 +4815,7 @@ void CClientSession::RecvCharTeleportReq(CNtlPacket * pPacket)
 		}
 		else res->wResultCode = GAME_FAIL;
 	}
-	
+
 	if (res->wResultCode == GAME_SUCCESS)
 	{
 		//send char state teleporting
@@ -4887,7 +4887,7 @@ void CClientSession::RecvCharTeleportReq(CNtlPacket * pPacket)
 		}
 	}
 	//printf("res->wResultCode %u, new loc %f %f %f \n", res->wResultCode, res->vNewLoc.x, res->vNewLoc.y, res->vNewLoc.z);
-	
+
 	packet.SetPacketLen(sizeof(sGU_CHAR_TELEPORT_RES));
 	app->Send(GetHandle(), &packet);
 }
@@ -4896,23 +4896,23 @@ void CClientSession::RecvCharTeleportReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		ATTACK BEGIN
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvAttackBegin(CNtlPacket * pPacket)
+void CClientSession::RecvAttackBegin(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_ATTACK_BEGIN* req = (sUG_CHAR_ATTACK_BEGIN *)pPacket->GetPacketData();
+	sUG_CHAR_ATTACK_BEGIN* req = (sUG_CHAR_ATTACK_BEGIN*)pPacket->GetPacketData();
 
 	//byType 0 = player / 1 = pet
-	
-	if(req->byType == 0)
+
+	if (req->byType == 0)
 	{
 		HOBJECT hTarget = cPlayer->GetTargetHandle();
 
 		if (hTarget == cPlayer->GetID())
 			return;
 
-		CCharacter*	victim = g_pObjectManager->GetChar(hTarget);
+		CCharacter* victim = g_pObjectManager->GetChar(hTarget);
 		if (victim == NULL || victim->IsInitialized() == false)
 			return;
 
@@ -4947,40 +4947,40 @@ void CClientSession::RecvAttackBegin(CNtlPacket * pPacket)
 		cPlayer->SetAttackTarget(victim->GetID());
 		cPlayer->ChangeAttackProgress(true);
 	}
-	else if(req->byType == 1)
+	else if (req->byType == 1)
 	{
-		ERR_LOG(LOG_USER,"An error is occured in RecvAttackBegin: req->byType == 1");
+		ERR_LOG(LOG_USER, "An error is occured in RecvAttackBegin: req->byType == 1");
 	}
 }
 //--------------------------------------------------------------------------------------//
 //		ATTACK END
 //---------------------------------------------------------------------------------------//
-void CClientSession::RecvAttackEnd(CNtlPacket * pPacket)
+void CClientSession::RecvAttackEnd(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_ATTACK_END* req = (sUG_CHAR_ATTACK_END *)pPacket->GetPacketData();
+	sUG_CHAR_ATTACK_END* req = (sUG_CHAR_ATTACK_END*)pPacket->GetPacketData();
 
-	if(req->byType == 0)
+	if (req->byType == 0)
 	{
 		cPlayer->ChangeAttackProgress(false);
 		cPlayer->SetAttackTarget(INVALID_HOBJECT);
 	}
-	else if(req->byType == 1)
+	else if (req->byType == 1)
 	{
-		ERR_LOG(LOG_USER,"An error is occured in RecvAttackEnd: req->byType == 1");
+		ERR_LOG(LOG_USER, "An error is occured in RecvAttackEnd: req->byType == 1");
 	}
 }
 
 
 
-void CClientSession::RecvCharSkillReq(CNtlPacket * pPacket)
+void CClientSession::RecvCharSkillReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_SKILL_REQ *req = (sUG_CHAR_SKILL_REQ*)pPacket->GetPacketData();
+	sUG_CHAR_SKILL_REQ* req = (sUG_CHAR_SKILL_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 	CGameServer* app = (CGameServer*)g_pApp;
 
@@ -5086,8 +5086,8 @@ void CClientSession::RecvCharSkillReq(CNtlPacket * pPacket)
 			{
 				resultcode = GAME_SKILL_CANT_CAST_NOW;
 			}
-			
-		
+
+
 			if (resultcode == GAME_SUCCESS)
 			{
 				//RP Ball Shit
@@ -5104,7 +5104,7 @@ void CClientSession::RecvCharSkillReq(CNtlPacket * pPacket)
 				if (byTargetCount > pSkill->GetOriginalTableData()->byApply_Target_Max)
 					byTargetCount = pSkill->GetOriginalTableData()->byApply_Target_Max;
 
-			//	NTL_PRINT(PRINT_APP,"StartSkill: %f %f %f | %f %f %f | %f %f %f | %u\n", vLoc.x, vLoc.y, vLoc.z, sFinalSubjectLoc.x, sFinalSubjectLoc.y, sFinalSubjectLoc.z, cPlayer->GetCurLoc().x, cPlayer->GetCurLoc().y, cPlayer->GetCurLoc().z, cPlayer->GetCharStateID());
+				//	NTL_PRINT(PRINT_APP,"StartSkill: %f %f %f | %f %f %f | %f %f %f | %u\n", vLoc.x, vLoc.y, vLoc.z, sFinalSubjectLoc.x, sFinalSubjectLoc.y, sFinalSubjectLoc.z, cPlayer->GetCurLoc().x, cPlayer->GetCurLoc().y, cPlayer->GetCurLoc().z, cPlayer->GetCharStateID());
 				pSkill->UseSkill(byRpBonusType, req->hTarget, sFinalSubjectLoc, sFinalLoc, byTargetCount, req->ahApplyTarget, resultcode);
 			}
 		}
@@ -5113,7 +5113,7 @@ void CClientSession::RecvCharSkillReq(CNtlPacket * pPacket)
 	else resultcode = GAME_SKILL_YOU_DONT_HAVE_THE_SKILL;
 
 	CNtlPacket packet(sizeof(sGU_CHAR_SKILL_RES));
-	sGU_CHAR_SKILL_RES * res = (sGU_CHAR_SKILL_RES *)packet.GetPacketData();
+	sGU_CHAR_SKILL_RES* res = (sGU_CHAR_SKILL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_SKILL_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_CHAR_SKILL_RES));
@@ -5123,15 +5123,15 @@ void CClientSession::RecvCharSkillReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char learn skill
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvLearnSkillReq(CNtlPacket * pPacket)
+void CClientSession::RecvLearnSkillReq(CNtlPacket* pPacket)
 {
-	sUG_SKILL_LEARN_REQ * req = (sUG_SKILL_LEARN_REQ*)pPacket->GetPacketData();
-	
+	sUG_SKILL_LEARN_REQ* req = (sUG_SKILL_LEARN_REQ*)pPacket->GetPacketData();
+
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CNtlPacket packet(sizeof(sGU_SKILL_LEARN_RES));
-	sGU_SKILL_LEARN_RES * res = (sGU_SKILL_LEARN_RES *)packet.GetPacketData();
+	sGU_SKILL_LEARN_RES* res = (sGU_SKILL_LEARN_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SKILL_LEARN_RES;
 
 	if (cPlayer->GetSkillManager())
@@ -5139,16 +5139,16 @@ void CClientSession::RecvLearnSkillReq(CNtlPacket * pPacket)
 	else
 		res->wResultCode = GAME_FAIL;
 
-	packet.SetPacketLen( sizeof(sGU_SKILL_LEARN_RES) );
+	packet.SetPacketLen(sizeof(sGU_SKILL_LEARN_RES));
 	g_pApp->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		Char learn skill by item
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvLearnSkillByItemReq(CNtlPacket * pPacket)
+void CClientSession::RecvLearnSkillByItemReq(CNtlPacket* pPacket)
 {
-	sUG_SKILL_LEARN_BY_ITEM_REQ * req = (sUG_SKILL_LEARN_BY_ITEM_REQ*)pPacket->GetPacketData();
+	sUG_SKILL_LEARN_BY_ITEM_REQ* req = (sUG_SKILL_LEARN_BY_ITEM_REQ*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -5188,7 +5188,7 @@ void CClientSession::RecvLearnSkillByItemReq(CNtlPacket * pPacket)
 	else wResultcode = GAME_FAIL;
 
 	CNtlPacket packet(sizeof(sGU_SKILL_LEARN_BY_ITEM_RES));
-	sGU_SKILL_LEARN_BY_ITEM_RES * res = (sGU_SKILL_LEARN_BY_ITEM_RES *)packet.GetPacketData();
+	sGU_SKILL_LEARN_BY_ITEM_RES* res = (sGU_SKILL_LEARN_BY_ITEM_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SKILL_LEARN_BY_ITEM_RES;
 	res->wResultCode = wResultcode;
 	packet.SetPacketLen(sizeof(sGU_SKILL_LEARN_BY_ITEM_RES));
@@ -5201,12 +5201,12 @@ void CClientSession::RecvLearnSkillByItemReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		Char learn HTB skill
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvHTBLearnReq(CNtlPacket * pPacket)
+void CClientSession::RecvHTBLearnReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_HTB_LEARN_REQ * req = (sUG_HTB_LEARN_REQ*)pPacket->GetPacketData();
+	sUG_HTB_LEARN_REQ* req = (sUG_HTB_LEARN_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_FAIL;
 	//sHTB_SET_TBLDAT *pHTBSetTblData = (sHTB_SET_TBLDAT*)g_pTableContainer->GetHTBSetTable()->FindData(req->skillId);	
 
@@ -5215,7 +5215,7 @@ void CClientSession::RecvHTBLearnReq(CNtlPacket * pPacket)
 	/////////////////
 
 	CNtlPacket packetHTB(sizeof(sGU_HTB_LEARN_RES));
-	sGU_HTB_LEARN_RES * res = (sGU_HTB_LEARN_RES*)packetHTB.GetPacketData();
+	sGU_HTB_LEARN_RES* res = (sGU_HTB_LEARN_RES*)packetHTB.GetPacketData();
 	res->wOpCode = GU_HTB_LEARN_RES;
 	res->skillId = req->skillId;
 	res->bySkillSlot = INVALID_BYTE;
@@ -5227,7 +5227,7 @@ void CClientSession::RecvHTBLearnReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		MOVE ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemMoveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -5235,10 +5235,10 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 	CGameServer* app = (CGameServer*)g_pApp;
 
 	WORD item_move_res = GAME_SUCCESS;
-	sUG_ITEM_MOVE_REQ * req = (sUG_ITEM_MOVE_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_MOVE_REQ* req = (sUG_ITEM_MOVE_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket pQry(sizeof(sGQ_ITEM_MOVE_REQ));
-	sGQ_ITEM_MOVE_REQ * rQry = (sGQ_ITEM_MOVE_REQ *)pQry.GetPacketData();
+	sGQ_ITEM_MOVE_REQ* rQry = (sGQ_ITEM_MOVE_REQ*)pQry.GetPacketData();
 	rQry->wOpCode = GQ_ITEM_MOVE_REQ;
 	rQry->handle = cPlayer->GetID();
 	rQry->charId = cPlayer->GetCharID();
@@ -5252,9 +5252,9 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 		item_move_res = GAME_FAIL;
 		goto END;
 	}
-	
+
 	CItem* src_item = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
-	if(src_item)
+	if (src_item)
 	{
 		CItem* dest_item = cPlayer->GetPlayerItemContainer()->GetItem(req->byDestPlace, req->byDestPos);
 
@@ -5266,7 +5266,7 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 			goto END;
 		}
 
-		if (dest_item && (dest_item->IsLocked(false) || dest_item->GetOwner() == NULL) )
+		if (dest_item && (dest_item->IsLocked(false) || dest_item->GetOwner() == NULL))
 		{
 			item_move_res = GAME_ITEM_IS_LOCK;
 			goto END;
@@ -5335,18 +5335,18 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 		{
 			if (cPlayer->GetLevel() < pItemData->byNeed_Min_Level) //check level
 				item_move_res = GAME_ITEM_NEED_MORE_LEVEL;
-			else if(cPlayer->GetLevel() > pItemData->byNeed_Max_Level)
+			else if (cPlayer->GetLevel() > pItemData->byNeed_Max_Level)
 				item_move_res = GAME_ITEM_TOO_HIGH_LEVEL_TO_USE_ITEM;
 
-			else if( Dbo_CheckClass(cPlayer->GetClass(), pItemData->dwNeed_Class_Bit_Flag) == false ) //check class
+			else if (Dbo_CheckClass(cPlayer->GetClass(), pItemData->dwNeed_Class_Bit_Flag) == false) //check class
 				item_move_res = GAME_ITEM_CLASS_FAIL;
 
-			else if(BIT_FLAG_TEST( MAKE_BIT_FLAG(cPlayer->GetGender()), pItemData->dwNeed_Gender_Bit_Flag ) == false) //check gender
+			else if (BIT_FLAG_TEST(MAKE_BIT_FLAG(cPlayer->GetGender()), pItemData->dwNeed_Gender_Bit_Flag) == false) //check gender
 				item_move_res = GAME_ITEM_GENDER_DOESNT_MATCH;
 
-			else if(pItemData->byRace_Special != cPlayer->GetRace() && pItemData->byRace_Special != INVALID_BYTE) //check race
+			else if (pItemData->byRace_Special != cPlayer->GetRace() && pItemData->byRace_Special != INVALID_BYTE) //check race
 				item_move_res = GAME_CHAR_RACE_FAIL;
-			
+
 			else if (BIT_FLAG_TEST(MAKE_BIT_FLAG(req->byDestPos), pItemData->dwEquip_Slot_Type_Bit_Flag) == false) //check if item can go to that position
 				item_move_res = GAME_ITEM_POSITION_FAIL;
 
@@ -5356,7 +5356,7 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 			else if (dest_item && dest_item->GetRestrictState() == ITEM_RESTRICT_STATE_TYPE_SEAL)
 				item_move_res = GAME_FAIL;
 
-			if(item_move_res == GAME_SUCCESS)
+			if (item_move_res == GAME_SUCCESS)
 			{
 				cPlayer->EquipItem(src_item, req->byDestPos);
 
@@ -5372,7 +5372,7 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 					src_item->SetRestrictState(rQry->bySrcRestrictState);
 
 					CNtlPacket packetItemUpdate(sizeof(sGU_ITEM_UPDATE));
-					sGU_ITEM_UPDATE * resIU = (sGU_ITEM_UPDATE *)packetItemUpdate.GetPacketData();
+					sGU_ITEM_UPDATE* resIU = (sGU_ITEM_UPDATE*)packetItemUpdate.GetPacketData();
 					resIU->wOpCode = GU_ITEM_UPDATE;
 					resIU->handle = src_item->GetID();
 					resIU->sItemData = src_item->GetItemData();
@@ -5381,24 +5381,24 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 				}
 			}
 		}
-		else if(req->bySrcPlace == CONTAINER_TYPE_EQUIP) //unequip
+		else if (req->bySrcPlace == CONTAINER_TYPE_EQUIP) //unequip
 		{
-		/*	if (req->bySrcPos == EQUIP_SLOT_TYPE_QUEST) //dont allow to unequip quest items
-			{
-				item_move_res = GAME_ITEM_IS_LOCK;
-			}
-			else*/ if(dest_item == NULL)
-			{
-				if (cPlayer->UnequipItem(src_item) == false)
+			/*	if (req->bySrcPos == EQUIP_SLOT_TYPE_QUEST) //dont allow to unequip quest items
 				{
-					item_move_res = GAME_FAIL;
+					item_move_res = GAME_ITEM_IS_LOCK;
 				}
-			} 
-			else item_move_res = GAME_ITEM_INVEN_FULL;
+				else*/ if (dest_item == NULL)
+				{
+					if (cPlayer->UnequipItem(src_item) == false)
+					{
+						item_move_res = GAME_FAIL;
+					}
+				}
+				else item_move_res = GAME_ITEM_INVEN_FULL;
 		}
 
 		/*Update item in map and database if move success*/
-		if(item_move_res == GAME_SUCCESS)
+		if (item_move_res == GAME_SUCCESS)
 		{
 			src_item->SetLocked(true);
 
@@ -5437,26 +5437,26 @@ void CClientSession::RecvItemMoveReq(CNtlPacket * pPacket)
 
 END:
 	CNtlPacket packet(sizeof(sGU_ITEM_MOVE_RES));
-	sGU_ITEM_MOVE_RES * res = (sGU_ITEM_MOVE_RES *)packet.GetPacketData();
+	sGU_ITEM_MOVE_RES* res = (sGU_ITEM_MOVE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ITEM_MOVE_RES;
 	res->bySrcPlace = req->bySrcPlace;
 	res->bySrcPos = req->bySrcPos;
 	res->byDestPlace = req->byDestPlace;
 	res->byDestPos = req->byDestPos;
-	res->wResultCode = item_move_res; 
-	app->Send( GetHandle() , &packet );
+	res->wResultCode = item_move_res;
+	app->Send(GetHandle(), &packet);
 }
 //--------------------------------------------------------------------------------------//
 //		DELETE ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemDeleteReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemDeleteReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_ITEM_DELETE_REQ * req = (sUG_ITEM_DELETE_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_DELETE_REQ* req = (sUG_ITEM_DELETE_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
-	
+
 	if (IsInvenContainer(req->bySrcPlace))
 	{
 		CItem* pItem = cPlayer->GetPlayerItemContainer()->GetItem(req->bySrcPlace, req->bySrcPos);
@@ -5474,29 +5474,29 @@ void CClientSession::RecvItemDeleteReq(CNtlPacket * pPacket)
 	else resultcode = GAME_FAIL;
 
 	CNtlPacket packet(sizeof(sGU_ITEM_DELETE_RES));
-	sGU_ITEM_DELETE_RES * res = (sGU_ITEM_DELETE_RES *)packet.GetPacketData();
+	sGU_ITEM_DELETE_RES* res = (sGU_ITEM_DELETE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ITEM_DELETE_RES;
 	res->wResultCode = resultcode;
 	res->byPlace = req->bySrcPlace;
 	res->byPos = req->bySrcPos;
-	packet.SetPacketLen( sizeof(sGU_ITEM_DELETE_RES) );
+	packet.SetPacketLen(sizeof(sGU_ITEM_DELETE_RES));
 	g_pApp->Send(GetHandle(), &packet);
 }
 //--------------------------------------------------------------------------------------//
 //		STACK ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemStackReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemStackReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_ITEM_MOVE_STACK_REQ * req = (sUG_ITEM_MOVE_STACK_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_MOVE_STACK_REQ* req = (sUG_ITEM_MOVE_STACK_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGQ_ITEM_MOVE_STACK_REQ));
-	sGQ_ITEM_MOVE_STACK_REQ * res = (sGQ_ITEM_MOVE_STACK_REQ *)packet.GetPacketData();
+	sGQ_ITEM_MOVE_STACK_REQ* res = (sGQ_ITEM_MOVE_STACK_REQ*)packet.GetPacketData();
 	res->wOpCode = GQ_ITEM_MOVE_STACK_REQ;
 	res->handle = cPlayer->GetID();
 	res->charId = cPlayer->GetCharID();
@@ -5525,7 +5525,7 @@ void CClientSession::RecvItemStackReq(CNtlPacket * pPacket)
 		resultcode = GAME_ITEM_IS_LOCK;
 		goto END;
 	}
-	
+
 	if (!IsInvenContainer(req->bySrcPlace) || !IsInvenContainer(req->byDestPlace)) //only allow to stack items inside inventory with this packet
 	{
 		resultcode = GAME_ITEM_STACK_FAIL;
@@ -5613,7 +5613,7 @@ void CClientSession::RecvItemStackReq(CNtlPacket * pPacket)
 	{
 	END:
 		CNtlPacket packetEnd(sizeof(sGU_ITEM_MOVE_STACK_RES));
-		sGU_ITEM_MOVE_STACK_RES * resEnd = (sGU_ITEM_MOVE_STACK_RES *)packetEnd.GetPacketData();
+		sGU_ITEM_MOVE_STACK_RES* resEnd = (sGU_ITEM_MOVE_STACK_RES*)packetEnd.GetPacketData();
 		resEnd->wOpCode = GU_ITEM_MOVE_STACK_RES;
 		resEnd->wResultCode = resultcode;
 		packetEnd.SetPacketLen(sizeof(sGU_ITEM_MOVE_STACK_RES));
@@ -5621,9 +5621,9 @@ void CClientSession::RecvItemStackReq(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvShopStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvShopStartReq(CNtlPacket* pPacket)
 {
-	sUG_SHOP_START_REQ * req = (sUG_SHOP_START_REQ *)pPacket->GetPacketData();
+	sUG_SHOP_START_REQ* req = (sUG_SHOP_START_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_FAIL;
 
@@ -5646,32 +5646,32 @@ void CClientSession::RecvShopStartReq(CNtlPacket * pPacket)
 
 				switch (req->byType)
 				{
-					case NPC_SHOP_TYPE_DEFAULT:
+				case NPC_SHOP_TYPE_DEFAULT:
+				{
+					if (pTableData->dwFunc_Bit_Flag & NPC_FUNC_FLAG_MERCHANT || pTableData->dwFunc_Bit_Flag & NPC_FUNC_FLAG_DOJO_MERCHANT)
 					{
-						if (pTableData->dwFunc_Bit_Flag & NPC_FUNC_FLAG_MERCHANT || pTableData->dwFunc_Bit_Flag & NPC_FUNC_FLAG_DOJO_MERCHANT)
-						{
-							// The First Prize Merchant has the NPC_FUNC_FLAG_MERCHANT and NPC_FUNC_FLAG_BUDOHSI_MERCHANT flags
-							if (pTableData->byJob != NPC_JOB_BUDOHSI_MERCHANT && pTableData->byJob != NPC_JOB_BUDOHSI_MERCHANT2 && pTableData->byJob != NPC_JOB_BUDOHSI_MERCHANT3)
-							{
-								wResultCode = GAME_SUCCESS;
-							}
-							else wResultCode = GAME_TARGET_HAS_DIFFERENT_JOB;
-						}
-						else wResultCode = GAME_TARGET_HAS_NOT_FUNCTION;
-					}
-					break;
-
-					case NPC_SHOP_TYPE_EXCHANGE:
-					{
-						if (pTableData->dwFunc_Bit_Flag & NPC_FUNC_FLAG_ITEM_EXCHANGE)
+						// The First Prize Merchant has the NPC_FUNC_FLAG_MERCHANT and NPC_FUNC_FLAG_BUDOHSI_MERCHANT flags
+						if (pTableData->byJob != NPC_JOB_BUDOHSI_MERCHANT && pTableData->byJob != NPC_JOB_BUDOHSI_MERCHANT2 && pTableData->byJob != NPC_JOB_BUDOHSI_MERCHANT3)
 						{
 							wResultCode = GAME_SUCCESS;
 						}
-						else wResultCode = GAME_TARGET_HAS_NOT_FUNCTION;
+						else wResultCode = GAME_TARGET_HAS_DIFFERENT_JOB;
 					}
-					break;
+					else wResultCode = GAME_TARGET_HAS_NOT_FUNCTION;
+				}
+				break;
 
-					default: break;
+				case NPC_SHOP_TYPE_EXCHANGE:
+				{
+					if (pTableData->dwFunc_Bit_Flag & NPC_FUNC_FLAG_ITEM_EXCHANGE)
+					{
+						wResultCode = GAME_SUCCESS;
+					}
+					else wResultCode = GAME_TARGET_HAS_NOT_FUNCTION;
+				}
+				break;
+
+				default: break;
 				}
 
 				// check if all good
@@ -5685,20 +5685,20 @@ void CClientSession::RecvShopStartReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_SHOP_START_RES));
-	sGU_SHOP_START_RES * res = (sGU_SHOP_START_RES *)packet.GetPacketData();
+	sGU_SHOP_START_RES* res = (sGU_SHOP_START_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SHOP_START_RES;
 	res->wResultCode = wResultCode;
 	res->handle = req->handle;
 	res->byType = req->byType;
-	g_pApp->Send(GetHandle(), &packet );
+	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvShopBuyReq(CNtlPacket * pPacket)
+void CClientSession::RecvShopBuyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SHOP_BUY_REQ * req = (sUG_SHOP_BUY_REQ *)pPacket->GetPacketData();
+	sUG_SHOP_BUY_REQ* req = (sUG_SHOP_BUY_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
@@ -5722,7 +5722,7 @@ void CClientSession::RecvShopBuyReq(CNtlPacket * pPacket)
 		{
 			sNPC_TBLDAT* pTableData = NPC->GetTbldat();
 
-			if(BIT_FLAG_TEST(pTableData->dwFunc_Bit_Flag, NPC_FUNC_FLAG_MERCHANT) == false && BIT_FLAG_TEST(pTableData->dwFunc_Bit_Flag, NPC_FUNC_FLAG_DOJO_MERCHANT) == false)
+			if (BIT_FLAG_TEST(pTableData->dwFunc_Bit_Flag, NPC_FUNC_FLAG_MERCHANT) == false && BIT_FLAG_TEST(pTableData->dwFunc_Bit_Flag, NPC_FUNC_FLAG_DOJO_MERCHANT) == false)
 				buy_item_result = GAME_TARGET_HAS_NOT_FUNCTION;
 			else if (pTableData->byJob == NPC_JOB_BUDOHSI_MERCHANT || pTableData->byJob == NPC_JOB_BUDOHSI_MERCHANT2 || pTableData->byJob == NPC_JOB_BUDOHSI_MERCHANT3)
 				buy_item_result = GAME_TARGET_HAS_DIFFERENT_JOB;
@@ -5859,17 +5859,17 @@ void CClientSession::RecvShopBuyReq(CNtlPacket * pPacket)
 			}
 		}
 	}
-	
+
 	CNtlPacket packet(sizeof(sGU_SHOP_BUY_RES));
-	sGU_SHOP_BUY_RES * res = (sGU_SHOP_BUY_RES *)packet.GetPacketData();
+	sGU_SHOP_BUY_RES* res = (sGU_SHOP_BUY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SHOP_BUY_RES;
 	res->wResultCode = buy_item_result;
 	res->handle = req->handle;
-	packet.SetPacketLen( sizeof(sGU_SHOP_BUY_RES) );
-	app->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_SHOP_BUY_RES));
+	app->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvShopEndReq(CNtlPacket * pPacket)
+void CClientSession::RecvShopEndReq(CNtlPacket* pPacket)
 {
 	WORD wResultCode = GAME_FAIL;
 
@@ -5885,21 +5885,21 @@ void CClientSession::RecvShopEndReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_SHOP_END_RES));
-	sGU_SHOP_END_RES * res = (sGU_SHOP_END_RES *)packet.GetPacketData();
+	sGU_SHOP_END_RES* res = (sGU_SHOP_END_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SHOP_END_RES;
 	res->wResultCode = wResultCode;
-	packet.SetPacketLen( sizeof(sGU_SHOP_END_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_SHOP_END_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvShopSellReq(CNtlPacket * pPacket)
+void CClientSession::RecvShopSellReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_SHOP_SELL_REQ * req = (sUG_SHOP_SELL_REQ *)pPacket->GetPacketData();
+	sUG_SHOP_SELL_REQ* req = (sUG_SHOP_SELL_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -5965,7 +5965,7 @@ void CClientSession::RecvShopSellReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_SHOP_SELL_RES));
-	sGU_SHOP_SELL_RES * res = (sGU_SHOP_SELL_RES *)packet.GetPacketData();
+	sGU_SHOP_SELL_RES* res = (sGU_SHOP_SELL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SHOP_SELL_RES;
 	res->handle = req->handle;
 	res->wResultCode = resultcode;
@@ -5973,35 +5973,35 @@ void CClientSession::RecvShopSellReq(CNtlPacket * pPacket)
 	app->Send(GetHandle(), &packet);
 }
 
-void	CClientSession::RecvRollDiceReq(CNtlPacket * pPacket)
+void	CClientSession::RecvRollDiceReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CNtlPacket packet(sizeof(sGU_DICE_ROLL_RES));
-	sGU_DICE_ROLL_RES * res = (sGU_DICE_ROLL_RES *)packet.GetPacketData();
+	sGU_DICE_ROLL_RES* res = (sGU_DICE_ROLL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_DICE_ROLL_RES;
 	res->wDiceResult = RandomRange(1, 100);
 	res->wResultCode = GAME_SUCCESS;
-	g_pApp->Send(GetHandle(), &packet );
+	g_pApp->Send(GetHandle(), &packet);
 
 	CNtlPacket packet2(sizeof(sGU_DICE_ROLLED_NFY));
-	sGU_DICE_ROLLED_NFY * res2 = (sGU_DICE_ROLLED_NFY *)packet2.GetPacketData();
+	sGU_DICE_ROLLED_NFY* res2 = (sGU_DICE_ROLLED_NFY*)packet2.GetPacketData();
 	res2->wDiceResult = res->wDiceResult;
 	res2->wOpCode = GU_DICE_ROLLED_NFY;
 	res2->hSubject = cPlayer->GetID();
 	cPlayer->Broadcast(&packet2, cPlayer);
 }
 
-void	CClientSession::RecvScouterIndicatorReq(CNtlPacket * pPacket)
+void	CClientSession::RecvScouterIndicatorReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SCOUTER_INDICATOR_REQ * req = (sUG_SCOUTER_INDICATOR_REQ *)pPacket->GetPacketData();
-	
+	sUG_SCOUTER_INDICATOR_REQ* req = (sUG_SCOUTER_INDICATOR_REQ*)pPacket->GetPacketData();
+
 	CNtlPacket packet(sizeof(sGU_SCOUTER_INDICATOR_RES));
-	sGU_SCOUTER_INDICATOR_RES * res = (sGU_SCOUTER_INDICATOR_RES *)packet.GetPacketData();
+	sGU_SCOUTER_INDICATOR_RES* res = (sGU_SCOUTER_INDICATOR_RES*)packet.GetPacketData();
 	res->hTarget = req->hTarget;
 	res->wOpCode = GU_SCOUTER_INDICATOR_RES;
 
@@ -6050,11 +6050,11 @@ void	CClientSession::RecvScouterIndicatorReq(CNtlPacket * pPacket)
 	}
 	else res->wResultCode = GAME_NEEDITEM_NOT_FOUND;
 
-	packet.SetPacketLen( sizeof(sGU_SCOUTER_INDICATOR_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_SCOUTER_INDICATOR_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 
-void	CClientSession::RecvScouterEquipCheckReq(CNtlPacket * pPacket)
+void	CClientSession::RecvScouterEquipCheckReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -6062,10 +6062,10 @@ void	CClientSession::RecvScouterEquipCheckReq(CNtlPacket * pPacket)
 	// to do: 
 	// check if player has option enabled/disabled to disable equipment check
 
-	sUG_SCOUTER_EQUIP_CHECK_REQ * req = (sUG_SCOUTER_EQUIP_CHECK_REQ *)pPacket->GetPacketData();
+	sUG_SCOUTER_EQUIP_CHECK_REQ* req = (sUG_SCOUTER_EQUIP_CHECK_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_SCOUTER_EQUIP_CHECK_RES));
-	sGU_SCOUTER_EQUIP_CHECK_RES * res = (sGU_SCOUTER_EQUIP_CHECK_RES *)packet.GetPacketData();
+	sGU_SCOUTER_EQUIP_CHECK_RES* res = (sGU_SCOUTER_EQUIP_CHECK_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SCOUTER_EQUIP_CHECK_RES;
 	res->hTarget = req->hTarget;
 	res->wResultCode = GAME_TARGET_NOT_FOUND;
@@ -6123,12 +6123,12 @@ void	CClientSession::RecvScouterEquipCheckReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		PC CHECK DRAGON BALLS
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvDragonBallCheckReq(CNtlPacket * pPacket)
+void	CClientSession::RecvDragonBallCheckReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_DRAGONBALL_CHECK_REQ * req = (sUG_DRAGONBALL_CHECK_REQ*)pPacket->GetPacketData();
+	sUG_DRAGONBALL_CHECK_REQ* req = (sUG_DRAGONBALL_CHECK_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 	int dbcount = 0;
@@ -6150,7 +6150,7 @@ void	CClientSession::RecvDragonBallCheckReq(CNtlPacket * pPacket)
 						{
 							if (CItem* db = cPlayer->GetPlayerItemContainer()->GetItem(req->sData[i].hItem))
 							{
-								if (db->GetPos() == req->sData[i].byPos && db->GetPlace() == req->sData[i].byPlace && db->GetTbldat()->byItem_Type == ITEM_TYPE_DRAGONBALL 
+								if (db->GetPos() == req->sData[i].byPos && db->GetPlace() == req->sData[i].byPlace && db->GetTbldat()->byItem_Type == ITEM_TYPE_DRAGONBALL
 									&& db->GetCount() > 0 && db->IsLocked() == false && IsInvenContainer(db->GetPlace()))
 								{
 									TBLIDX lastDbId = ((db->GetTblidx() / 10) * 10) + 8;
@@ -6196,7 +6196,7 @@ void	CClientSession::RecvDragonBallCheckReq(CNtlPacket * pPacket)
 	else resultcode = GAME_FAIL;
 
 	CNtlPacket packet(sizeof(sGU_DRAGONBALL_CHECK_RES));
-	sGU_DRAGONBALL_CHECK_RES * res = (sGU_DRAGONBALL_CHECK_RES *)packet.GetPacketData();
+	sGU_DRAGONBALL_CHECK_RES* res = (sGU_DRAGONBALL_CHECK_RES*)packet.GetPacketData();
 	res->wOpCode = GU_DRAGONBALL_CHECK_RES;
 	res->hObject = req->hObject;
 	res->wResultCode = resultcode;
@@ -6210,15 +6210,15 @@ void	CClientSession::RecvDragonBallCheckReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		RECEIVE REWARD FROM SHENRON
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvDragonBallRewardReq(CNtlPacket * pPacket)
+void	CClientSession::RecvDragonBallRewardReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DRAGONBALL_REWARD_REQ * req = (sUG_DRAGONBALL_REWARD_REQ *)pPacket->GetPacketData();
-	
+	sUG_DRAGONBALL_REWARD_REQ* req = (sUG_DRAGONBALL_REWARD_REQ*)pPacket->GetPacketData();
+
 	WORD resultcode = GAME_SUCCESS;
 
 	if (cPlayer->GetShenronID() != INVALID_HOBJECT)
@@ -6247,7 +6247,7 @@ void	CClientSession::RecvDragonBallRewardReq(CNtlPacket * pPacket)
 					DWORD zennyreward = pDBtData->dwRewardZenny * cPlayer->GetLevel();
 					if (cPlayer->CanReceiveZeni(zennyreward))
 					{
-						
+
 						ERR_LOG(LOG_USER, "Player: %u receive %u zeni from db wish reward", cPlayer->GetCharID(), zennyreward);
 
 						cPlayer->UpdateZeni(ZENNY_CHANGE_TYPE_REWARD, zennyreward, true, true);
@@ -6275,12 +6275,12 @@ void	CClientSession::RecvDragonBallRewardReq(CNtlPacket * pPacket)
 	else resultcode = GAME_FAIL;
 
 	CNtlPacket packet(sizeof(sGU_DRAGONBALL_REWARD_RES));
-	sGU_DRAGONBALL_REWARD_RES * res = (sGU_DRAGONBALL_REWARD_RES *)packet.GetPacketData();
+	sGU_DRAGONBALL_REWARD_RES* res = (sGU_DRAGONBALL_REWARD_RES*)packet.GetPacketData();
 	res->hObject = req->hObject;
 	res->wOpCode = GU_DRAGONBALL_REWARD_RES;
 	res->wResultCode = resultcode;
-	packet.SetPacketLen( sizeof(sGU_DRAGONBALL_REWARD_RES) );
-	app->Send(GetHandle() , &packet );
+	packet.SetPacketLen(sizeof(sGU_DRAGONBALL_REWARD_RES));
+	app->Send(GetHandle(), &packet);
 
 	if (resultcode == GAME_SUCCESS)
 	{
@@ -6289,36 +6289,36 @@ void	CClientSession::RecvDragonBallRewardReq(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvSendGambleBuyReq(CNtlPacket * pPacket)
+void CClientSession::RecvSendGambleBuyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_SHOP_GAMBLE_BUY_REQ * req = (sUG_SHOP_GAMBLE_BUY_REQ*)pPacket->GetPacketData();
+	sUG_SHOP_GAMBLE_BUY_REQ* req = (sUG_SHOP_GAMBLE_BUY_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
-	
+
 	CNtlPacket packet(sizeof(sGU_SHOP_GAMBLE_BUY_RES));
-	sGU_SHOP_GAMBLE_BUY_RES * res = (sGU_SHOP_GAMBLE_BUY_RES *)packet.GetPacketData();
+	sGU_SHOP_GAMBLE_BUY_RES* res = (sGU_SHOP_GAMBLE_BUY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SHOP_GAMBLE_BUY_RES;
 	res->handle = req->handle;
 	res->hItem = INVALID_HOBJECT;
-	
+
 	//check inventory
-	if(cPlayer->GetPlayerItemContainer()->CountEmptyInventory() > 0)
+	if (cPlayer->GetPlayerItemContainer()->CountEmptyInventory() > 0)
 	{
 		CNpc* pNPCtData = g_pObjectManager->GetNpc(req->handle);
-		if(pNPCtData)
+		if (pNPCtData)
 		{
-			if (pNPCtData->GetTbldat()->byJob == NPC_JOB_GAMBLE_MERCHANT || pNPCtData->GetTbldat()->byJob == NPC_JOB_MASCOT_GAMBLE_MERCHANT 
+			if (pNPCtData->GetTbldat()->byJob == NPC_JOB_GAMBLE_MERCHANT || pNPCtData->GetTbldat()->byJob == NPC_JOB_MASCOT_GAMBLE_MERCHANT
 				|| pNPCtData->GetTbldat()->byJob == NPC_JOB_MASCOT_GAMBLE_MERCHANT_2 || pNPCtData->GetTbldat()->byJob == NPC_JOB_AIR_GAMBLE_MERCHANT)
 			{
 				sMERCHANT_TBLDAT* pMerchantData = (sMERCHANT_TBLDAT*)g_pTableContainer->GetMerchantTable()->FindData(pNPCtData->GetMerchant(0));
 				if (pMerchantData)
 				{
-					if(pMerchantData->bySell_Type == MERCHANT_SELL_TYPE_GAMBLE || pMerchantData->bySell_Type == MERCHANT_SELL_TYPE_GAMBLE_ZENNY)
+					if (pMerchantData->bySell_Type == MERCHANT_SELL_TYPE_GAMBLE || pMerchantData->bySell_Type == MERCHANT_SELL_TYPE_GAMBLE_ZENNY)
 					{
 						sQUEST_PROBABILITY_TBLDAT* pProbabilityData = (sQUEST_PROBABILITY_TBLDAT*)g_pTableContainer->GetQuestProbabilityTable()->FindData(pMerchantData->aitem_Tblidx[0]);
 						if (pProbabilityData)
@@ -6396,7 +6396,7 @@ void CClientSession::RecvSendGambleBuyReq(CNtlPacket * pPacket)
 											if (itemreward)
 											{
 												CNtlPacket packetQry(sizeof(sGQ_SHOP_GAMBLE_BUY_REQ));
-												sGQ_SHOP_GAMBLE_BUY_REQ * resQry = (sGQ_SHOP_GAMBLE_BUY_REQ *)packetQry.GetPacketData();
+												sGQ_SHOP_GAMBLE_BUY_REQ* resQry = (sGQ_SHOP_GAMBLE_BUY_REQ*)packetQry.GetPacketData();
 												resQry->wOpCode = GQ_SHOP_GAMBLE_BUY_REQ;
 												resQry->handle = cPlayer->GetID();
 												resQry->charId = cPlayer->GetCharID();
@@ -6483,23 +6483,23 @@ void CClientSession::RecvSendGambleBuyReq(CNtlPacket * pPacket)
 				else resultcode = GAME_FAIL;
 			}
 			else resultcode = GAME_TARGET_HAS_DIFFERENT_JOB;
-		} 
+		}
 		else resultcode = GAME_FAIL;
-	} 
+	}
 	else resultcode = GAME_ITEM_INVEN_FULL;
 
 	//printf("result %u \n", resultcode);
 
 	res->wResultCode = resultcode;
-	app->Send(GetHandle() , &packet );
+	app->Send(GetHandle(), &packet);
 }
 
 //------------------------------------------------
 // Character Skill Upgrade
 //------------------------------------------------
-void CClientSession::RecvCharSkillUpgradeReq(CNtlPacket * pPacket)
+void CClientSession::RecvCharSkillUpgradeReq(CNtlPacket* pPacket)
 {
-	sUG_SKILL_UPGRADE_REQ * req = (sUG_SKILL_UPGRADE_REQ*)pPacket->GetPacketData();
+	sUG_SKILL_UPGRADE_REQ* req = (sUG_SKILL_UPGRADE_REQ*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -6512,7 +6512,7 @@ void CClientSession::RecvCharSkillUpgradeReq(CNtlPacket * pPacket)
 //------------------------------------------------
 void CClientSession::RecvRpBonusSettingReq(CNtlPacket* pPacket)
 {
-	sUG_SKILL_RP_BONUS_SETTING_REQ * req = (sUG_SKILL_RP_BONUS_SETTING_REQ*)pPacket->GetPacketData();
+	sUG_SKILL_RP_BONUS_SETTING_REQ* req = (sUG_SKILL_RP_BONUS_SETTING_REQ*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -6523,14 +6523,14 @@ void CClientSession::RecvRpBonusSettingReq(CNtlPacket* pPacket)
 //-------------------------------------------------
 //      Quick Slot Update
 //-------------------------------------------------
-void CClientSession::RecvQuickSlotUpdateReq(CNtlPacket * pPacket)
+void CClientSession::RecvQuickSlotUpdateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_QUICK_SLOT_UPDATE_REQ * req = (sUG_QUICK_SLOT_UPDATE_REQ*)pPacket->GetPacketData();
+	sUG_QUICK_SLOT_UPDATE_REQ* req = (sUG_QUICK_SLOT_UPDATE_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket pQry(sizeof(sGQ_QUICK_SLOT_UPDATE_REQ));
@@ -6543,7 +6543,7 @@ void CClientSession::RecvQuickSlotUpdateReq(CNtlPacket * pPacket)
 	rQry->byPlace = req->byPlace;
 	rQry->byPos = req->byPos;
 
-	if(req->byType == QUICK_SLOT_TYPE_ITEM)
+	if (req->byType == QUICK_SLOT_TYPE_ITEM)
 	{
 		if (IsInvenContainer(req->byPlace))
 		{
@@ -6564,9 +6564,9 @@ void CClientSession::RecvQuickSlotUpdateReq(CNtlPacket * pPacket)
 		pQry.SetPacketLen(sizeof(sGQ_QUICK_SLOT_UPDATE_REQ));
 		app->SendTo(app->GetQueryServerSession(), &pQry);
 	}
-	
+
 	CNtlPacket packet(sizeof(sGU_QUICK_SLOT_UPDATE_RES));
-	sGU_QUICK_SLOT_UPDATE_RES * res = (sGU_QUICK_SLOT_UPDATE_RES*)packet.GetPacketData();
+	sGU_QUICK_SLOT_UPDATE_RES* res = (sGU_QUICK_SLOT_UPDATE_RES*)packet.GetPacketData();
 	res->byPlace = req->byPlace;
 	res->byPos = req->byPos;
 	res->bySlotID = req->bySlotID;
@@ -6580,14 +6580,14 @@ void CClientSession::RecvQuickSlotUpdateReq(CNtlPacket * pPacket)
 //-------------------------------------------------
 //      Quick Slot Delete
 //-------------------------------------------------
-void CClientSession::RecvQuickSlotDelReq(CNtlPacket * pPacket)
+void CClientSession::RecvQuickSlotDelReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_QUICK_SLOT_DEL_REQ * req = (sUG_QUICK_SLOT_DEL_REQ*)pPacket->GetPacketData();
+	sUG_QUICK_SLOT_DEL_REQ* req = (sUG_QUICK_SLOT_DEL_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket pQry(sizeof(sGQ_QUICK_SLOT_DEL_REQ));
 	sGQ_QUICK_SLOT_DEL_REQ* rQry = (sGQ_QUICK_SLOT_DEL_REQ*)pQry.GetPacketData();
@@ -6600,22 +6600,22 @@ void CClientSession::RecvQuickSlotDelReq(CNtlPacket * pPacket)
 
 
 	CNtlPacket packet(sizeof(sGU_QUICK_SLOT_DEL_NFY));
-	sGU_QUICK_SLOT_DEL_NFY * res = (sGU_QUICK_SLOT_DEL_NFY*)packet.GetPacketData();
+	sGU_QUICK_SLOT_DEL_NFY* res = (sGU_QUICK_SLOT_DEL_NFY*)packet.GetPacketData();
 	res->wOpCode = GU_QUICK_SLOT_DEL_NFY;
 	res->bySlotID = req->bySlotID;
 	packet.SetPacketLen(sizeof(sGU_QUICK_SLOT_DEL_NFY));
 	app->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvPetDismissPetReq(CNtlPacket * pPacket)
+void CClientSession::RecvPetDismissPetReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PET_DISMISS_PET_REQ* req = (sUG_PET_DISMISS_PET_REQ *)pPacket->GetPacketData();
+	sUG_PET_DISMISS_PET_REQ* req = (sUG_PET_DISMISS_PET_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_PET_DISMISS_PET_RES));
-	sGU_PET_DISMISS_PET_RES * res = (sGU_PET_DISMISS_PET_RES*)packet.GetPacketData();
+	sGU_PET_DISMISS_PET_RES* res = (sGU_PET_DISMISS_PET_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PET_DISMISS_PET_RES;
 	res->byAvatarType = req->byAvatarType;
 	res->wResultCode = GAME_PET_TARGET_IS_NOT_SPAWNED;
@@ -6635,12 +6635,12 @@ void CClientSession::RecvPetDismissPetReq(CNtlPacket * pPacket)
 }
 
 
-void	CClientSession::RecvZennyPickUpReq(CNtlPacket * pPacket)
+void	CClientSession::RecvZennyPickUpReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_ZENNY_PICK_REQ* req = (sUG_ZENNY_PICK_REQ *)pPacket->GetPacketData();
+	sUG_ZENNY_PICK_REQ* req = (sUG_ZENNY_PICK_REQ*)pPacket->GetPacketData();
 
 	WORD wRes = GAME_FAIL;
 
@@ -6683,30 +6683,30 @@ void	CClientSession::RecvZennyPickUpReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_ZENNY_PICK_RES));
-	sGU_ZENNY_PICK_RES * res = (sGU_ZENNY_PICK_RES*)packet.GetPacketData();
+	sGU_ZENNY_PICK_RES* res = (sGU_ZENNY_PICK_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ZENNY_PICK_RES;
 	res->wResultCode = wRes;
 	packet.SetPacketLen(sizeof(sGU_ZENNY_PICK_RES));
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void	CClientSession::RecvFreeBattleChallengeReq(CNtlPacket * pPacket)
+void	CClientSession::RecvFreeBattleChallengeReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_FREEBATTLE_CHALLENGE_REQ* req = (sUG_FREEBATTLE_CHALLENGE_REQ *)pPacket->GetPacketData();
+	sUG_FREEBATTLE_CHALLENGE_REQ* req = (sUG_FREEBATTLE_CHALLENGE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlVector arenaLoc(DBO_ARENA_BASE_LOC_X, DBO_ARENA_BASE_LOC_Y, DBO_ARENA_BASE_LOC_Z);
 
 	CPlayer* target = g_pObjectManager->GetPC(req->hTarget);
-	if(target == NULL || !target->IsInitialized())
+	if (target == NULL || !target->IsInitialized())
 		resultcode = GAME_TARGET_NOT_FOUND;
-	else if(target->GetFreeBattleTarget() != INVALID_CHARACTERID)
+	else if (target->GetFreeBattleTarget() != INVALID_CHARACTERID)
 		resultcode = GAME_FREEBATTLE_TARGET_ALREADY_HAS_MATCH;
 	else if (cPlayer->GetFreeBattleTarget() != INVALID_CHARACTERID)
 		resultcode = GAME_FREEBATTLE_ALREADY_HAS_MATCH;
@@ -6720,31 +6720,31 @@ void	CClientSession::RecvFreeBattleChallengeReq(CNtlPacket * pPacket)
 		resultcode = GAME_FAIL;
 	else if (target->IsInRange(arenaLoc, DBO_ARENA_FREEBATTLELOC_RANGE) || cPlayer->IsInRange(arenaLoc, DBO_ARENA_FREEBATTLELOC_RANGE))
 		resultcode = GAME_FREEBATTLE_WRONG_PLACE;
-	else if(cPlayer->GetDragonballScramble() || target->GetDragonballScramble())
+	else if (cPlayer->GetDragonballScramble() || target->GetDragonballScramble())
 		resultcode = SCRAMBLE_CANNOT_DO_WHILE_JOINED;
 
 	CNtlPacket packet(sizeof(sGU_FREEBATTLE_CHALLENGE_RES));
-	sGU_FREEBATTLE_CHALLENGE_RES * res = (sGU_FREEBATTLE_CHALLENGE_RES *)packet.GetPacketData();
+	sGU_FREEBATTLE_CHALLENGE_RES* res = (sGU_FREEBATTLE_CHALLENGE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_FREEBATTLE_CHALLENGE_RES;
 	res->hTarget = req->hTarget;
 	res->wResultCode = resultcode;
-	packet.SetPacketLen( sizeof(sGU_FREEBATTLE_CHALLENGE_RES) );
-	app->Send( GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_FREEBATTLE_CHALLENGE_RES));
+	app->Send(GetHandle(), &packet);
 
 
-	if( resultcode == GAME_SUCCESS )
+	if (resultcode == GAME_SUCCESS)
 	{
-		g_pFreeBattleManager->CreateFreeBattle(cPlayer,target);
+		g_pFreeBattleManager->CreateFreeBattle(cPlayer, target);
 
 		CNtlPacket packet2(sizeof(sGU_FREEBATTLE_ACCEPT_REQ));
-		sGU_FREEBATTLE_ACCEPT_REQ * res2 = (sGU_FREEBATTLE_ACCEPT_REQ *)packet2.GetPacketData();
+		sGU_FREEBATTLE_ACCEPT_REQ* res2 = (sGU_FREEBATTLE_ACCEPT_REQ*)packet2.GetPacketData();
 		res2->hChallenger = cPlayer->GetID();
 		res2->wOpCode = GU_FREEBATTLE_ACCEPT_REQ;
-		packet2.SetPacketLen( sizeof(sGU_FREEBATTLE_ACCEPT_REQ) );
-		app->Send( target->GetClientSessionID(), &packet2 );
+		packet2.SetPacketLen(sizeof(sGU_FREEBATTLE_ACCEPT_REQ));
+		app->Send(target->GetClientSessionID(), &packet2);
 	}
 }
-void	CClientSession::RecvFreeBattleAccpetReq(CNtlPacket * pPacket)
+void	CClientSession::RecvFreeBattleAccpetReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -6752,10 +6752,10 @@ void	CClientSession::RecvFreeBattleAccpetReq(CNtlPacket * pPacket)
 	CGameServer* app = (CGameServer*)g_pApp;
 
 	CPlayer* invitor = g_pObjectManager->FindByChar(cPlayer->GetFreeBattleTarget());
-	if(invitor)
+	if (invitor)
 	{
-		sUG_FREEBATTLE_ACCEPT_RES* req = (sUG_FREEBATTLE_ACCEPT_RES *)pPacket->GetPacketData();
-		
+		sUG_FREEBATTLE_ACCEPT_RES* req = (sUG_FREEBATTLE_ACCEPT_RES*)pPacket->GetPacketData();
+
 		if (req->byAccept == 1)
 		{
 			WORD resultcode = GAME_SUCCESS;
@@ -6777,13 +6777,13 @@ void	CClientSession::RecvFreeBattleAccpetReq(CNtlPacket * pPacket)
 			else if (invitor->GetDragonballScramble() || cPlayer->GetDragonballScramble())
 				resultcode = SCRAMBLE_CANNOT_DO_WHILE_JOINED;
 
-			if(resultcode == GAME_SUCCESS)
+			if (resultcode == GAME_SUCCESS)
 			{
 				if (g_pFreeBattleManager->BeginFreeBattle(invitor->GetFreeBattleID()))
 				{
 					//send packet to player me
 					CNtlPacket packet(sizeof(sGU_FREEBATTLE_START_NFY));
-					sGU_FREEBATTLE_START_NFY * res = (sGU_FREEBATTLE_START_NFY *)packet.GetPacketData();
+					sGU_FREEBATTLE_START_NFY* res = (sGU_FREEBATTLE_START_NFY*)packet.GetPacketData();
 					res->hTarget = invitor->GetID();
 					res->vRefreeLoc.y = invitor->GetCurLoc().y;
 					res->vRefreeLoc.x = invitor->GetCurLoc().x + 10;
@@ -6794,7 +6794,7 @@ void	CClientSession::RecvFreeBattleAccpetReq(CNtlPacket * pPacket)
 
 					//send packet to invitor
 					CNtlPacket packet2(sizeof(sGU_FREEBATTLE_START_NFY));
-					sGU_FREEBATTLE_START_NFY * res2 = (sGU_FREEBATTLE_START_NFY *)packet2.GetPacketData();
+					sGU_FREEBATTLE_START_NFY* res2 = (sGU_FREEBATTLE_START_NFY*)packet2.GetPacketData();
 					res2->hTarget = cPlayer->GetID();
 					res2->vRefreeLoc.y = invitor->GetCurLoc().y;
 					res2->vRefreeLoc.x = invitor->GetCurLoc().x + 10;
@@ -6806,14 +6806,14 @@ void	CClientSession::RecvFreeBattleAccpetReq(CNtlPacket * pPacket)
 				else
 				{
 					CNtlPacket packet(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
-					sGU_FREEBATTLE_CANCEL_NFY * res = (sGU_FREEBATTLE_CANCEL_NFY *)packet.GetPacketData();
+					sGU_FREEBATTLE_CANCEL_NFY* res = (sGU_FREEBATTLE_CANCEL_NFY*)packet.GetPacketData();
 					res->wOpCode = GU_FREEBATTLE_CANCEL_NFY;
 					res->wResultCode = resultcode;
 					packet.SetPacketLen(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
 					app->Send(invitor->GetClientSessionID(), &packet);
 
 					CNtlPacket packet2(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
-					sGU_FREEBATTLE_CANCEL_NFY * res2 = (sGU_FREEBATTLE_CANCEL_NFY *)packet2.GetPacketData();
+					sGU_FREEBATTLE_CANCEL_NFY* res2 = (sGU_FREEBATTLE_CANCEL_NFY*)packet2.GetPacketData();
 					res2->wOpCode = GU_FREEBATTLE_CANCEL_NFY;
 					res2->wResultCode = GAME_SUCCESS;
 					packet2.SetPacketLen(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
@@ -6828,18 +6828,18 @@ void	CClientSession::RecvFreeBattleAccpetReq(CNtlPacket * pPacket)
 				g_pFreeBattleManager->DeleteFreeBattle(invitor->GetFreeBattleID());
 
 				CNtlPacket packet(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
-				sGU_FREEBATTLE_CANCEL_NFY * res = (sGU_FREEBATTLE_CANCEL_NFY *)packet.GetPacketData();
+				sGU_FREEBATTLE_CANCEL_NFY* res = (sGU_FREEBATTLE_CANCEL_NFY*)packet.GetPacketData();
 				res->wOpCode = GU_FREEBATTLE_CANCEL_NFY;
 				res->wResultCode = resultcode;
-				packet.SetPacketLen( sizeof(sGU_FREEBATTLE_CANCEL_NFY) );
-				app->Send( invitor->GetClientSessionID(), &packet );
+				packet.SetPacketLen(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
+				app->Send(invitor->GetClientSessionID(), &packet);
 
 				CNtlPacket packet2(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
-				sGU_FREEBATTLE_CANCEL_NFY * res2 = (sGU_FREEBATTLE_CANCEL_NFY *)packet2.GetPacketData();
+				sGU_FREEBATTLE_CANCEL_NFY* res2 = (sGU_FREEBATTLE_CANCEL_NFY*)packet2.GetPacketData();
 				res2->wOpCode = GU_FREEBATTLE_CANCEL_NFY;
 				res2->wResultCode = GAME_SUCCESS;
-				packet2.SetPacketLen( sizeof(sGU_FREEBATTLE_CANCEL_NFY) );
-				app->Send(GetHandle(), &packet2 );
+				packet2.SetPacketLen(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
+				app->Send(GetHandle(), &packet2);
 			}
 		}
 		else
@@ -6847,45 +6847,45 @@ void	CClientSession::RecvFreeBattleAccpetReq(CNtlPacket * pPacket)
 			g_pFreeBattleManager->DeleteFreeBattle(invitor->GetFreeBattleID());
 
 			CNtlPacket packet(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
-			sGU_FREEBATTLE_CANCEL_NFY * res = (sGU_FREEBATTLE_CANCEL_NFY *)packet.GetPacketData();
+			sGU_FREEBATTLE_CANCEL_NFY* res = (sGU_FREEBATTLE_CANCEL_NFY*)packet.GetPacketData();
 			res->wOpCode = GU_FREEBATTLE_CANCEL_NFY;
 			res->wResultCode = GAME_FREEBATTLE_CHALLENGE_ACCEPT_DENIED;
-			packet.SetPacketLen( sizeof(sGU_FREEBATTLE_CANCEL_NFY) );
-			app->Send( invitor->GetClientSessionID(), &packet );
+			packet.SetPacketLen(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
+			app->Send(invitor->GetClientSessionID(), &packet);
 
 			CNtlPacket packet2(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
-			sGU_FREEBATTLE_CANCEL_NFY * res2 = (sGU_FREEBATTLE_CANCEL_NFY *)packet2.GetPacketData();
+			sGU_FREEBATTLE_CANCEL_NFY* res2 = (sGU_FREEBATTLE_CANCEL_NFY*)packet2.GetPacketData();
 			res2->wOpCode = GU_FREEBATTLE_CANCEL_NFY;
 			res2->wResultCode = GAME_SUCCESS;
-			packet2.SetPacketLen( sizeof(sGU_FREEBATTLE_CANCEL_NFY) );
-			app->Send(GetHandle(), &packet2 );
+			packet2.SetPacketLen(sizeof(sGU_FREEBATTLE_CANCEL_NFY));
+			app->Send(GetHandle(), &packet2);
 		}
 	}
 }
 
-void CClientSession::RecvRideOnBusReq(CNtlPacket * pPacket)
+void CClientSession::RecvRideOnBusReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_RIDE_ON_BUS_REQ * req = (sUG_RIDE_ON_BUS_REQ*)pPacket->GetPacketData();
-	
+	sUG_RIDE_ON_BUS_REQ* req = (sUG_RIDE_ON_BUS_REQ*)pPacket->GetPacketData();
+
 	WORD wResultCode = GAME_SUCCESS;
 
 	CNpc* pBus = g_pObjectManager->GetNpc(req->hTarget);
 	if (pBus && pBus->HasFunction(NPC_FUNC_FLAG_BUS))
 	{
-		if(pBus->GetCurWorld() == NULL)
+		if (pBus->GetCurWorld() == NULL)
 			wResultCode = GAME_FAIL;
-		else if(pBus->IsSitting() == false && pBus->IsStanding() == false && pBus->IsDestMoving() == false)
+		else if (pBus->IsSitting() == false && pBus->IsStanding() == false && pBus->IsDestMoving() == false)
 			wResultCode = GAME_TARGET_IS_WRONG_STATE;
 		else if (cPlayer->GetZeni() < pBus->GetTbldat()->amerchant_Tblidx[0])
 			wResultCode = GAME_ZENNY_NOT_ENOUGH;
-		else if(cPlayer->IsInRange(pBus, 20.f) == false)
+		else if (cPlayer->IsInRange(pBus, 20.f) == false)
 			wResultCode = GAME_TARGET_TOO_FAR;
-		else if(cPlayer->GetDragonballScramble())
+		else if (cPlayer->GetDragonballScramble())
 			wResultCode = SCRAMBLE_CANNOT_RIDE_BUS_WHILE_JOINED;
-		else if(cPlayer->GetStateManager()->CanCharStateTransition(CHARSTATE_RIDEON) == false)
+		else if (cPlayer->GetStateManager()->CanCharStateTransition(CHARSTATE_RIDEON) == false)
 			wResultCode = GAME_CHAR_IS_WRONG_STATE;
 		else if (cPlayer->GetAspectStateId() != ASPECTSTATE_INVALID && cPlayer->GetAspectStateId() != ASPECTSTATE_VEHICLE)
 			wResultCode = GAME_CHAR_IS_WRONG_STATE;
@@ -6906,7 +6906,7 @@ void CClientSession::RecvRideOnBusReq(CNtlPacket * pPacket)
 	else wResultCode = GAME_TARGET_NOT_FOUND;
 
 	CNtlPacket packet(sizeof(sGU_RIDE_ON_BUS_RES));
-	sGU_RIDE_ON_BUS_RES * res = (sGU_RIDE_ON_BUS_RES *)packet.GetPacketData();
+	sGU_RIDE_ON_BUS_RES* res = (sGU_RIDE_ON_BUS_RES*)packet.GetPacketData();
 	res->wOpCode = GU_RIDE_ON_BUS_RES;
 	res->hTarget = req->hTarget;
 	res->wResultCode = wResultCode;
@@ -6914,16 +6914,16 @@ void CClientSession::RecvRideOnBusReq(CNtlPacket * pPacket)
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvRideOffBusReq(CNtlPacket * pPacket)
+void CClientSession::RecvRideOffBusReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_RIDE_OFF_BUS_REQ * req = (sUG_RIDE_OFF_BUS_REQ*)pPacket->GetPacketData();
+	sUG_RIDE_OFF_BUS_REQ* req = (sUG_RIDE_OFF_BUS_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_SUCCESS;
 
-	if(cPlayer->GetBusID() == INVALID_HOBJECT)
+	if (cPlayer->GetBusID() == INVALID_HOBJECT)
 		wResultCode = GAME_FAIL;
 	else
 	{
@@ -6932,7 +6932,7 @@ void CClientSession::RecvRideOffBusReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_RIDE_OFF_BUS_RES));
-	sGU_RIDE_OFF_BUS_RES * res = (sGU_RIDE_OFF_BUS_RES *)packet.GetPacketData();
+	sGU_RIDE_OFF_BUS_RES* res = (sGU_RIDE_OFF_BUS_RES*)packet.GetPacketData();
 	res->wOpCode = GU_RIDE_OFF_BUS_RES;
 	res->wResultCode = wResultCode;
 	packet.SetPacketLen(sizeof(sGU_RIDE_OFF_BUS_RES));
@@ -6940,7 +6940,7 @@ void CClientSession::RecvRideOffBusReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvCharKnockdownReleaseNfy(CNtlPacket * pPacket)
+void CClientSession::RecvCharKnockdownReleaseNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -6952,7 +6952,7 @@ void CClientSession::RecvCharKnockdownReleaseNfy(CNtlPacket * pPacket)
 			CGameServer* app = (CGameServer*)g_pApp;
 
 			DWORD dwAnimationLength = (DWORD)cPlayer->GetAniTbldat()->GetAnimationLength(BTL_DEF_KD_STAND_UP);
-			
+
 			//printf("dwAnimationLength: %u \n", dwAnimationLength);
 
 			cPlayer->SetLastAttackTime(app->GetCurTickCount() + dwAnimationLength);
@@ -6962,17 +6962,17 @@ void CClientSession::RecvCharKnockdownReleaseNfy(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvCancelTransformationReq(CNtlPacket * pPacket)
+void CClientSession::RecvCancelTransformationReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	if(cPlayer->IsStanding() || cPlayer->IsMoving() || cPlayer->IsDestMoving())
+	if (cPlayer->IsStanding() || cPlayer->IsMoving() || cPlayer->IsDestMoving())
 		cPlayer->CancelTransformation();
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_TRANSFORM_CANCEL_RES));
-		sGU_TRANSFORM_CANCEL_RES * res = (sGU_TRANSFORM_CANCEL_RES*)packet.GetPacketData();
+		sGU_TRANSFORM_CANCEL_RES* res = (sGU_TRANSFORM_CANCEL_RES*)packet.GetPacketData();
 		res->wOpCode = GU_TRANSFORM_CANCEL_RES;
 		res->wResultCode = GAME_CHAR_IS_WRONG_STATE;
 		g_pApp->Send(cPlayer->GetClientSessionID(), &packet);
@@ -6980,14 +6980,14 @@ void CClientSession::RecvCancelTransformationReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvSocialSkill(CNtlPacket * pPacket)
- {
+void CClientSession::RecvSocialSkill(CNtlPacket* pPacket)
+{
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_SOCIAL_ACTION * req = (sUG_SOCIAL_ACTION*)pPacket->GetPacketData();
+	sUG_SOCIAL_ACTION* req = (sUG_SOCIAL_ACTION*)pPacket->GetPacketData();
 
 	if (cPlayer->GetCharStateID() != CHARSTATE_STANDING)
 	{
@@ -7025,29 +7025,29 @@ void CClientSession::RecvSocialSkill(CNtlPacket * pPacket)
 	if (pActionTbldat->byAction_Type != ACTION_TYPE_SOCIAL_ACTION)
 		return;
 
- 	CNtlPacket packet(sizeof(sGU_SOCIAL_ACTION));
-	sGU_SOCIAL_ACTION * res = (sGU_SOCIAL_ACTION*)packet.GetPacketData();
+	CNtlPacket packet(sizeof(sGU_SOCIAL_ACTION));
+	sGU_SOCIAL_ACTION* res = (sGU_SOCIAL_ACTION*)packet.GetPacketData();
 	res->wOpCode = GU_SOCIAL_ACTION;
 	res->hSubject = cPlayer->GetID();
 	res->socialActionId = req->socialActionId;
 	packet.SetPacketLen(sizeof(sGU_SOCIAL_ACTION));
 	cPlayer->Broadcast(&packet, cPlayer);
- }
+}
 
- 
+
 
 //-----------------------------------------------------------------//
 //-------------------Skill/Item BUFF Drop--------------------------//
 //-----------------------------------------------------------------//
-void CClientSession::RecvBuffDropReq(CNtlPacket * pPacket)
+void CClientSession::RecvBuffDropReq(CNtlPacket* pPacket)
 {
- 	sUG_BUFF_DROP_REQ * req = (sUG_BUFF_DROP_REQ*)pPacket->GetPacketData();
+	sUG_BUFF_DROP_REQ* req = (sUG_BUFF_DROP_REQ*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CNtlPacket packet(sizeof(sGU_BUFF_DROP_RES));
-	sGU_BUFF_DROP_RES * res = (sGU_BUFF_DROP_RES*)packet.GetPacketData();
+	sGU_BUFF_DROP_RES* res = (sGU_BUFF_DROP_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BUFF_DROP_RES;
 	res->wResultCode = GAME_SUCCESS;
 
@@ -7057,7 +7057,7 @@ void CClientSession::RecvBuffDropReq(CNtlPacket * pPacket)
 		if (buff->GetSourceTblidx() == req->tblidx && buff->GetSourceType() == req->bySourceType)
 		{
 			//anti bug for lp/ep auto recover pot
-			if(buff->GetSourceType() == DBO_OBJECT_SOURCE_ITEM)
+			if (buff->GetSourceType() == DBO_OBJECT_SOURCE_ITEM)
 			{
 				if (buff->GetSystemEffectCode(0) == ACTIVE_LP_AUTO_RECOVER || buff->GetSystemEffectCode(0) == ACTIVE_EP_AUTO_RECOVER)
 				{
@@ -7067,10 +7067,10 @@ void CClientSession::RecvBuffDropReq(CNtlPacket * pPacket)
 					}
 					else
 					{
-						sITEM_TBLDAT * pItemTbldat = (sITEM_TBLDAT*)g_pTableContainer->GetItemTable()->FindData(buff->GetSourceTblidx());
+						sITEM_TBLDAT* pItemTbldat = (sITEM_TBLDAT*)g_pTableContainer->GetItemTable()->FindData(buff->GetSourceTblidx());
 						if (pItemTbldat)
 						{
-							sUSE_ITEM_TBLDAT * pUseItemTbldat = (sUSE_ITEM_TBLDAT*)g_pTableContainer->GetUseItemTable()->FindData(pItemTbldat->Use_Item_Tblidx);
+							sUSE_ITEM_TBLDAT* pUseItemTbldat = (sUSE_ITEM_TBLDAT*)g_pTableContainer->GetUseItemTable()->FindData(pItemTbldat->Use_Item_Tblidx);
 							if (pUseItemTbldat)
 							{
 								bool bIsActive = buff->GetBuffInfo()->bActive;
@@ -7124,7 +7124,7 @@ void CClientSession::RecvBuffDropReq(CNtlPacket * pPacket)
 			}
 			else
 			{
-				if(buff->IsCurseBuff())
+				if (buff->IsCurseBuff())
 					res->wResultCode = GAME_SKILL_NO_BUFF_TO_DROP_FOUND;
 				else
 					cPlayer->GetBuffManager()->RemoveBuff(req->buffIndex, buff->GetBuffType(), CBuff::BUFF_REMOVAL_REASON_BY_ITSELF);
@@ -7133,21 +7133,21 @@ void CClientSession::RecvBuffDropReq(CNtlPacket * pPacket)
 		else res->wResultCode = GAME_SKILL_NO_BUFF_TO_DROP_FOUND;
 	}
 	else res->wResultCode = GAME_SKILL_NO_BUFF_TO_DROP_FOUND;
-	
+
 
 	packet.SetPacketLen(sizeof(sGU_BUFF_DROP_RES));
 	g_pApp->Send(GetHandle(), &packet);
- }
+}
 
 //-----------------------------------------------------------//
 // START HTB SKILL
 //-----------------------------------------------------------//
-void CClientSession::RecvHTBStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvHTBStartReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_HTB_START_REQ * req = (sUG_HTB_START_REQ*)pPacket->GetPacketData();
+	sUG_HTB_START_REQ* req = (sUG_HTB_START_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SKILL_NO_TARGET_APPOINTED;
 
@@ -7155,7 +7155,7 @@ void CClientSession::RecvHTBStartReq(CNtlPacket * pPacket)
 	{
 		if (NTL_HTB_MAX_PC_HAVE_HTB_SKILL <= req->bySkillSlot)
 			resultcode = GAME_FAIL;
-		else if(pTarget->GetObjType() != OBJTYPE_PC && pTarget->GetObjType() != OBJTYPE_MOB)
+		else if (pTarget->GetObjType() != OBJTYPE_PC && pTarget->GetObjType() != OBJTYPE_MOB)
 			resultcode = GAME_SKILL_INVALID_TARGET_APPOINTED;
 		else if (cPlayer->GetCurRPBall() < DBO_HTB_PREREQUISITE_RP_BALL)
 			resultcode = GAME_HTB_NOT_ENOUGH_RP_BALL;
@@ -7222,7 +7222,7 @@ void CClientSession::RecvHTBStartReq(CNtlPacket * pPacket)
 
 
 						CNtlPacket packet(sizeof(sGU_UPDATE_CHAR_STATE));
-						sGU_UPDATE_CHAR_STATE * res = (sGU_UPDATE_CHAR_STATE*)packet.GetPacketData();
+						sGU_UPDATE_CHAR_STATE* res = (sGU_UPDATE_CHAR_STATE*)packet.GetPacketData();
 						res->wOpCode = GU_UPDATE_CHAR_STATE;
 						res->handle = cPlayer->GetID();
 						res->sCharState.sCharStateBase.byStateID = CHARSTATE_HTB;
@@ -7260,8 +7260,8 @@ void CClientSession::RecvHTBStartReq(CNtlPacket * pPacket)
 									pTarget->GetCurLoc().CopyTo(res->sCharState.sCharStateDetail.sCharStateHTB.aHTBSkillResult[i].sSkillResult.vFinalSubjectLoc);
 								}
 
-							//	res->sCharState.sCharStateDetail.sCharStateHTB.byStepCount = 0;
-							//	res->sCharState.sCharStateDetail.sCharStateHTB.byResultCount = 1;
+								//	res->sCharState.sCharStateDetail.sCharStateHTB.byStepCount = 0;
+								//	res->sCharState.sCharStateDetail.sCharStateHTB.byResultCount = 1;
 								res->sCharState.sCharStateDetail.sCharStateHTB.bIsSuccess = false;
 							}
 						}
@@ -7280,7 +7280,7 @@ void CClientSession::RecvHTBStartReq(CNtlPacket * pPacket)
 
 								if (pHtb->GetTbldat()->aHTBAction[i].skillTblidx != INVALID_TBLIDX)
 								{
-									sSKILL_TBLDAT *pSkillTblData = (sSKILL_TBLDAT*)g_pTableContainer->GetSkillTable()->FindData(pHtb->GetTbldat()->aHTBAction[i].skillTblidx);
+									sSKILL_TBLDAT* pSkillTblData = (sSKILL_TBLDAT*)g_pTableContainer->GetSkillTable()->FindData(pHtb->GetTbldat()->aHTBAction[i].skillTblidx);
 									res->sCharState.sCharStateDetail.sCharStateHTB.aHTBSkillResult[i].sSkillResult.effectResult[0].eResultType = DBO_SYSTEM_EFFECT_RESULT_TYPE_DD_DOT;
 
 									if (i == pHtb->GetTbldat()->bySetCount - 1)
@@ -7335,7 +7335,7 @@ void CClientSession::RecvHTBStartReq(CNtlPacket * pPacket)
 
 
 	CNtlPacket packetEnd(sizeof(sGU_HTB_START_RES));
-	sGU_HTB_START_RES * resEnd = (sGU_HTB_START_RES*)packetEnd.GetPacketData();
+	sGU_HTB_START_RES* resEnd = (sGU_HTB_START_RES*)packetEnd.GetPacketData();
 	resEnd->wOpCode = GU_HTB_START_RES;
 	resEnd->wResultCode = resultcode;
 	resEnd->bySkillSlot = req->bySkillSlot;
@@ -7347,12 +7347,12 @@ void CClientSession::RecvHTBStartReq(CNtlPacket * pPacket)
 //-----------------------------------------------------------//
 //
 //-----------------------------------------------------------//
-void CClientSession::RecvHTBRpBallUseReq(CNtlPacket * pPacket)
+void CClientSession::RecvHTBRpBallUseReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_HTB_RP_BALL_USE_REQ * req = (sUG_HTB_RP_BALL_USE_REQ*)pPacket->GetPacketData();
+	sUG_HTB_RP_BALL_USE_REQ* req = (sUG_HTB_RP_BALL_USE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -7360,7 +7360,7 @@ void CClientSession::RecvHTBRpBallUseReq(CNtlPacket * pPacket)
 		resultcode = GAME_HTB_NOT_ENOUGH_RP_BALL;
 
 	CNtlPacket packet(sizeof(sGU_HTB_RP_BALL_USE_RES));
-	sGU_HTB_RP_BALL_USE_RES * res = (sGU_HTB_RP_BALL_USE_RES*)packet.GetPacketData();
+	sGU_HTB_RP_BALL_USE_RES* res = (sGU_HTB_RP_BALL_USE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_HTB_RP_BALL_USE_RES;
 	res->byRpBallCount = req->byRpBallCount;
 	res->wResultCode = resultcode;
@@ -7373,7 +7373,7 @@ void CClientSession::RecvHTBRpBallUseReq(CNtlPacket * pPacket)
 		cPlayer->SetHtbUseBalls(req->byRpBallCount);
 
 		CNtlPacket packet2(sizeof(sGU_HTB_RP_BALL_USED_NFY));
-		sGU_HTB_RP_BALL_USED_NFY * res2 = (sGU_HTB_RP_BALL_USED_NFY*)packet2.GetPacketData();
+		sGU_HTB_RP_BALL_USED_NFY* res2 = (sGU_HTB_RP_BALL_USED_NFY*)packet2.GetPacketData();
 		res2->wOpCode = GU_HTB_RP_BALL_USED_NFY;
 		res2->hSubject = cPlayer->GetID();
 		res2->byRpBallCount = req->byRpBallCount;
@@ -7385,18 +7385,18 @@ void CClientSession::RecvHTBRpBallUseReq(CNtlPacket * pPacket)
 //-----------------------------------------------------------//
 // HTB FORWARD REQ
 //-----------------------------------------------------------//
-void CClientSession::RecvHTBForwardReq(CNtlPacket * pPacket)
+void CClientSession::RecvHTBForwardReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_HTB_FORWARD_REQ * req = (sUG_HTB_FORWARD_REQ*)pPacket->GetPacketData();
+	sUG_HTB_FORWARD_REQ* req = (sUG_HTB_FORWARD_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
-	
+
 	if (cPlayer->GetCharStateID() == CHARSTATE_HTB)
 	{
-		if(cPlayer->GetCurrentHtbSkill() < NTL_HTB_MAX_PC_HAVE_HTB_SKILL)
+		if (cPlayer->GetCurrentHtbSkill() < NTL_HTB_MAX_PC_HAVE_HTB_SKILL)
 		{
 			CHtbSkill* pHtb = cPlayer->GetHtbSkillManager()->GetHtbSkill(cPlayer->GetCurrentHtbSkill());
 			if (pHtb)
@@ -7416,7 +7416,7 @@ void CClientSession::RecvHTBForwardReq(CNtlPacket * pPacket)
 						if (pHtb->GetCurrentStep() == pHtb->GetTbldat()->byStop_Point)
 						{
 							CNtlPacket packet3(sizeof(sGU_HTB_RP_BALL_RESULT_DECIDED_NFY));
-							sGU_HTB_RP_BALL_RESULT_DECIDED_NFY * res3 = (sGU_HTB_RP_BALL_RESULT_DECIDED_NFY*)packet3.GetPacketData();
+							sGU_HTB_RP_BALL_RESULT_DECIDED_NFY* res3 = (sGU_HTB_RP_BALL_RESULT_DECIDED_NFY*)packet3.GetPacketData();
 							res3->wOpCode = GU_HTB_RP_BALL_RESULT_DECIDED_NFY;
 							res3->hAttacker = cPlayer->GetID();
 							res3->hWinner = cPlayer->GetID();
@@ -7449,9 +7449,9 @@ void CClientSession::RecvHTBForwardReq(CNtlPacket * pPacket)
 							if (res3->hWinner != cPlayer->GetID())
 							{
 								pHtb->SetHitCount(pHtb->GetTbldat()->byStop_Point);
-							
+
 								CNtlPacket packet2(sizeof(sGU_HTB_LAST_STEP_CHANGED_NFY));
-								sGU_HTB_LAST_STEP_CHANGED_NFY * res2 = (sGU_HTB_LAST_STEP_CHANGED_NFY*)packet2.GetPacketData();
+								sGU_HTB_LAST_STEP_CHANGED_NFY* res2 = (sGU_HTB_LAST_STEP_CHANGED_NFY*)packet2.GetPacketData();
 								res2->wOpCode = GU_HTB_LAST_STEP_CHANGED_NFY;
 								res2->byLastStep = pHtb->GetTbldat()->byStop_Point;
 								res2->hSubject = cPlayer->GetID();
@@ -7515,7 +7515,7 @@ void CClientSession::RecvHTBForwardReq(CNtlPacket * pPacket)
 								cPlayer->SetCurrentHtbSkill(INVALID_BYTE);
 
 								CNtlPacket packet2(sizeof(sGU_HTB_LAST_STEP_CHANGED_NFY));
-								sGU_HTB_LAST_STEP_CHANGED_NFY * res2 = (sGU_HTB_LAST_STEP_CHANGED_NFY*)packet2.GetPacketData();
+								sGU_HTB_LAST_STEP_CHANGED_NFY* res2 = (sGU_HTB_LAST_STEP_CHANGED_NFY*)packet2.GetPacketData();
 								res2->wOpCode = GU_HTB_LAST_STEP_CHANGED_NFY;
 								res2->byLastStep = INVALID_BYTE;
 								res2->hSubject = pHtb->GetTarget();
@@ -7531,7 +7531,7 @@ void CClientSession::RecvHTBForwardReq(CNtlPacket * pPacket)
 						pHtb->SetHitCount(0);
 						pHtb->SetTarget(INVALID_HOBJECT);
 
-						if(pTarget)
+						if (pTarget)
 							pTarget->SetHtbSkillCaster(cPlayer->GetID());
 
 						cPlayer->SetCurrentHtbSkill(INVALID_BYTE);
@@ -7539,7 +7539,7 @@ void CClientSession::RecvHTBForwardReq(CNtlPacket * pPacket)
 						cPlayer->SendCharStateStanding();
 
 						CNtlPacket packet2(sizeof(sGU_HTB_LAST_STEP_CHANGED_NFY));
-						sGU_HTB_LAST_STEP_CHANGED_NFY * res2 = (sGU_HTB_LAST_STEP_CHANGED_NFY*)packet2.GetPacketData();
+						sGU_HTB_LAST_STEP_CHANGED_NFY* res2 = (sGU_HTB_LAST_STEP_CHANGED_NFY*)packet2.GetPacketData();
 						res2->wOpCode = GU_HTB_LAST_STEP_CHANGED_NFY;
 						res2->byLastStep = 1;
 						res2->hSubject = cPlayer->GetID();
@@ -7554,7 +7554,7 @@ void CClientSession::RecvHTBForwardReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packetEnd(sizeof(sGU_HTB_FORWARD_RES));
-	sGU_HTB_FORWARD_RES * resEnd = (sGU_HTB_FORWARD_RES*)packetEnd.GetPacketData();
+	sGU_HTB_FORWARD_RES* resEnd = (sGU_HTB_FORWARD_RES*)packetEnd.GetPacketData();
 	resEnd->wOpCode = GU_HTB_FORWARD_RES;
 	resEnd->wResultCode = wResultcode;
 	packetEnd.SetPacketLen(sizeof(sGU_HTB_FORWARD_RES));
@@ -7564,14 +7564,14 @@ void CClientSession::RecvHTBForwardReq(CNtlPacket * pPacket)
 //-----------------------------------------------------------//
 //	START/STOP CHARGING RP
 //-----------------------------------------------------------//
-void CClientSession::RecvRpCharge(CNtlPacket * pPacket)
+void CClientSession::RecvRpCharge(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_CHARGE * req = (sUG_CHAR_CHARGE*)pPacket->GetPacketData();
-	
-	if(req->bCharge) //Start charging
+	sUG_CHAR_CHARGE* req = (sUG_CHAR_CHARGE*)pPacket->GetPacketData();
+
+	if (req->bCharge) //Start charging
 	{
 		// check charstate-id
 		if (cPlayer->GetStateManager()->CanCharStateTransition(CHARSTATE_CHARGING) == false)
@@ -7609,7 +7609,7 @@ void CClientSession::RecvRpCharge(CNtlPacket * pPacket)
 			ERR_LOG(LOG_USER, "Player %u try to use charge skill but dont have that skill !!!", cPlayer->GetCharID());
 			return;
 		}
-		
+
 		cPlayer->GetStateManager()->ChangeCharState(CHARSTATE_CHARGING, NULL, true);
 	}
 	else //Stop charging
@@ -7621,12 +7621,12 @@ void CClientSession::RecvRpCharge(CNtlPacket * pPacket)
 //-----------------------------------------------------------//
 //	START/STOP BLOCKING
 //-----------------------------------------------------------//
-void CClientSession::RecvBlockMode(CNtlPacket * pPacket)
+void CClientSession::RecvBlockMode(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_BLOCK_MODE * req = (sUG_CHAR_BLOCK_MODE*)pPacket->GetPacketData();
+	sUG_CHAR_BLOCK_MODE* req = (sUG_CHAR_BLOCK_MODE*)pPacket->GetPacketData();
 
 	if (req->bIsOn)
 	{
@@ -7648,7 +7648,7 @@ void CClientSession::RecvBlockMode(CNtlPacket * pPacket)
 		}
 
 		BYTE byAspectState = cPlayer->GetAspectStateId();
-		if(byAspectState == ASPECTSTATE_SPINNING_ATTACK || byAspectState == ASPECTSTATE_VEHICLE || byAspectState == ASPECTSTATE_ROLLING_ATTACK)
+		if (byAspectState == ASPECTSTATE_SPINNING_ATTACK || byAspectState == ASPECTSTATE_VEHICLE || byAspectState == ASPECTSTATE_ROLLING_ATTACK)
 		{
 			ERR_LOG(LOG_USER, "Player %u tried guard in wrong aspect state %u", cPlayer->GetCharID(), byAspectState);
 			return;
@@ -7668,7 +7668,7 @@ void CClientSession::RecvBlockMode(CNtlPacket * pPacket)
 	}
 	else
 	{
-		if(cPlayer->GetCharStateID() == CHARSTATE_GUARD)
+		if (cPlayer->GetCharStateID() == CHARSTATE_GUARD)
 			cPlayer->SendCharStateStanding();
 	}
 }
@@ -7676,9 +7676,9 @@ void CClientSession::RecvBlockMode(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		RECEIVE SKILL TARGETS
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvSkillTargetList(CNtlPacket *pPacket)
+void CClientSession::RecvSkillTargetList(CNtlPacket* pPacket)
 {
-	sUG_SKILL_TARGET_LIST * req = (sUG_SKILL_TARGET_LIST*)pPacket->GetPacketData();
+	sUG_SKILL_TARGET_LIST* req = (sUG_SKILL_TARGET_LIST*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -7711,15 +7711,15 @@ void CClientSession::RecvSkillTargetList(CNtlPacket *pPacket)
 //-----------------------------------------------------------//
 // GMT UPDATES
 //-----------------------------------------------------------//
-void CClientSession::RecvGmtUpdateReq(CNtlPacket * pPacket)
+void CClientSession::RecvGmtUpdateReq(CNtlPacket* pPacket)
 {
-	sUG_GMT_UPDATE_REQ * req = (sUG_GMT_UPDATE_REQ*)pPacket->GetPacketData();
-	
+	sUG_GMT_UPDATE_REQ* req = (sUG_GMT_UPDATE_REQ*)pPacket->GetPacketData();
+
 	CNtlPacket packet(sizeof(sGU_GMT_UPDATE_RES));
-	sGU_GMT_UPDATE_RES * res = (sGU_GMT_UPDATE_RES*)packet.GetPacketData();
+	sGU_GMT_UPDATE_RES* res = (sGU_GMT_UPDATE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_GMT_UPDATE_RES;
 	res->wResultCode = GAME_SUCCESS;
-//	res->sNext = req->sNext;
+	//	res->sNext = req->sNext;
 	packet.SetPacketLen(sizeof(sGU_GMT_UPDATE_RES));
 	g_pApp->Send(GetHandle(), &packet);
 }
@@ -7727,13 +7727,13 @@ void CClientSession::RecvGmtUpdateReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		ADD WAR FOG INFO (MAP)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvWarFogUpdateReq(CNtlPacket * pPacket)
+void CClientSession::RecvWarFogUpdateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
-	sUG_WAR_FOG_UPDATE_REQ * req = (sUG_WAR_FOG_UPDATE_REQ*)pPacket->GetPacketData();
+	sUG_WAR_FOG_UPDATE_REQ* req = (sUG_WAR_FOG_UPDATE_REQ*)pPacket->GetPacketData();
 
 	WORD ResultCode = GAME_SUCCESS;
 	TBLIDX contentTblidx = INVALID_TBLIDX;
@@ -7749,8 +7749,8 @@ void CClientSession::RecvWarFogUpdateReq(CNtlPacket * pPacket)
 			ResultCode = GAME_TARGET_TOO_FAR;
 		else if (cPlayer->CheckWarFog(obj->GetContent()))
 			ResultCode = GAME_WARFOG_ARLEADY_ADDED;
-		
-		else if(cPlayer->AddWarFogFlag(obj->GetContent()) == false) //add warfog and check if success
+
+		else if (cPlayer->AddWarFogFlag(obj->GetContent()) == false) //add warfog and check if success
 			ResultCode = GAME_FAIL;
 		else
 		{
@@ -7761,7 +7761,7 @@ void CClientSession::RecvWarFogUpdateReq(CNtlPacket * pPacket)
 	if (ResultCode == GAME_SUCCESS)
 	{
 		CNtlPacket packetQry(sizeof(sGQ_WAR_FOG_UPDATE_REQ));
-		sGQ_WAR_FOG_UPDATE_REQ * resQry = (sGQ_WAR_FOG_UPDATE_REQ*)packetQry.GetPacketData();
+		sGQ_WAR_FOG_UPDATE_REQ* resQry = (sGQ_WAR_FOG_UPDATE_REQ*)packetQry.GetPacketData();
 		resQry->wOpCode = GQ_WAR_FOG_UPDATE_REQ;
 		resQry->charID = cPlayer->GetCharID();
 		resQry->contentsTblidx = contentTblidx;
@@ -7771,7 +7771,7 @@ void CClientSession::RecvWarFogUpdateReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_WAR_FOG_UPDATE_RES));
-	sGU_WAR_FOG_UPDATE_RES * res = (sGU_WAR_FOG_UPDATE_RES*)packet.GetPacketData();
+	sGU_WAR_FOG_UPDATE_RES* res = (sGU_WAR_FOG_UPDATE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_WAR_FOG_UPDATE_RES;
 	res->handle = req->hObject;
 	res->wResultCode = ResultCode;
@@ -7779,14 +7779,14 @@ void CClientSession::RecvWarFogUpdateReq(CNtlPacket * pPacket)
 	app->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvCharDashKeyBoard(CNtlPacket * pPacket)
+void CClientSession::RecvCharDashKeyBoard(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_DASH_KEYBOARD * req = (sUG_CHAR_DASH_KEYBOARD*)pPacket->GetPacketData();
+	sUG_CHAR_DASH_KEYBOARD* req = (sUG_CHAR_DASH_KEYBOARD*)pPacket->GetPacketData();
 
 	if (cPlayer->GetCurEP() == 0)
 	{
@@ -7864,7 +7864,7 @@ void CClientSession::RecvCharDashKeyBoard(CNtlPacket * pPacket)
 
 		CNtlVector sDir;
 		NtlDirectionDecompress(&req->vCurDir, &sDir.x, &sDir.y, &sDir.z);
-		if(sDir.IsInvalid() == false) // check if valid direction
+		if (sDir.IsInvalid() == false) // check if valid direction
 			cPlayer->SetCurDir(sDir);
 
 		CNtlVector destLoc(vLoc);
@@ -7900,7 +7900,7 @@ void CClientSession::RecvCharDashKeyBoard(CNtlPacket * pPacket)
 
 		//set dash state
 		CNtlPacket packet(sizeof(sGU_UPDATE_CHAR_STATE));
-		sGU_UPDATE_CHAR_STATE * res = (sGU_UPDATE_CHAR_STATE *)packet.GetPacketData();
+		sGU_UPDATE_CHAR_STATE* res = (sGU_UPDATE_CHAR_STATE*)packet.GetPacketData();
 		res->wOpCode = GU_UPDATE_CHAR_STATE;
 		res->handle = cPlayer->GetID();
 		res->sCharState.sCharStateBase.byStateID = CHARSTATE_DASH_PASSIVE;
@@ -7923,12 +7923,12 @@ void CClientSession::RecvCharDashKeyBoard(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvCharDashMouse(CNtlPacket * pPacket)
+void CClientSession::RecvCharDashMouse(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_DASH_MOUSE * req = (sUG_CHAR_DASH_MOUSE*)pPacket->GetPacketData();
+	sUG_CHAR_DASH_MOUSE* req = (sUG_CHAR_DASH_MOUSE*)pPacket->GetPacketData();
 
 	if (cPlayer->GetCurEP() == 0)
 	{
@@ -8031,7 +8031,7 @@ void CClientSession::RecvCharDashMouse(CNtlPacket * pPacket)
 		}
 
 		CNtlPacket packet(sizeof(sGU_UPDATE_CHAR_STATE));
-		sGU_UPDATE_CHAR_STATE * res = (sGU_UPDATE_CHAR_STATE *)packet.GetPacketData();
+		sGU_UPDATE_CHAR_STATE* res = (sGU_UPDATE_CHAR_STATE*)packet.GetPacketData();
 		res->wOpCode = GU_UPDATE_CHAR_STATE;
 		res->handle = cPlayer->GetID();
 		res->sCharState.sCharStateBase.byStateID = CHARSTATE_DASH_PASSIVE;
@@ -8051,14 +8051,14 @@ void CClientSession::RecvCharDashMouse(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvCharDashAir(CNtlPacket * pPacket)
+void CClientSession::RecvCharDashAir(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_AIR_DASH * req = (sUG_CHAR_AIR_DASH*)pPacket->GetPacketData();
+	sUG_CHAR_AIR_DASH* req = (sUG_CHAR_AIR_DASH*)pPacket->GetPacketData();
 
 	if (req->byMoveDirection == NTL_MOVE_F || req->byMoveDirection == NTL_MOVE_F_TURN_L || req->byMoveDirection == NTL_MOVE_F_TURN_R)
 	{
@@ -8098,7 +8098,7 @@ void CClientSession::RecvCharAirAccel(CNtlPacket* pPacket)
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	CGameServer * app = (CGameServer*)g_pApp;
+	CGameServer* app = (CGameServer*)g_pApp;
 
 	sUG_CHAR_AIR_ACCEL* req = (sUG_CHAR_AIR_ACCEL*)pPacket->GetPacketData();
 
@@ -8143,25 +8143,25 @@ void CClientSession::RecvCharAirAccel(CNtlPacket* pPacket)
 //--------------------------------------------------------------------------------------//
 //	NetPY Shop start
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvNetPyStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvNetPyStartReq(CNtlPacket* pPacket)
 {
 }
 //--------------------------------------------------------------------------------------//
 //	NetPY Shop end
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvNetPyEndReq(CNtlPacket * pPacket)
+void CClientSession::RecvNetPyEndReq(CNtlPacket* pPacket)
 {
 }
 
 //--------------------------------------------------------------------------------------//
 //	World map status // packet received when open world map (m button)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvWorldMapStatus(CNtlPacket * pPacket)
+void CClientSession::RecvWorldMapStatus(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_WORLD_MAP_STATUS * req = (sUG_WORLD_MAP_STATUS*)pPacket->GetPacketData();
+	sUG_WORLD_MAP_STATUS* req = (sUG_WORLD_MAP_STATUS*)pPacket->GetPacketData();
 
 	//printf("bIsWorldMapOpen %i, worldMapZoneId %u \n", req->bIsWorldMapOpen, req->worldMapZoneId);
 
@@ -8173,14 +8173,14 @@ void CClientSession::RecvWorldMapStatus(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	move cash item to inventory
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCashItemMoveReq(CNtlPacket * pPacket)
+void CClientSession::RecvCashItemMoveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CASHITEM_MOVE_REQ * req = (sUG_CASHITEM_MOVE_REQ*)pPacket->GetPacketData();
+	sUG_CASHITEM_MOVE_REQ* req = (sUG_CASHITEM_MOVE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -8222,7 +8222,7 @@ void CClientSession::RecvCashItemMoveReq(CNtlPacket * pPacket)
 					resQry->sData.byRank = pItemTbldat->byRank;
 
 					// If item has no duration, make it account bound.
-					if(resQry->sData.nUseStartTime == 0)
+					if (resQry->sData.nUseStartTime == 0)
 						resQry->sData.byRestrictState = ITEM_RESTRICT_STATE_TYPE_ACCOUNT_GET;
 
 					resQry->sData.byStack = brief->byStackCount;
@@ -8253,14 +8253,14 @@ void CClientSession::RecvCashItemMoveReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	use cash item
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCashItemUseReq(CNtlPacket * pPacket)
+void CClientSession::RecvCashItemUseReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CASHITEM_USE_REQ * req = (sUG_CASHITEM_USE_REQ*)pPacket->GetPacketData();
+	sUG_CASHITEM_USE_REQ* req = (sUG_CASHITEM_USE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -8273,7 +8273,7 @@ void CClientSession::RecvCashItemUseReq(CNtlPacket * pPacket)
 			sITEM_TBLDAT* pItemTbldat = (sITEM_TBLDAT*)g_pTableContainer->GetItemTable()->FindData(hlsitem->itemTblidx);
 			if (pItemTbldat)
 			{
-			//	printf("pItemTbldat->tblidx %u, pItemTbldat->byItem_Type %u, pItemTbldat->byItemGroup %u, pItemTbldat->byCommonPointType %u \n", pItemTbldat->tblidx, pItemTbldat->byItem_Type, pItemTbldat->byItemGroup, pItemTbldat->byCommonPointType);
+				//	printf("pItemTbldat->tblidx %u, pItemTbldat->byItem_Type %u, pItemTbldat->byItemGroup %u, pItemTbldat->byCommonPointType %u \n", pItemTbldat->tblidx, pItemTbldat->byItem_Type, pItemTbldat->byItemGroup, pItemTbldat->byCommonPointType);
 				if (pItemTbldat->byCommonPointType == 2) //update wagu coin for cash shop
 				{
 					if (pItemTbldat->byItem_Type == ITEM_TYPE_WAREHOUSE)
@@ -8350,7 +8350,7 @@ void CClientSession::RecvCashItemUseReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	cashitem HLS Shop start
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCashItemHlsStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvCashItemHlsStartReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -8366,7 +8366,7 @@ void CClientSession::RecvCashItemHlsStartReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	cashitem HLS Shop end
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCashItemHlsEndReq(CNtlPacket * pPacket)
+void CClientSession::RecvCashItemHlsEndReq(CNtlPacket* pPacket)
 {
 	CNtlPacket packet(sizeof(sGU_CASHITEM_HLSHOP_END_RES));
 	sGU_CASHITEM_HLSHOP_END_RES* res = (sGU_CASHITEM_HLSHOP_END_RES*)packet.GetPacketData();
@@ -8379,7 +8379,7 @@ void CClientSession::RecvCashItemHlsEndReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	cashitem HLS Shop refresh
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCashItemHlsRefreshReq(CNtlPacket * pPacket)
+void CClientSession::RecvCashItemHlsRefreshReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -8417,14 +8417,14 @@ void CClientSession::RecvCashItemHlsRefreshReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	cashitem buy
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCashItemBuyReq(CNtlPacket * pPacket)
+void CClientSession::RecvCashItemBuyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CASHITEM_BUY_REQ * req = (sUG_CASHITEM_BUY_REQ*)pPacket->GetPacketData();
+	sUG_CASHITEM_BUY_REQ* req = (sUG_CASHITEM_BUY_REQ*)pPacket->GetPacketData();
 
 	sHLS_ITEM_TBLDAT* hlsitem = (sHLS_ITEM_TBLDAT*)g_pTableContainer->GetHLSItemTable()->FindData(req->dwIdxHlsTable);
 
@@ -8457,7 +8457,7 @@ void CClientSession::RecvCashItemBuyReq(CNtlPacket * pPacket)
 	else resultcode = GAME_CASHITEM_NOT_FOUND;
 
 	CNtlPacket packet(sizeof(sGU_CASHITEM_BUY_RES));
-	sGU_CASHITEM_BUY_RES * res = (sGU_CASHITEM_BUY_RES *)packet.GetPacketData();
+	sGU_CASHITEM_BUY_RES* res = (sGU_CASHITEM_BUY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_CASHITEM_BUY_RES;
 	res->dwRemainAmount = cPlayer->GetItemShopCash();
 	res->wResultCode = resultcode;
@@ -8467,14 +8467,14 @@ void CClientSession::RecvCashItemBuyReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	cashitem SEND GIFT
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCashItemSendGiftReq(CNtlPacket * pPacket)
+void CClientSession::RecvCashItemSendGiftReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CASHITEM_SEND_GIFT_REQ * req = (sUG_CASHITEM_SEND_GIFT_REQ*)pPacket->GetPacketData();
+	sUG_CASHITEM_SEND_GIFT_REQ* req = (sUG_CASHITEM_SEND_GIFT_REQ*)pPacket->GetPacketData();
 
 	sHLS_ITEM_TBLDAT* hlsitem = (sHLS_ITEM_TBLDAT*)g_pTableContainer->GetHLSItemTable()->FindData(req->dwIdxHlsTable);
 
@@ -8526,7 +8526,7 @@ void CClientSession::RecvCashItemSendGiftReq(CNtlPacket * pPacket)
 	Ntl_CleanUpHeapString(chname);
 
 	CNtlPacket packet2(sizeof(sGU_CASHITEM_SEND_GIFT_RES));
-	sGU_CASHITEM_SEND_GIFT_RES * res2 = (sGU_CASHITEM_SEND_GIFT_RES *)packet2.GetPacketData();
+	sGU_CASHITEM_SEND_GIFT_RES* res2 = (sGU_CASHITEM_SEND_GIFT_RES*)packet2.GetPacketData();
 	res2->wOpCode = GU_CASHITEM_SEND_GIFT_RES;
 	res2->dwRemainAmount = cPlayer->GetItemShopCash();
 	res2->wResultCode = resultcode;
@@ -8537,17 +8537,17 @@ void CClientSession::RecvCashItemSendGiftReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		BANK START
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBankStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvBankStartReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_BANK_START_REQ * req = (sUG_BANK_START_REQ*)pPacket->GetPacketData();
+	sUG_BANK_START_REQ* req = (sUG_BANK_START_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_BANK_START_RES));
-	sGU_BANK_START_RES * res = (sGU_BANK_START_RES *)packet.GetPacketData();
+	sGU_BANK_START_RES* res = (sGU_BANK_START_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BANK_START_RES;
-	res->wResultCode  = GAME_FAIL;
+	res->wResultCode = GAME_FAIL;
 	res->handle = req->handle;
 
 	if (req->handle != INVALID_HOBJECT)
@@ -8560,12 +8560,12 @@ void CClientSession::RecvBankStartReq(CNtlPacket * pPacket)
 		else if (pNpc->GetTbldat()->byJob != NPC_JOB_BANKER)	//check if npc is a banke
 			res->wResultCode = GAME_TARGET_HAS_DIFFERENT_JOB;
 	}
-	else if(cPlayer->CanOpenRemoteBank() == false)
+	else if (cPlayer->CanOpenRemoteBank() == false)
 		res->wResultCode = GAME_FAIL;
 
 	if (cPlayer->IsUsingBank() == true)	//check if has the bank open
 		res->wResultCode = GAME_FAIL;
-	else if(cPlayer->IsBankLoaded() == false)	//bank is loaded before this packet is received
+	else if (cPlayer->IsBankLoaded() == false)	//bank is loaded before this packet is received
 		res->wResultCode = GAME_FAIL;
 	else
 	{
@@ -8573,23 +8573,23 @@ void CClientSession::RecvBankStartReq(CNtlPacket * pPacket)
 		cPlayer->SetUsingBank(true);
 	}
 
-	packet.SetPacketLen( sizeof(sGU_BANK_START_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_BANK_START_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
 }
 
 //--------------------------------------------------------------------------------------//
 //		BANK END
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBankEndReq(CNtlPacket * pPacket)
+void CClientSession::RecvBankEndReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CNtlPacket packet(sizeof(sGU_BANK_END_RES));
-	sGU_BANK_END_RES * res = (sGU_BANK_END_RES *)packet.GetPacketData();
+	sGU_BANK_END_RES* res = (sGU_BANK_END_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BANK_END_RES;
-	res->wResultCode  = GAME_FAIL;
+	res->wResultCode = GAME_FAIL;
 
 	if (cPlayer->IsUsingBank())
 	{
@@ -8597,21 +8597,21 @@ void CClientSession::RecvBankEndReq(CNtlPacket * pPacket)
 		cPlayer->SetUsingBank(false);
 	}
 
-	packet.SetPacketLen( sizeof(sGU_BANK_END_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_BANK_END_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		BANK LOAD
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBankLoadReq(CNtlPacket * pPacket)
+void CClientSession::RecvBankLoadReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_BANK_LOAD_REQ * req = (sUG_BANK_LOAD_REQ*)pPacket->GetPacketData();
+	sUG_BANK_LOAD_REQ* req = (sUG_BANK_LOAD_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
 
@@ -8621,7 +8621,7 @@ void CClientSession::RecvBankLoadReq(CNtlPacket * pPacket)
 	if (cPlayer->IsBankLoaded() || wResultcode != GAME_SUCCESS)
 	{
 		CNtlPacket packet2(sizeof(sGU_BANK_LOAD_RES));
-		sGU_BANK_LOAD_RES * res2 = (sGU_BANK_LOAD_RES *)packet2.GetPacketData();
+		sGU_BANK_LOAD_RES* res2 = (sGU_BANK_LOAD_RES*)packet2.GetPacketData();
 		res2->wOpCode = GU_BANK_LOAD_RES;
 		res2->handle = req->handle;
 		res2->wResultCode = wResultcode;
@@ -8631,7 +8631,7 @@ void CClientSession::RecvBankLoadReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGQ_LOAD_PC_BANK_DATA_REQ));
-		sGQ_LOAD_PC_BANK_DATA_REQ * res = (sGQ_LOAD_PC_BANK_DATA_REQ *)packet.GetPacketData();
+		sGQ_LOAD_PC_BANK_DATA_REQ* res = (sGQ_LOAD_PC_BANK_DATA_REQ*)packet.GetPacketData();
 		res->wOpCode = GQ_LOAD_PC_BANK_DATA_REQ;
 		res->accountId = cPlayer->GetAccountID();
 		res->charId = cPlayer->GetCharID();
@@ -8645,12 +8645,12 @@ void CClientSession::RecvBankLoadReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		BANK BUY
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBankBuyReq(CNtlPacket * pPacket)
+void CClientSession::RecvBankBuyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_BANK_BUY_REQ * req = (sUG_BANK_BUY_REQ*)pPacket->GetPacketData();
+	sUG_BANK_BUY_REQ* req = (sUG_BANK_BUY_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
@@ -8658,7 +8658,7 @@ void CClientSession::RecvBankBuyReq(CNtlPacket * pPacket)
 		return;
 
 	WORD wResultcode = GAME_SUCCESS;
-	
+
 
 	CNpc* pNpc = g_pObjectManager->GetNpc(req->hNpchandle);
 	sMERCHANT_TBLDAT* pMerchantTbldat = NULL;
@@ -8677,16 +8677,16 @@ void CClientSession::RecvBankBuyReq(CNtlPacket * pPacket)
 	else if (cPlayer->IsBankLoaded() == false)	//check if has the bank loaded
 		wResultcode = GAME_FAIL;
 
-	else if(cPlayer->GetPlayerItemContainer()->GetItem(CONTAINER_TYPE_BANKSLOT, req->byPos) != NULL)	//check if already has bank
+	else if (cPlayer->GetPlayerItemContainer()->GetItem(CONTAINER_TYPE_BANKSLOT, req->byPos) != NULL)	//check if already has bank
 		wResultcode = GAME_BANK_ALREADY_EXIST;
-	else if(cPlayer->GetPlayerItemContainer()->IsInventoryReserved(CONTAINER_TYPE_BANKSLOT, req->byPos))
+	else if (cPlayer->GetPlayerItemContainer()->IsInventoryReserved(CONTAINER_TYPE_BANKSLOT, req->byPos))
 		wResultcode = GAME_BANK_ALREADY_EXIST;
 
 	else
 	{
 		pMerchantTbldat = (sMERCHANT_TBLDAT*)g_pTableContainer->GetMerchantTable()->FindData(pNpc->GetMerchant(req->byMerchantTab));
 
-		if(pMerchantTbldat == NULL)
+		if (pMerchantTbldat == NULL)
 			wResultcode = GAME_COMMON_CAN_NOT_FIND_TABLE_DATA;
 		else if (pMerchantTbldat->bySell_Type != MERCHANT_SELL_TYPE_BANK)
 			wResultcode = GAME_FAIL;
@@ -8700,14 +8700,14 @@ void CClientSession::RecvBankBuyReq(CNtlPacket * pPacket)
 				wResultcode = GAME_ZENNY_NOT_ENOUGH;
 		}
 	}
-	
+
 	if (wResultcode == GAME_SUCCESS)
 	{
 		//reseve dest place/pos to avoid item getting there while moving. Only need to do this when moving to a free slot
 		cPlayer->GetPlayerItemContainer()->AddReservedInventory(CONTAINER_TYPE_BANKSLOT, req->byPos);
 
 		CNtlPacket packet2(sizeof(sGQ_BANK_BUY_REQ));
-		sGQ_BANK_BUY_REQ * res2 = (sGQ_BANK_BUY_REQ *)packet2.GetPacketData();
+		sGQ_BANK_BUY_REQ* res2 = (sGQ_BANK_BUY_REQ*)packet2.GetPacketData();
 		res2->wOpCode = GQ_BANK_BUY_REQ;
 		res2->handle = cPlayer->GetID();
 		res2->npchandle = req->hNpchandle;
@@ -8734,7 +8734,7 @@ void CClientSession::RecvBankBuyReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_BANK_BUY_RES));
-		sGU_BANK_BUY_RES * res = (sGU_BANK_BUY_RES *)packet.GetPacketData();
+		sGU_BANK_BUY_RES* res = (sGU_BANK_BUY_RES*)packet.GetPacketData();
 		res->wOpCode = GU_BANK_BUY_RES;
 		res->hNpchandle = req->hNpchandle;
 		res->wResultCode = wResultcode;
@@ -8746,28 +8746,28 @@ void CClientSession::RecvBankBuyReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		BANK MONEY
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBankZeniReq(CNtlPacket * pPacket)
+void CClientSession::RecvBankZeniReq(CNtlPacket* pPacket)
 {
 	WORD result = GAME_FAIL;
-	sUG_BANK_ZENNY_REQ * req = (sUG_BANK_ZENNY_REQ*)pPacket->GetPacketData();
+	sUG_BANK_ZENNY_REQ* req = (sUG_BANK_ZENNY_REQ*)pPacket->GetPacketData();
 
 
 }
 //--------------------------------------------------------------------------------------//
 //		BANK MOVE ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBankMoveReq(CNtlPacket * pPacket)
+void CClientSession::RecvBankMoveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_BANK_MOVE_REQ * req = (sUG_BANK_MOVE_REQ*)pPacket->GetPacketData();
+	sUG_BANK_MOVE_REQ* req = (sUG_BANK_MOVE_REQ*)pPacket->GetPacketData();
 	WORD item_move_res = GAME_SUCCESS;
 
 	CNtlPacket pQry(sizeof(sGQ_BANK_MOVE_REQ));
-	sGQ_BANK_MOVE_REQ * rQry = (sGQ_BANK_MOVE_REQ *)pQry.GetPacketData();
+	sGQ_BANK_MOVE_REQ* rQry = (sGQ_BANK_MOVE_REQ*)pQry.GetPacketData();
 	rQry->wOpCode = GQ_BANK_MOVE_REQ;
 	rQry->hNpcHandle = req->handle;
 	rQry->handle = cPlayer->GetID();
@@ -8953,7 +8953,7 @@ void CClientSession::RecvBankMoveReq(CNtlPacket * pPacket)
 					src_item->SetRestrictState(rQry->bySrcRestrictState);
 
 					CNtlPacket packetItemUpdate(sizeof(sGU_ITEM_UPDATE));
-					sGU_ITEM_UPDATE * resIU = (sGU_ITEM_UPDATE *)packetItemUpdate.GetPacketData();
+					sGU_ITEM_UPDATE* resIU = (sGU_ITEM_UPDATE*)packetItemUpdate.GetPacketData();
 					resIU->wOpCode = GU_ITEM_UPDATE;
 					resIU->handle = src_item->GetID();
 					resIU->sItemData = src_item->GetItemData();
@@ -9002,7 +9002,7 @@ void CClientSession::RecvBankMoveReq(CNtlPacket * pPacket)
 
 END:
 	CNtlPacket packet(sizeof(sGU_BANK_MOVE_RES));
-	sGU_BANK_MOVE_RES * res = (sGU_BANK_MOVE_RES *)packet.GetPacketData();
+	sGU_BANK_MOVE_RES* res = (sGU_BANK_MOVE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BANK_MOVE_RES;
 	res->handle = req->handle;
 	res->bySrcPlace = req->bySrcPlace;
@@ -9017,18 +9017,18 @@ END:
 //--------------------------------------------------------------------------------------//
 //		BANK STACK ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBankStackReq(CNtlPacket * pPacket)
+void CClientSession::RecvBankStackReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_BANK_MOVE_STACK_REQ * req = (sUG_BANK_MOVE_STACK_REQ*)pPacket->GetPacketData();
+	sUG_BANK_MOVE_STACK_REQ* req = (sUG_BANK_MOVE_STACK_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGQ_BANK_MOVE_STACK_REQ));
-	sGQ_BANK_MOVE_STACK_REQ * res = (sGQ_BANK_MOVE_STACK_REQ *)packet.GetPacketData();
+	sGQ_BANK_MOVE_STACK_REQ* res = (sGQ_BANK_MOVE_STACK_REQ*)packet.GetPacketData();
 	res->wOpCode = GQ_BANK_MOVE_STACK_REQ;
 	res->handle = cPlayer->GetID();
 	res->hNpcHandle = req->handle;
@@ -9066,7 +9066,7 @@ void CClientSession::RecvBankStackReq(CNtlPacket * pPacket)
 		goto END;
 	}
 
-	if ( (!IsInvenContainer(req->bySrcPlace) && !IsBankContainer(req->byDestPlace)) //only allow to stack items inside inventory<->bank with this packet
+	if ((!IsInvenContainer(req->bySrcPlace) && !IsBankContainer(req->byDestPlace)) //only allow to stack items inside inventory<->bank with this packet
 		&& (!IsBankContainer(req->bySrcPlace) && !IsInvenContainer(req->byDestPlace))
 		)
 	{
@@ -9156,7 +9156,7 @@ void CClientSession::RecvBankStackReq(CNtlPacket * pPacket)
 	{
 	END:
 		CNtlPacket packetEnd(sizeof(sGU_BANK_MOVE_STACK_RES));
-		sGU_BANK_MOVE_STACK_RES * resEnd = (sGU_BANK_MOVE_STACK_RES *)packetEnd.GetPacketData();
+		sGU_BANK_MOVE_STACK_RES* resEnd = (sGU_BANK_MOVE_STACK_RES*)packetEnd.GetPacketData();
 		resEnd->wOpCode = GU_BANK_MOVE_STACK_RES;
 		resEnd->wResultCode = resultcode;
 		g_pApp->Send(GetHandle(), &packetEnd);
@@ -9166,12 +9166,12 @@ void CClientSession::RecvBankStackReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		BANK DELETE ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBankDeleteReq(CNtlPacket * pPacket)
+void CClientSession::RecvBankDeleteReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_BANK_ITEM_DELETE_REQ * req = (sUG_BANK_ITEM_DELETE_REQ*)pPacket->GetPacketData();
+	sUG_BANK_ITEM_DELETE_REQ* req = (sUG_BANK_ITEM_DELETE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -9193,13 +9193,13 @@ void CClientSession::RecvBankDeleteReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_BANK_ITEM_DELETE_RES));
-	sGU_BANK_ITEM_DELETE_RES * res = (sGU_BANK_ITEM_DELETE_RES *)packet.GetPacketData();
+	sGU_BANK_ITEM_DELETE_RES* res = (sGU_BANK_ITEM_DELETE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BANK_ITEM_DELETE_RES;
 	res->wResultCode = resultcode;
-	packet.SetPacketLen( sizeof(sGU_BANK_ITEM_DELETE_RES) );
-	g_pApp->Send(GetHandle() , &packet );
+	packet.SetPacketLen(sizeof(sGU_BANK_ITEM_DELETE_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
-	if(resultcode == GAME_SUCCESS)
+	if (resultcode == GAME_SUCCESS)
 		item->SetCount(0, false, true);
 }
 
@@ -9207,15 +9207,15 @@ void CClientSession::RecvBankDeleteReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		REPAIR ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvRepairItemReq(CNtlPacket * pPacket)
+void CClientSession::RecvRepairItemReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_ITEM_REPAIR_REQ * req = (sUG_ITEM_REPAIR_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_REPAIR_REQ* req = (sUG_ITEM_REPAIR_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_ITEM_REPAIR_RES));
-	sGU_ITEM_REPAIR_RES * res = (sGU_ITEM_REPAIR_RES *)packet.GetPacketData();
+	sGU_ITEM_REPAIR_RES* res = (sGU_ITEM_REPAIR_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ITEM_REPAIR_RES;
 	res->hNpchandle = req->handle;
 	res->wResultCode = GAME_FAIL;
@@ -9254,7 +9254,7 @@ void CClientSession::RecvRepairItemReq(CNtlPacket * pPacket)
 
 
 							CNtlPacket packet2(sizeof(sGQ_ITEM_REPAIR_REQ));
-							sGQ_ITEM_REPAIR_REQ * res2 = (sGQ_ITEM_REPAIR_REQ *)packet2.GetPacketData();
+							sGQ_ITEM_REPAIR_REQ* res2 = (sGQ_ITEM_REPAIR_REQ*)packet2.GetPacketData();
 							res2->wOpCode = GQ_ITEM_REPAIR_REQ;
 							res2->handle = cPlayer->GetID();
 							res2->charId = cPlayer->GetCharID();
@@ -9283,27 +9283,23 @@ void CClientSession::RecvRepairItemReq(CNtlPacket * pPacket)
 		}
 	}
 
-	packet.SetPacketLen( sizeof(sGU_ITEM_REPAIR_RES) );
-	g_pApp->Send( GetHandle() , &packet );
+	packet.SetPacketLen(sizeof(sGU_ITEM_REPAIR_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		REPAIR EQUIP
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvEquipRepairReq(CNtlPacket * pPacket)
+void CClientSession::RecvEquipRepairReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
-
 	CGameServer* app = (CGameServer*)g_pApp;
-
-	sUG_ITEM_EQUIP_REPAIR_REQ * req = (sUG_ITEM_EQUIP_REPAIR_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_EQUIP_REPAIR_REQ* req = (sUG_ITEM_EQUIP_REPAIR_REQ*)pPacket->GetPacketData();
 	DWORD repairprice = 0;
-
 	CNtlPacket packet(sizeof(sGU_ITEM_EQUIP_REPAIR_RES));
-	sGU_ITEM_EQUIP_REPAIR_RES * res = (sGU_ITEM_EQUIP_REPAIR_RES *)packet.GetPacketData();
+	sGU_ITEM_EQUIP_REPAIR_RES* res = (sGU_ITEM_EQUIP_REPAIR_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ITEM_EQUIP_REPAIR_RES;
-
 	if (cPlayer->GetNpcShopHandle() != req->handle) // check if viewing the same NPC
 		res->wResultCode = GAME_FAIL;
 	else
@@ -9315,6 +9311,7 @@ void CClientSession::RecvEquipRepairReq(CNtlPacket * pPacket)
 			res->wResultCode = GAME_TARGET_TOO_FAR;
 		else
 		{
+
 			//Get repair price
 			for (int slot = 0; slot < EQUIP_SLOT_TYPE_COUNT; slot++)
 			{
@@ -9328,7 +9325,6 @@ void CClientSession::RecvEquipRepairReq(CNtlPacket * pPacket)
 					}
 				}
 			}
-
 			//Check gold and repair all equipments
 			if (repairprice > 0)
 			{
@@ -9340,18 +9336,18 @@ void CClientSession::RecvEquipRepairReq(CNtlPacket * pPacket)
 					res2->handle = cPlayer->GetID();
 					res2->charId = cPlayer->GetCharID();
 					res2->npcHandle = req->handle;
-
 					for (int j = 0; j < EQUIP_SLOT_TYPE_COUNT; j++)
 					{
 						CItem* pItem = cPlayer->GetPlayerItemContainer()->GetItem(CONTAINER_TYPE_EQUIP, j);
-						if (pItem && pItem->IsLocked(false))
+						if (pItem && !pItem->IsLocked(false))
 						{
 							sITEM_TBLDAT* pItemData = pItem->GetTbldat();
-							if (pItem->GetDurability() < pItemData->byDurability)
+							if (pItemData->byDurability != INVALID_BYTE && pItem->GetDurability() < pItemData->byDurability)
 							{
 								pItem->UpdateDurability(pItemData->byDurability);
 
 								res->wResultCode = GAME_SUCCESS;
+
 								res2->byCount += 1;
 								res2->asItemData[j].itemID = pItem->GetItemID();
 								res2->asItemData[j].byPlace = pItem->GetPlace();
@@ -9360,50 +9356,46 @@ void CClientSession::RecvEquipRepairReq(CNtlPacket * pPacket)
 							}
 						}
 					}
-
 					res2->dwZenny = repairprice;
 					packet2.SetPacketLen(sizeof(sGQ_ITEM_EQUIP_REPAIR_REQ));
 					app->SendTo(app->GetQueryServerSession(), &packet2);
 
+					res->wResultCode = GAME_SUCCESS;
 					cPlayer->UpdateZeni(ZENNY_CHANGE_TYPE_REPAIR, repairprice, false, false);
-
 				}
 				else res->wResultCode = GAME_ZENNY_NOT_ENOUGH;
 			}
 			else res->wResultCode = GAME_REPAIR_NOT_FOUND;
 		}
 	}
-
-
 	res->dwSpendedZenny = repairprice;
 	res->handle = req->handle;
-	packet.SetPacketLen( sizeof(sGU_ITEM_EQUIP_REPAIR_RES) );
-	app->Send( GetHandle() , &packet );
-
-	if(res->wResultCode == GAME_SUCCESS)
+	packet.SetPacketLen(sizeof(sGU_ITEM_EQUIP_REPAIR_RES));
+	app->Send(GetHandle(), &packet);
+	if (res->wResultCode == GAME_SUCCESS)
 		cPlayer->GetCharAtt()->CalculateAll();
 }
 
 //--------------------------------------------------------------------------------------//
 //		SHOP IDENTIFY ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvShopIdentifyItemReq(CNtlPacket * pPacket)
+void CClientSession::RecvShopIdentifyItemReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_SHOP_ITEM_IDENTIFY_REQ * req = (sUG_SHOP_ITEM_IDENTIFY_REQ*)pPacket->GetPacketData();
+	sUG_SHOP_ITEM_IDENTIFY_REQ* req = (sUG_SHOP_ITEM_IDENTIFY_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_SHOP_ITEM_IDENTIFY_RES));
-	sGU_SHOP_ITEM_IDENTIFY_RES * res = (sGU_SHOP_ITEM_IDENTIFY_RES *)packet.GetPacketData();
+	sGU_SHOP_ITEM_IDENTIFY_RES* res = (sGU_SHOP_ITEM_IDENTIFY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SHOP_ITEM_IDENTIFY_RES;
 	res->hNpchandle = req->hNpchandle;
 	res->byPlace = req->byPlace;
 	res->byPos = req->byPos;
 	res->wResultCode = GAME_SUCCESS;
-	
+
 	if (cPlayer->GetNpcShopHandle() != req->hNpchandle) // check if viewing the same NPC
 		res->wResultCode = GAME_FAIL;
 	else if (cPlayer->GetZeni() < NTL_SHOP_ITEM_IDENTIFY_ZENNY)
@@ -9444,29 +9436,29 @@ void CClientSession::RecvShopIdentifyItemReq(CNtlPacket * pPacket)
 			else res->wResultCode = GAME_ITEM_UNIDENTIFY_FAIL;
 		}
 	}
-	
-	packet.SetPacketLen( sizeof(sGU_SHOP_ITEM_IDENTIFY_RES) );
-	app->Send(GetHandle(), &packet );
+
+	packet.SetPacketLen(sizeof(sGU_SHOP_ITEM_IDENTIFY_RES));
+	app->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		IDENTIFY ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvIdentifyItemReq(CNtlPacket * pPacket)
+void CClientSession::RecvIdentifyItemReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_ITEM_IDENTIFY_REQ * req = (sUG_ITEM_IDENTIFY_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_IDENTIFY_REQ* req = (sUG_ITEM_IDENTIFY_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_ITEM_IDENTIFY_RES));
-	sGU_ITEM_IDENTIFY_RES * res = (sGU_ITEM_IDENTIFY_RES *)packet.GetPacketData();
+	sGU_ITEM_IDENTIFY_RES* res = (sGU_ITEM_IDENTIFY_RES*)packet.GetPacketData();
 
 	res->wOpCode = GU_ITEM_IDENTIFY_RES;
 
-	if(cPlayer->GetZeni() >= NTL_SHOP_ITEM_IDENTIFY_ZENNY)
+	if (cPlayer->GetZeni() >= NTL_SHOP_ITEM_IDENTIFY_ZENNY)
 	{
 		if (IsInvenContainer(req->byPlace))
 		{
@@ -9483,7 +9475,7 @@ void CClientSession::RecvIdentifyItemReq(CNtlPacket * pPacket)
 					cPlayer->UpdateZeni(ZENNY_CHANGE_TYPE_ITEM_IDENTIFY, NTL_SHOP_ITEM_IDENTIFY_ZENNY, false, false);
 
 					CNtlPacket pQry(sizeof(sGQ_ITEM_IDENTIFY_REQ));
-					sGQ_ITEM_IDENTIFY_REQ * rQry = (sGQ_ITEM_IDENTIFY_REQ *)pQry.GetPacketData();
+					sGQ_ITEM_IDENTIFY_REQ* rQry = (sGQ_ITEM_IDENTIFY_REQ*)pQry.GetPacketData();
 					rQry->wOpCode = GQ_ITEM_IDENTIFY_REQ;
 					rQry->charId = cPlayer->GetCharID();
 					rQry->dwZeni = cPlayer->GetZeni();
@@ -9499,14 +9491,14 @@ void CClientSession::RecvIdentifyItemReq(CNtlPacket * pPacket)
 	}
 	else res->wResultCode = GAME_ZENNY_NOT_ENOUGH;
 
-	packet.SetPacketLen( sizeof(sGU_ITEM_IDENTIFY_RES) );
-	app->Send( GetHandle() , &packet );
+	packet.SetPacketLen(sizeof(sGU_ITEM_IDENTIFY_RES));
+	app->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		VEHICLE STUNT (JUMP)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvVehicleStuntNfy(CNtlPacket * pPacket)
+void CClientSession::RecvVehicleStuntNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -9519,16 +9511,16 @@ void CClientSession::RecvVehicleStuntNfy(CNtlPacket * pPacket)
 
 	if (cPlayer->GetCharStateID() != CHARSTATE_MOVING && cPlayer->GetCharStateID() != CHARSTATE_DESTMOVE && cPlayer->GetCharStateID() != CHARSTATE_FOLLOWING)
 	{
-	//	No need to log
-	//	ERR_LOG(LOG_USER, "Player %u Received vehicle jump while wrong state %u", cPlayer->GetCharID(), cPlayer->GetCharStateID());
+		//	No need to log
+		//	ERR_LOG(LOG_USER, "Player %u Received vehicle jump while wrong state %u", cPlayer->GetCharID(), cPlayer->GetCharStateID());
 		return;
 	}
 
 	CNtlPacket packet(sizeof(sGU_VEHICLE_STUNT_NFY));
-	sGU_VEHICLE_STUNT_NFY * res = (sGU_VEHICLE_STUNT_NFY *)packet.GetPacketData();
+	sGU_VEHICLE_STUNT_NFY* res = (sGU_VEHICLE_STUNT_NFY*)packet.GetPacketData();
 	res->wOpCode = GU_VEHICLE_STUNT_NFY;
 	res->hDriverHandle = cPlayer->GetID();
-	packet.SetPacketLen( sizeof(sGU_VEHICLE_STUNT_NFY) );
+	packet.SetPacketLen(sizeof(sGU_VEHICLE_STUNT_NFY));
 	cPlayer->Broadcast(&packet);
 }
 
@@ -9536,12 +9528,12 @@ void CClientSession::RecvVehicleStuntNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	 VEHICLE DIRECT PLAY END (Received when finished throwing capsule)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCancelVehicleDirectPlayNfy(CNtlPacket * pPacket)
+void CClientSession::RecvCancelVehicleDirectPlayNfy(CNtlPacket* pPacket)
 {
 	if (cPlayer->IsVehicleAniPlay())
 	{
 		cPlayer->SetVehicleAniPlay(false);
-	//	cPlayer->SendCharStateStanding();
+		//	cPlayer->SendCharStateStanding();
 	}
 	else
 	{
@@ -9553,17 +9545,17 @@ void CClientSession::RecvCancelVehicleDirectPlayNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	 
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvEndVehicleReq(CNtlPacket * pPacket)
+void CClientSession::RecvEndVehicleReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	if(cPlayer->GetVehicleTblidx() != INVALID_TBLIDX)
+	if (cPlayer->GetVehicleTblidx() != INVALID_TBLIDX)
 		cPlayer->EndVehicle(GAME_SUCCESS);
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_VEHICLE_END_RES));
-		sGU_VEHICLE_END_RES * res = (sGU_VEHICLE_END_RES *)packet.GetPacketData();
+		sGU_VEHICLE_END_RES* res = (sGU_VEHICLE_END_RES*)packet.GetPacketData();
 		res->wOpCode = GU_VEHICLE_END_RES;
 		res->wResultCode = GAME_VEHICLE_NOT_ON_VEHICLE;
 		packet.SetPacketLen(sizeof(sGU_VEHICLE_END_RES));
@@ -9575,7 +9567,7 @@ void CClientSession::RecvEndVehicleReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	 
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvVehicleFuelRemoveNfy(CNtlPacket * pPacket)
+void CClientSession::RecvVehicleFuelRemoveNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -9586,18 +9578,18 @@ void CClientSession::RecvVehicleFuelRemoveNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	 
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvVehicleFuelInsertReq(CNtlPacket * pPacket)
+void CClientSession::RecvVehicleFuelInsertReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_VEHICLE_FUEL_INSERT_REQ * req = (sUG_VEHICLE_FUEL_INSERT_REQ*)pPacket->GetPacketData();
+	sUG_VEHICLE_FUEL_INSERT_REQ* req = (sUG_VEHICLE_FUEL_INSERT_REQ*)pPacket->GetPacketData();
 
 	cPlayer->UpdateVehicleFuel(true, req->byPlace, req->byPos);
 }
 
 
-void CClientSession::RecvCharDirectPlayCancel(CNtlPacket * pPacket)
+void CClientSession::RecvCharDirectPlayCancel(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -9609,7 +9601,7 @@ void CClientSession::RecvCharDirectPlayCancel(CNtlPacket * pPacket)
 //-------------------------------------------------
 //		RECEIVED WHEN DIRECT PLAY END
 //-------------------------------------------------
-void CClientSession::RecvCharDirectPlayAck(CNtlPacket * pPacket)
+void CClientSession::RecvCharDirectPlayAck(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -9620,12 +9612,12 @@ void CClientSession::RecvCharDirectPlayAck(CNtlPacket * pPacket)
 //-------------------------------------------------
 //     UG_CHAR_LOC_AFTER_KNOCKDOWN_NFY
 //-------------------------------------------------
-void CClientSession::RecvCharLocAfterKnockdown(CNtlPacket * pPacket)
+void CClientSession::RecvCharLocAfterKnockdown(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_LOC_AFTER_KNOCKDOWN_NFY * req = (sUG_CHAR_LOC_AFTER_KNOCKDOWN_NFY*)pPacket->GetPacketData();
+	sUG_CHAR_LOC_AFTER_KNOCKDOWN_NFY* req = (sUG_CHAR_LOC_AFTER_KNOCKDOWN_NFY*)pPacket->GetPacketData();
 
 	CStateBase* pState = (CStateBase*)cPlayer->GetStateManager()->GetCharState();
 
@@ -9653,12 +9645,12 @@ void CClientSession::RecvCharLocAfterKnockdown(CNtlPacket * pPacket)
 //-------------------------------------------------
 //     UG_CHAR_LOC_AFTER_SLIDING_NFY
 //-------------------------------------------------
-void CClientSession::RecvCharLocAfterSliding(CNtlPacket * pPacket)
+void CClientSession::RecvCharLocAfterSliding(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_LOC_AFTER_SLIDING_NFY * req = (sUG_CHAR_LOC_AFTER_SLIDING_NFY*)pPacket->GetPacketData();
+	sUG_CHAR_LOC_AFTER_SLIDING_NFY* req = (sUG_CHAR_LOC_AFTER_SLIDING_NFY*)pPacket->GetPacketData();
 
 	CNtlVector vLoc;
 	NtlLocationDecompress(&req->vCurLoc, &vLoc.x, &vLoc.y, &vLoc.z);
@@ -9678,14 +9670,14 @@ void CClientSession::RecvCharLocAfterSliding(CNtlPacket * pPacket)
 //-------------------------------------------------
 //     UG_CHAR_LOC_AFTER_PUSH_NFY
 //-------------------------------------------------
-void CClientSession::RecvCharLocAfterPush(CNtlPacket * pPacket)
+void CClientSession::RecvCharLocAfterPush(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_LOC_AFTER_PUSH_NFY * req = (sUG_CHAR_LOC_AFTER_PUSH_NFY*)pPacket->GetPacketData();
+	sUG_CHAR_LOC_AFTER_PUSH_NFY* req = (sUG_CHAR_LOC_AFTER_PUSH_NFY*)pPacket->GetPacketData();
 
 	CNtlVector vLoc;
 	NtlLocationDecompress(&req->vCurLoc, &vLoc.x, &vLoc.y, &vLoc.z);
@@ -9718,12 +9710,12 @@ void CClientSession::RecvCharLocAfterPush(CNtlPacket * pPacket)
 //-------------------------------------------------
 //     UG_CROSSFIRE_REQ (Select next target)
 //-------------------------------------------------
-void CClientSession::RecvCrossfireReq(CNtlPacket * pPacket)
+void CClientSession::RecvCrossfireReq(CNtlPacket* pPacket)
 {
 	if (cPlayer == NULL || cPlayer->IsInitialized() == false || cPlayer->GetCurWorld() == NULL)
 		return;
 
-	sUG_CROSSFIRE_REQ * req = (sUG_CROSSFIRE_REQ*)pPacket->GetPacketData();
+	sUG_CROSSFIRE_REQ* req = (sUG_CROSSFIRE_REQ*)pPacket->GetPacketData();
 
 	CCharacter* pTarget = g_pObjectManager->GetChar(req->hAnotherUser);
 	if (pTarget && pTarget->IsInitialized())
@@ -9734,7 +9726,7 @@ void CClientSession::RecvCrossfireReq(CNtlPacket * pPacket)
 		if (cPlayer->ChangeTarget(req->hAnotherUser))
 		{
 			CNtlPacket packet(sizeof(sGU_CROSSFIRE_RES));
-			sGU_CROSSFIRE_RES * res = (sGU_CROSSFIRE_RES*)packet.GetPacketData();
+			sGU_CROSSFIRE_RES* res = (sGU_CROSSFIRE_RES*)packet.GetPacketData();
 			res->wOpCode = GU_CROSSFIRE_RES;
 			res->hTarget = req->hAnotherUser;
 			packet.SetPacketLen(sizeof(sGU_CROSSFIRE_RES));
@@ -9749,7 +9741,7 @@ void CClientSession::RecvCrossfireReq(CNtlPacket * pPacket)
 void CClientSession::SendResultcode(WORD wResultcode)
 {
 	CNtlPacket packet(sizeof(sGU_SYSTEM_DISPLAY_RESULTCODE));
-	sGU_SYSTEM_DISPLAY_RESULTCODE * res = (sGU_SYSTEM_DISPLAY_RESULTCODE*)packet.GetPacketData();
+	sGU_SYSTEM_DISPLAY_RESULTCODE* res = (sGU_SYSTEM_DISPLAY_RESULTCODE*)packet.GetPacketData();
 	res->wOpCode = GU_SYSTEM_DISPLAY_RESULTCODE;
 	res->byDisplayType = 0;
 	res->wResultCode = wResultcode;
@@ -9761,19 +9753,19 @@ void CClientSession::SendResultcode(WORD wResultcode)
 //-------------------------------------------------
 //     SEND ITEM UPGRADE WORK
 //-------------------------------------------------
-void CClientSession::RecvItemUpgradeReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemUpgradeReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
-	
-	sUG_ITEM_UPGRADE_REQ * req = (sUG_ITEM_UPGRADE_REQ*)pPacket->GetPacketData();
+
+	sUG_ITEM_UPGRADE_REQ* req = (sUG_ITEM_UPGRADE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGU_ITEM_UPGRADE_RES));
-	sGU_ITEM_UPGRADE_RES * res = (sGU_ITEM_UPGRADE_RES*)packet.GetPacketData();
+	sGU_ITEM_UPGRADE_RES* res = (sGU_ITEM_UPGRADE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ITEM_UPGRADE_RES;
 	res->byItemPlace = req->byItemPlace;
 	res->byItemPos = req->byItemPos;
@@ -9808,8 +9800,8 @@ void CClientSession::RecvItemUpgradeReq(CNtlPacket * pPacket)
 				goto END;
 			}
 
-			sITEM_TBLDAT * pEquipData = equipdata->GetTbldat();
-			sITEM_TBLDAT * pStoneData = hpstonedata->GetTbldat();
+			sITEM_TBLDAT* pEquipData = equipdata->GetTbldat();
+			sITEM_TBLDAT* pStoneData = hpstonedata->GetTbldat();
 
 			if (pEquipData && pStoneData)
 			{
@@ -9951,7 +9943,7 @@ void CClientSession::RecvItemUpgradeReq(CNtlPacket * pPacket)
 						else if (Dbo_CheckProbabilityF(pItemUpgrade->fUpgrade_Destroy_Rate)) //check if destroy
 						{
 							res->wResultMessageCode = ITEM_UPGRADE_RESULT_RESET;
-							
+
 							if (whiteStone)
 								res->byItemGrade = UnsignedSafeDecrease<BYTE>(equipdata->GetGrade(), 2);
 							else
@@ -9984,7 +9976,7 @@ void CClientSession::RecvItemUpgradeReq(CNtlPacket * pPacket)
 							ERR_LOG(LOG_HACK, "Player %u upgraded %I64u (%u) to +15 from %u . stoneId %I64u (%u)", cPlayer->GetCharID(), equipdata->GetItemID(), equipdata->GetTblidx(), equipdata->GetGrade(), hpstonedata->GetItemID(), hpstonedata->GetTblidx());
 
 						CNtlPacket pChat(sizeof(sGT_BROADCASTING_SYSTEM_NFY));
-						sGT_BROADCASTING_SYSTEM_NFY * rChat = (sGT_BROADCASTING_SYSTEM_NFY *)pChat.GetPacketData();
+						sGT_BROADCASTING_SYSTEM_NFY* rChat = (sGT_BROADCASTING_SYSTEM_NFY*)pChat.GetPacketData();
 						rChat->wOpCode = GT_BROADCASTING_SYSTEM_NFY;
 						rChat->byMsgType = DBO_BROADCASTING_MSG_TYPE_ITEMUPGRADE;
 						rChat->sData.sItemUpgrade.byGrade = res->byItemGrade;
@@ -9997,7 +9989,7 @@ void CClientSession::RecvItemUpgradeReq(CNtlPacket * pPacket)
 					equipdata->SetGrade(res->byItemGrade);
 
 					CNtlPacket pQry(sizeof(sGQ_ITEM_UPGRADE_WORK_REQ));
-					sGQ_ITEM_UPGRADE_WORK_REQ * rQry = (sGQ_ITEM_UPGRADE_WORK_REQ *)pQry.GetPacketData();
+					sGQ_ITEM_UPGRADE_WORK_REQ* rQry = (sGQ_ITEM_UPGRADE_WORK_REQ*)pQry.GetPacketData();
 					rQry->wOpCode = GQ_ITEM_UPGRADE_WORK_REQ;
 					rQry->handle = cPlayer->GetID();
 					rQry->charId = cPlayer->GetCharID();
@@ -10058,7 +10050,7 @@ END:
 //-------------------------------------------------//-------------------------------------------------//-------------------------------------------------
 //													   =====			PRIVATE SHOP			=====
 //-------------------------------------------------//-------------------------------------------------//-------------------------------------------------
-void CClientSession::RecvCreatePrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvCreatePrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -10066,7 +10058,7 @@ void CClientSession::RecvCreatePrivateShopReq(CNtlPacket * pPacket)
 	cPlayer->CreatePrivateShop();
 }
 
-void CClientSession::RecvExitPrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvExitPrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -10074,45 +10066,45 @@ void CClientSession::RecvExitPrivateShopReq(CNtlPacket * pPacket)
 	cPlayer->ClosePrivateShop();
 }
 
-void CClientSession::RecvItemInsertPrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemInsertPrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PRIVATESHOP_ITEM_INSERT_REQ * req = (sUG_PRIVATESHOP_ITEM_INSERT_REQ*)pPacket->GetPacketData();
-	
+	sUG_PRIVATESHOP_ITEM_INSERT_REQ* req = (sUG_PRIVATESHOP_ITEM_INSERT_REQ*)pPacket->GetPacketData();
+
 	if (cPlayer->GetPrivateShop())
 		cPlayer->GetPrivateShop()->AddItem(req->byInventoryPlace, req->byInventoryPos, req->byPrivateShopInventorySlotPos);
 }
 
-void CClientSession::RecvItemUpdatePrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemUpdatePrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PRIVATESHOP_ITEM_UPDATE_REQ * req = (sUG_PRIVATESHOP_ITEM_UPDATE_REQ*)pPacket->GetPacketData();
+	sUG_PRIVATESHOP_ITEM_UPDATE_REQ* req = (sUG_PRIVATESHOP_ITEM_UPDATE_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetPrivateShop())
 		cPlayer->GetPrivateShop()->UpdatePrice(req->byPrivateShopInventorySlotPos, req->dwZenny);
 }
 
-void CClientSession::RecvItemDeletePrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemDeletePrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PRIVATESHOP_ITEM_DELETE_REQ * req = (sUG_PRIVATESHOP_ITEM_DELETE_REQ*)pPacket->GetPacketData();
+	sUG_PRIVATESHOP_ITEM_DELETE_REQ* req = (sUG_PRIVATESHOP_ITEM_DELETE_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetPrivateShop())
 		cPlayer->GetPrivateShop()->DelItem(req->byPrivateShopInventorySlotPos);
 }
 
-void CClientSession::RecvOpenPrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvOpenPrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PRIVATESHOP_OPEN_REQ * req = (sUG_PRIVATESHOP_OPEN_REQ*)pPacket->GetPacketData();
+	sUG_PRIVATESHOP_OPEN_REQ* req = (sUG_PRIVATESHOP_OPEN_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_FAIL;
 
@@ -10129,7 +10121,7 @@ void CClientSession::RecvOpenPrivateShopReq(CNtlPacket * pPacket)
 		cPlayer->GetPrivateShop()->OpenShop(req->bIsOwnerEmpty, req->byNoticeSize, req->wcNotice, req->wcPrivateShopName);
 		return;
 	}
-	
+
 	CNtlPacket packet(sizeof(sGU_PRIVATESHOP_OPEN_RES));
 	sGU_PRIVATESHOP_OPEN_RES* res = (sGU_PRIVATESHOP_OPEN_RES*)packet.GetPacketData();
 	res->wOpCode = GU_PRIVATESHOP_OPEN_RES;
@@ -10138,12 +10130,12 @@ void CClientSession::RecvOpenPrivateShopReq(CNtlPacket * pPacket)
 	cPlayer->SendPacket(&packet);
 }
 
-void CClientSession::RecvEnterPrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvEnterPrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PRIVATESHOP_ENTER_REQ * req = (sUG_PRIVATESHOP_ENTER_REQ*)pPacket->GetPacketData();
+	sUG_PRIVATESHOP_ENTER_REQ* req = (sUG_PRIVATESHOP_ENTER_REQ*)pPacket->GetPacketData();
 
 	CPrivateShop* shop = g_pPShopManager->GetPrivateShop(req->hOwner);
 	if (shop && req->hOwner != cPlayer->GetID())
@@ -10158,12 +10150,12 @@ void CClientSession::RecvEnterPrivateShopReq(CNtlPacket * pPacket)
 		g_pApp->Send(GetHandle(), &packet);
 	}
 }
-void CClientSession::RecvLeavePrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvLeavePrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PRIVATESHOP_LEAVE_REQ * req = (sUG_PRIVATESHOP_LEAVE_REQ*)pPacket->GetPacketData();
+	sUG_PRIVATESHOP_LEAVE_REQ* req = (sUG_PRIVATESHOP_LEAVE_REQ*)pPacket->GetPacketData();
 
 	CPrivateShop* shop = cPlayer->GetVisitPrivateShop();
 	if (shop && shop->GetOwner() && shop->GetOwner()->GetID() == req->hOwner && cPlayer->GetID() != req->hOwner)
@@ -10179,13 +10171,13 @@ void CClientSession::RecvLeavePrivateShopReq(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvSelectItemPrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvSelectItemPrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PRIVATESHOP_ITEM_SELECT_REQ * req = (sUG_PRIVATESHOP_ITEM_SELECT_REQ*)pPacket->GetPacketData();
-	
+	sUG_PRIVATESHOP_ITEM_SELECT_REQ* req = (sUG_PRIVATESHOP_ITEM_SELECT_REQ*)pPacket->GetPacketData();
+
 	CPrivateShop* shop = cPlayer->GetVisitPrivateShop();
 	if (shop && shop->GetOwner() && shop->GetOwner()->GetID() == req->hOwner && cPlayer->GetID() != req->hOwner)
 		shop->SelectItem(req->byPrivateShopInventorySlotPos, req->byItemState, cPlayer);
@@ -10200,12 +10192,12 @@ void CClientSession::RecvSelectItemPrivateShopReq(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvBuyItemPrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvBuyItemPrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PRIVATESHOP_ITEM_BUYING_REQ * req = (sUG_PRIVATESHOP_ITEM_BUYING_REQ*)pPacket->GetPacketData();
+	sUG_PRIVATESHOP_ITEM_BUYING_REQ* req = (sUG_PRIVATESHOP_ITEM_BUYING_REQ*)pPacket->GetPacketData();
 
 	CPrivateShop* shop = cPlayer->GetVisitPrivateShop();
 	if (shop && shop->GetOwner() && shop->GetOwner()->GetID() == req->hOwner && cPlayer->GetID() != req->hOwner)
@@ -10222,7 +10214,7 @@ void CClientSession::RecvBuyItemPrivateShopReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvClosePrivateShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvClosePrivateShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -10250,9 +10242,9 @@ void CClientSession::RecvClosePrivateShopReq(CNtlPacket * pPacket)
 	else ERR_LOG(LOG_USER, "player %u no private shop found.", cPlayer->GetCharID());
 }
 
-void CClientSession::RecvPickUpItemReq(CNtlPacket * pPacket)
+void CClientSession::RecvPickUpItemReq(CNtlPacket* pPacket)
 {
-	sUG_ITEM_PICK_REQ * req = (sUG_ITEM_PICK_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_PICK_REQ* req = (sUG_ITEM_PICK_REQ*)pPacket->GetPacketData();
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -10278,7 +10270,7 @@ void CClientSession::RecvPickUpItemReq(CNtlPacket * pPacket)
 			if (item->GetCurWorld() == NULL)
 				wRes = GAME_LOOTING_FAIL;
 
-			else if(item->GetLocked())
+			else if (item->GetLocked())
 				wRes = GAME_ITEM_IS_LOCK;
 
 			//check distance
@@ -10301,7 +10293,7 @@ void CClientSession::RecvPickUpItemReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_ITEM_PICK_RES));
-	sGU_ITEM_PICK_RES * res = (sGU_ITEM_PICK_RES*)packet.GetPacketData();
+	sGU_ITEM_PICK_RES* res = (sGU_ITEM_PICK_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ITEM_PICK_RES;
 	res->wResultCode = wRes;
 	packet.SetPacketLen(sizeof(sGU_ITEM_PICK_RES));
@@ -10310,16 +10302,16 @@ void CClientSession::RecvPickUpItemReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		RENEW ITEM DURATION
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemDurationRenewReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemDurationRenewReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DURATION_RENEW_REQ * req = (sUG_DURATION_RENEW_REQ*)pPacket->GetPacketData();
-	WORD resultcode = GAME_SUCCESS; 
-	
+	sUG_DURATION_RENEW_REQ* req = (sUG_DURATION_RENEW_REQ*)pPacket->GetPacketData();
+	WORD resultcode = GAME_SUCCESS;
+
 	CItem* pItem = cPlayer->GetPlayerItemContainer()->GetItem(req->hItemHandle);
 	if (pItem && pItem->GetCount() > 0 && IsInvenContainer(pItem->GetPlace()))
 	{
@@ -10369,7 +10361,7 @@ void CClientSession::RecvItemDurationRenewReq(CNtlPacket * pPacket)
 							res2->handle = req->hItemHandle;
 							memcpy(&res2->sItemData, &pItem->GetItemData(), sizeof(sITEM_DATA));
 
-							if(pItem->IsExpired() == false)
+							if (pItem->IsExpired() == false)
 								res2->sItemData.nUseEndTime = pItem->GetItemData().nUseEndTime + pItemData->dwUseDurationMax;
 							else
 							{
@@ -10426,18 +10418,18 @@ void CClientSession::RecvItemDurationRenewReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE ITEM BATTLE ATTRIBUTE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemChangeBattleAttributeReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemChangeBattleAttributeReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_ITEM_CHAGE_BATTLE_ATTRIBUTE_REQ * req = (sUG_ITEM_CHAGE_BATTLE_ATTRIBUTE_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_CHAGE_BATTLE_ATTRIBUTE_REQ* req = (sUG_ITEM_CHAGE_BATTLE_ATTRIBUTE_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 	BYTE byBattleattribute = BATTLE_ATTRIBUTE_NONE;
 	DWORD dwPrice = 0;
-	
+
 	CNpc* pNpc = g_pObjectManager->GetNpc(req->npcHandle);
 	if (pNpc)
 	{
@@ -10532,14 +10524,14 @@ void CClientSession::RecvItemChangeBattleAttributeReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPGRADE ITEM BY COUPON
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemUpgradeByCouponReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemUpgradeByCouponReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_ITEM_UPGRADE_BY_COUPON_REQ * req = (sUG_ITEM_UPGRADE_BY_COUPON_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_UPGRADE_BY_COUPON_REQ* req = (sUG_ITEM_UPGRADE_BY_COUPON_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_FAIL;
 
@@ -10585,7 +10577,7 @@ void CClientSession::RecvItemUpgradeByCouponReq(CNtlPacket * pPacket)
 						resultcode = GAME_SUCCESS;
 
 						CNtlPacket pQry(sizeof(sGQ_ITEM_UPGRADE_BY_COUPON_REQ));
-						sGQ_ITEM_UPGRADE_BY_COUPON_REQ * rQry = (sGQ_ITEM_UPGRADE_BY_COUPON_REQ *)pQry.GetPacketData();
+						sGQ_ITEM_UPGRADE_BY_COUPON_REQ* rQry = (sGQ_ITEM_UPGRADE_BY_COUPON_REQ*)pQry.GetPacketData();
 						rQry->wOpCode = GQ_ITEM_UPGRADE_BY_COUPON_REQ;
 						rQry->handle = cPlayer->GetID();
 						rQry->charId = cPlayer->GetCharID();
@@ -10633,14 +10625,14 @@ void CClientSession::RecvItemUpgradeByCouponReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE SHORTCUT KEY
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvShortcutKeyUpdateReq(CNtlPacket * pPacket)
+void CClientSession::RecvShortcutKeyUpdateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHAR_KEY_UPDATE_REQ * req = (sUG_CHAR_KEY_UPDATE_REQ*)pPacket->GetPacketData();
+	sUG_CHAR_KEY_UPDATE_REQ* req = (sUG_CHAR_KEY_UPDATE_REQ*)pPacket->GetPacketData();
 	if (req->byCount > 0 && req->byCount < NTL_SHORTCUT_MAX_COUNT)
 	{
 		CNtlPacket packet(sizeof(sGU_CHAR_KEY_UPDATE_RES));
@@ -10662,18 +10654,18 @@ void CClientSession::RecvShortcutKeyUpdateReq(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvAttackTargetNfy(CNtlPacket * pPacket)
+void CClientSession::RecvAttackTargetNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PET_ATTACK_TARGET_NFY * req = (sUG_PET_ATTACK_TARGET_NFY*)pPacket->GetPacketData();
+	sUG_PET_ATTACK_TARGET_NFY* req = (sUG_PET_ATTACK_TARGET_NFY*)pPacket->GetPacketData();
 
 	//printf("%u %u %u %u\n", req->byAvatarType, req->Unknown, req->Unknown2, req->Unknown3);
 
 	if (CSummonPet* pPet = cPlayer->GetSummonPet())
 	{
-		if(pPet->GetAttackTarget() == cPlayer->GetTargetHandle() || cPlayer->GetTargetHandle() == INVALID_HOBJECT)
+		if (pPet->GetAttackTarget() == cPlayer->GetTargetHandle() || cPlayer->GetTargetHandle() == INVALID_HOBJECT)
 			pPet->SetAttackTarget(INVALID_HOBJECT);
 		else if (cPlayer->GetTargetHandle() != INVALID_HOBJECT && cPlayer->GetTargetHandle() != cPlayer->GetID())
 		{
@@ -10685,14 +10677,14 @@ void CClientSession::RecvAttackTargetNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		SELECT CHARACTER TITLE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvSelectCharTitleReq(CNtlPacket * pPacket)
+void CClientSession::RecvSelectCharTitleReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
-	sUG_CHARTITLE_SELECT_REQ * req = (sUG_CHARTITLE_SELECT_REQ*)pPacket->GetPacketData();
-	
+	sUG_CHARTITLE_SELECT_REQ* req = (sUG_CHARTITLE_SELECT_REQ*)pPacket->GetPacketData();
+
 	WORD resultcode = GAME_SUCCESS;
 
 	/*	Note:
@@ -10703,7 +10695,7 @@ void CClientSession::RecvSelectCharTitleReq(CNtlPacket * pPacket)
 	{
 		if (req->tblIndex != INVALID_TBLIDX)
 		{
-			sCHARTITLE_TBLDAT *charTitleTbldat = (sCHARTITLE_TBLDAT *)g_pTableContainer->GetCharTitleTable()->FindData(req->tblIndex);
+			sCHARTITLE_TBLDAT* charTitleTbldat = (sCHARTITLE_TBLDAT*)g_pTableContainer->GetCharTitleTable()->FindData(req->tblIndex);
 			if (charTitleTbldat == NULL)
 				resultcode = CHARTITLE_NO_HAVE;
 			else
@@ -10731,7 +10723,7 @@ void CClientSession::RecvSelectCharTitleReq(CNtlPacket * pPacket)
 	app->Send(GetHandle(), &packet);
 
 
-	if(resultcode == GAME_SUCCESS)
+	if (resultcode == GAME_SUCCESS)
 	{
 		//send to database
 		CNtlPacket packet(sizeof(sGQ_CHARTITLE_SELECT_REQ));
@@ -10760,20 +10752,20 @@ void CClientSession::RecvSelectCharTitleReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvPartySelectStateReq(CNtlPacket * pPacket)
+void CClientSession::RecvPartySelectStateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PARTY_SELECT_STATE_REQ * req = (sUG_PARTY_SELECT_STATE_REQ*)pPacket->GetPacketData();
+	sUG_PARTY_SELECT_STATE_REQ* req = (sUG_PARTY_SELECT_STATE_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
 
-	if(req->bySelectState == NTL_PARTY_SELECT_TYPE_FIRST || req->bySelectState > NTL_PARTY_SELECT_TYPE_LAST)
+	if (req->bySelectState == NTL_PARTY_SELECT_TYPE_FIRST || req->bySelectState > NTL_PARTY_SELECT_TYPE_LAST)
 		wResultcode = GAME_FAIL;
-	else if(cPlayer->GetParty() == NULL || cPlayer->GetPartyID() == INVALID_PARTYID)
+	else if (cPlayer->GetParty() == NULL || cPlayer->GetPartyID() == INVALID_PARTYID)
 		wResultcode = GAME_PARTY_YOU_ARE_NOT_IN_PARTY;
-	else if(cPlayer->GetCCBD() == NULL)
+	else if (cPlayer->GetCCBD() == NULL)
 		wResultcode = GAME_FAIL;
 	else
 	{
@@ -10793,62 +10785,62 @@ void CClientSession::RecvPartySelectStateReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		(CCBD) BATTLE DUNGEON ENTER REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBattleDungeonEnterReq(CNtlPacket * pPacket)
+void CClientSession::RecvBattleDungeonEnterReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_BATTLE_DUNGEON_ENTER_REQ * req = (sUG_BATTLE_DUNGEON_ENTER_REQ*)pPacket->GetPacketData();
+	sUG_BATTLE_DUNGEON_ENTER_REQ* req = (sUG_BATTLE_DUNGEON_ENTER_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
 
 	//if (cPlayer->IsGameMaster()) //only allow for gm until its done
 	//{
-		CNpc* pNpc = g_pObjectManager->GetNpc(req->hNpc);
-		if (pNpc && cPlayer->IsInRange(pNpc, DBO_DISTANCE_CHECK_TOLERANCE))
+	CNpc* pNpc = g_pObjectManager->GetNpc(req->hNpc);
+	if (pNpc && cPlayer->IsInRange(pNpc, DBO_DISTANCE_CHECK_TOLERANCE))
+	{
+		if (pNpc->GetTbldat()->byJob != NPC_JOB_BATTLE_DUNGEON_MANAGER)
+			wResultcode = GAME_TARGET_HAS_DIFFERENT_JOB;
+		else if (BIT_FLAG_TEST(pNpc->GetTbldat()->dwFunc_Bit_Flag, NPC_FUNC_FLAG_BATTLE_DUNGEON_MANAGER) == false)
+			wResultcode = GAME_TARGET_HAS_NOT_FUNCTION;
+		else
 		{
-			if (pNpc->GetTbldat()->byJob != NPC_JOB_BATTLE_DUNGEON_MANAGER)
-				wResultcode = GAME_TARGET_HAS_DIFFERENT_JOB;
-			else if (BIT_FLAG_TEST(pNpc->GetTbldat()->dwFunc_Bit_Flag, NPC_FUNC_FLAG_BATTLE_DUNGEON_MANAGER) == false)
-				wResultcode = GAME_TARGET_HAS_NOT_FUNCTION;
-			else
+			if (cPlayer->GetParty() && cPlayer->GetPartyID() != INVALID_PARTYID)
 			{
-				if (cPlayer->GetParty() && cPlayer->GetPartyID() != INVALID_PARTYID)
+				if (cPlayer->GetParty()->GetPartyLeaderID() == cPlayer->GetID())
 				{
-					if (cPlayer->GetParty()->GetPartyLeaderID() == cPlayer->GetID())
+					if (cPlayer->GetParty()->IsEveryoneInLeaderRange(cPlayer, NTL_MAX_RADIUS_OF_VISIBLE_AREA))
 					{
-						if (cPlayer->GetParty()->IsEveryoneInLeaderRange(cPlayer, NTL_MAX_RADIUS_OF_VISIBLE_AREA))
+						BYTE byBeginStage = 1;
+						CItem* pItem = NULL;
+
+						if (req->hItem != INVALID_HOBJECT)
 						{
-							BYTE byBeginStage = 1;
-							CItem* pItem = NULL;
-
-							if (req->hItem != INVALID_HOBJECT)
+							pItem = cPlayer->GetPlayerItemContainer()->GetItem(req->hItem);
+							if (pItem && pItem->GetCount() > 0 && pItem->IsLocked() == false && IsInvenContainer(pItem->GetPlace()))
 							{
-								pItem = cPlayer->GetPlayerItemContainer()->GetItem(req->hItem);
-								if (pItem && pItem->GetCount() > 0 && pItem->IsLocked() == false && IsInvenContainer(pItem->GetPlace()))
-								{
-									if (pItem->GetTbldat()->byItem_Type == ITEM_TYPE_BATTLE_DUNGEON_TICKET)
-										byBeginStage = (BYTE)pItem->GetTbldat()->contentsTblidx;
-								}
-							}
-
-							CBattleDungeon* pDungeon = g_pDungeonManager->CreateBattleDungeon(cPlayer, wResultcode, byBeginStage);
-							if (pDungeon == NULL)
-								wResultcode = GAME_PARTY_DUNGEON_IS_NOT_CREATED;
-							else
-							{
-								if (pItem && byBeginStage > 1)
-									pItem->SetCount(pItem->GetCount() - 1, false, true);
+								if (pItem->GetTbldat()->byItem_Type == ITEM_TYPE_BATTLE_DUNGEON_TICKET)
+									byBeginStage = (BYTE)pItem->GetTbldat()->contentsTblidx;
 							}
 						}
-						else wResultcode = GAME_PARTY_MEMBER_IS_TOO_FAR;
+
+						CBattleDungeon* pDungeon = g_pDungeonManager->CreateBattleDungeon(cPlayer, wResultcode, byBeginStage);
+						if (pDungeon == NULL)
+							wResultcode = GAME_PARTY_DUNGEON_IS_NOT_CREATED;
+						else
+						{
+							if (pItem && byBeginStage > 1)
+								pItem->SetCount(pItem->GetCount() - 1, false, true);
+						}
 					}
-					else wResultcode = GAME_COMMON_YOU_ARE_NOT_A_PARTY_LEADER;
+					else wResultcode = GAME_PARTY_MEMBER_IS_TOO_FAR;
 				}
-				else wResultcode = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
+				else wResultcode = GAME_COMMON_YOU_ARE_NOT_A_PARTY_LEADER;
 			}
+			else wResultcode = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
 		}
-		else wResultcode = GAME_FAIL;
+	}
+	else wResultcode = GAME_FAIL;
 	//}
 	//else wResultcode = GAME_FAIL;
 
@@ -10863,12 +10855,12 @@ void CClientSession::RecvBattleDungeonEnterReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		(CCBD) BATTLE DUNGEON LEAVE REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBattleDungeonLeaveReq(CNtlPacket * pPacket)
+void CClientSession::RecvBattleDungeonLeaveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_BATTLE_DUNGEON_LEAVE_REQ * req = (sUG_BATTLE_DUNGEON_LEAVE_REQ*)pPacket->GetPacketData();
+	sUG_BATTLE_DUNGEON_LEAVE_REQ* req = (sUG_BATTLE_DUNGEON_LEAVE_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
 
@@ -10894,14 +10886,14 @@ void CClientSession::RecvBattleDungeonLeaveReq(CNtlPacket * pPacket)
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvItemSealReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemSealReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_ITEM_SEAL_REQ * req = (sUG_ITEM_SEAL_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_SEAL_REQ* req = (sUG_ITEM_SEAL_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
 
@@ -10981,14 +10973,14 @@ void CClientSession::RecvItemSealReq(CNtlPacket * pPacket)
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvItemSealExtractReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemSealExtractReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_ITEM_SEAL_EXTRACT_REQ * req = (sUG_ITEM_SEAL_EXTRACT_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_SEAL_EXTRACT_REQ* req = (sUG_ITEM_SEAL_EXTRACT_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
 
@@ -11036,21 +11028,21 @@ void CClientSession::RecvItemSealExtractReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		LOAD AUCTION HOUSE ITEMS
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvLoadAuctionHouseReq(CNtlPacket * pPacket)
+void CClientSession::RecvLoadAuctionHouseReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TENKAICHIDAISIJYOU_LIST_REQ * req = (sUG_TENKAICHIDAISIJYOU_LIST_REQ*)pPacket->GetPacketData();
+	sUG_TENKAICHIDAISIJYOU_LIST_REQ* req = (sUG_TENKAICHIDAISIJYOU_LIST_REQ*)pPacket->GetPacketData();
 
 	//ERR_LOG(LOG_USER, "Account %u request auction house", cPlayer->GetAccountID());
 	//printf("byPage: %i, byTabType: %u, uiPage: %u, bySortType: %u, byClassType:%u, byItemType:%u, byRank:%u, byMinLevel:%u,byMaxLevel:%u \n",
 	//	req->byPage, req->byTabType, req->uiPage, req->bySortType, req->byClassType, req->byItemType, req->byRank, req->byMinLevel, req->byMaxLevel);
 
 	CNtlPacket packet(sizeof(sGT_TENKAICHIDAISIJYOU_LIST_REQ));
-	sGT_TENKAICHIDAISIJYOU_LIST_REQ * res = (sGT_TENKAICHIDAISIJYOU_LIST_REQ *)packet.GetPacketData();
+	sGT_TENKAICHIDAISIJYOU_LIST_REQ* res = (sGT_TENKAICHIDAISIJYOU_LIST_REQ*)packet.GetPacketData();
 	res->wOpCode = GT_TENKAICHIDAISIJYOU_LIST_REQ;
 	res->accountId = cPlayer->GetAccountID();
 	NTL_SAFE_WCSCPY(res->awchItemName, req->awchItemName);
@@ -11070,14 +11062,14 @@ void CClientSession::RecvLoadAuctionHouseReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		SELL ITEM AT AUCTON HOUSE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvSellAuctionHouseReq(CNtlPacket * pPacket)
+void CClientSession::RecvSellAuctionHouseReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TENKAICHIDAISIJYOU_SELL_REQ * req = (sUG_TENKAICHIDAISIJYOU_SELL_REQ*)pPacket->GetPacketData();
+	sUG_TENKAICHIDAISIJYOU_SELL_REQ* req = (sUG_TENKAICHIDAISIJYOU_SELL_REQ*)pPacket->GetPacketData();
 
 	DWORD dwSellFee = Dbo_GetAuctionHouseSellFee(req->dwPrice);
 
@@ -11106,7 +11098,7 @@ void CClientSession::RecvSellAuctionHouseReq(CNtlPacket * pPacket)
 								cPlayer->UpdateZeni(ZENNY_CHANGE_TYPE_TMP_SELL_FEE, dwSellFee, false, false);
 
 								CNtlPacket packet(sizeof(sGT_TENKAICHIDAISIJYOU_SELL_REQ));
-								sGT_TENKAICHIDAISIJYOU_SELL_REQ * res = (sGT_TENKAICHIDAISIJYOU_SELL_REQ *)packet.GetPacketData();
+								sGT_TENKAICHIDAISIJYOU_SELL_REQ* res = (sGT_TENKAICHIDAISIJYOU_SELL_REQ*)packet.GetPacketData();
 								res->wOpCode = GT_TENKAICHIDAISIJYOU_SELL_REQ;
 
 
@@ -11164,7 +11156,7 @@ void CClientSession::RecvSellAuctionHouseReq(CNtlPacket * pPacket)
 
 
 	CNtlPacket packet2(sizeof(sGU_TENKAICHIDAISIJYOU_SELL_RES));
-	sGU_TENKAICHIDAISIJYOU_SELL_RES * res2 = (sGU_TENKAICHIDAISIJYOU_SELL_RES *)packet2.GetPacketData();
+	sGU_TENKAICHIDAISIJYOU_SELL_RES* res2 = (sGU_TENKAICHIDAISIJYOU_SELL_RES*)packet2.GetPacketData();
 	res2->wOpCode = GU_TENKAICHIDAISIJYOU_SELL_RES;
 	res2->byCount = req->byCount;
 	res2->byPlace = req->byPlace;
@@ -11177,17 +11169,17 @@ void CClientSession::RecvSellAuctionHouseReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CANCEL SELL ITEM AT AUCTON HOUSE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvSellCancelAuctionHouseReq(CNtlPacket * pPacket)
+void CClientSession::RecvSellCancelAuctionHouseReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ * req = (sUG_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ*)pPacket->GetPacketData();
-	
+	sUG_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ* req = (sUG_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ*)pPacket->GetPacketData();
+
 	CNtlPacket packet(sizeof(sGT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ));
-	sGT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ * res = (sGT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ *)packet.GetPacketData();
+	sGT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ* res = (sGT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ*)packet.GetPacketData();
 	res->wOpCode = GT_TENKAICHIDAISIJYOU_SELL_CANCEL_REQ;
 	wcscpy_s(res->awchText, 128 + 1, L"Cancel Auction Item");
 	res->charId = cPlayer->GetCharID();
@@ -11199,19 +11191,19 @@ void CClientSession::RecvSellCancelAuctionHouseReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		BUY ITEM AT AUCTON HOUSE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBuyAuctionHouseReq(CNtlPacket * pPacket)
+void CClientSession::RecvBuyAuctionHouseReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TENKAICHIDAISIJYOU_BUY_REQ * req = (sUG_TENKAICHIDAISIJYOU_BUY_REQ*)pPacket->GetPacketData();
+	sUG_TENKAICHIDAISIJYOU_BUY_REQ* req = (sUG_TENKAICHIDAISIJYOU_BUY_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetLevel() >= NTL_AUCTIONHOUSE_REQUIRED_LV)
 	{
 		CNtlPacket packet(sizeof(sGT_TENKAICHIDAISIJYOU_PRICE_INFO_REQ));
-		sGT_TENKAICHIDAISIJYOU_PRICE_INFO_REQ * res = (sGT_TENKAICHIDAISIJYOU_PRICE_INFO_REQ *)packet.GetPacketData();
+		sGT_TENKAICHIDAISIJYOU_PRICE_INFO_REQ* res = (sGT_TENKAICHIDAISIJYOU_PRICE_INFO_REQ*)packet.GetPacketData();
 		res->wOpCode = GT_TENKAICHIDAISIJYOU_PRICE_INFO_REQ;
 		res->charId = cPlayer->GetCharID();
 		res->nItem = req->nItem;
@@ -11221,7 +11213,7 @@ void CClientSession::RecvBuyAuctionHouseReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet2(sizeof(sGU_TENKAICHIDAISIJYOU_BUY_RES));
-		sGU_TENKAICHIDAISIJYOU_BUY_RES * res2 = (sGU_TENKAICHIDAISIJYOU_BUY_RES *)packet2.GetPacketData();
+		sGU_TENKAICHIDAISIJYOU_BUY_RES* res2 = (sGU_TENKAICHIDAISIJYOU_BUY_RES*)packet2.GetPacketData();
 		res2->wOpCode = GU_TENKAICHIDAISIJYOU_BUY_RES;
 		res2->wResultCode = GAME_ITEM_NEED_MORE_LEVEL;
 		packet2.SetPacketLen(sizeof(sGU_TENKAICHIDAISIJYOU_BUY_RES));
@@ -11229,12 +11221,12 @@ void CClientSession::RecvBuyAuctionHouseReq(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvPetAttackToggleNfy(CNtlPacket * pPacket)
+void CClientSession::RecvPetAttackToggleNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PET_ATTACK_TOGGLE_NFY * req = (sUG_PET_ATTACK_TOGGLE_NFY*)pPacket->GetPacketData();
+	sUG_PET_ATTACK_TOGGLE_NFY* req = (sUG_PET_ATTACK_TOGGLE_NFY*)pPacket->GetPacketData();
 	//printf("%u %u %u\n", req->unknown, req->unknown2, req->unknown3);
 	if (CSummonPet* pPet = cPlayer->GetSummonPet())
 	{
@@ -11245,12 +11237,12 @@ void CClientSession::RecvPetAttackToggleNfy(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvPetSkillToggleNfy(CNtlPacket * pPacket)
+void CClientSession::RecvPetSkillToggleNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_PET_SKILL_TOGGLE_NFY * req = (sUG_PET_SKILL_TOGGLE_NFY*)pPacket->GetPacketData();
+	sUG_PET_SKILL_TOGGLE_NFY* req = (sUG_PET_SKILL_TOGGLE_NFY*)pPacket->GetPacketData();
 	//printf("%u %u %i\n", req->byAvatarType, req->skillTblidx, req->bActivate);
 
 	if (req->byAvatarType == DBO_AVATAR_TYPE_SUMMON_PET_1)
@@ -11296,7 +11288,7 @@ void CClientSession::RecvPetSkillToggleNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		START GIFT SHOP (BROWN WP BOX AT CLIENT INTERFACE)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGiftShopStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvGiftShopStartReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -11309,7 +11301,7 @@ void CClientSession::RecvGiftShopStartReq(CNtlPacket * pPacket)
 		res->byTabIndex = 0;
 		wcscpy_s(res->wszTabName, NTL_MAX_SIZE_TAB_NAME_IN_UNICODE + 1, L"DBOG <3");
 		res->byItemCount = 0;
-	//	res->aSellItemInfo
+		//	res->aSellItemInfo
 		packet.SetPacketLen(sizeof(sGU_GIFT_SHOP_TAB_INFO_NFY));
 		g_pApp->Send(GetHandle(), &packet);
 	}
@@ -11327,7 +11319,7 @@ void CClientSession::RecvGiftShopStartReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		BUY GIFT SHOP ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvGiftShopBuyReq(CNtlPacket * pPacket)
+void CClientSession::RecvGiftShopBuyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -11349,15 +11341,15 @@ void CClientSession::RecvGiftShopBuyReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		SKILL INIT (RESET SKILLS) Reset skills by NPC. Cost Money
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvSkillInitReq(CNtlPacket * pPacket)
+void CClientSession::RecvSkillInitReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_SKILL_INIT_REQ * req = (sUG_SKILL_INIT_REQ*)pPacket->GetPacketData();
-			
+	sUG_SKILL_INIT_REQ* req = (sUG_SKILL_INIT_REQ*)pPacket->GetPacketData();
+
 	WORD result = GAME_FAIL;
 	DWORD reqzeni = Dbo_GetRequiredZennyForNpcSkillInit(cPlayer->GetLevel());
 
@@ -11421,15 +11413,15 @@ void CClientSession::RecvSkillInitReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		SKILL INIT (RESET SKILLS) Reset all skill by Item.
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvSkillResetPlusReq(CNtlPacket * pPacket)
+void CClientSession::RecvSkillResetPlusReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_SKILL_RESET_PLUS_REQ * req = (sUG_SKILL_RESET_PLUS_REQ*)pPacket->GetPacketData();
-	
+	sUG_SKILL_RESET_PLUS_REQ* req = (sUG_SKILL_RESET_PLUS_REQ*)pPacket->GetPacketData();
+
 	WORD result = GAME_SUCCESS;
 
 	if (cPlayer->GetAspectStateId() == ASPECTSTATE_INVALID)
@@ -11479,12 +11471,12 @@ void CClientSession::RecvSkillResetPlusReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		TELEPORT CONFIRMATION
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTeleportConfirmationReq(CNtlPacket * pPacket)
+void CClientSession::RecvTeleportConfirmationReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_TELEPORT_CONFIRM_REQ * req = (sUG_TELEPORT_CONFIRM_REQ*)pPacket->GetPacketData();
+	sUG_TELEPORT_CONFIRM_REQ* req = (sUG_TELEPORT_CONFIRM_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_FAIL;
 	CPlayer* pRequestor = NULL;
@@ -11497,7 +11489,7 @@ void CClientSession::RecvTeleportConfirmationReq(CNtlPacket * pPacket)
 		else if (cPlayer->GetDragonballScrambleBallFlag() > 0)
 			wResultcode = GAME_CAN_NOT_TELEPORT;
 
-		else if(cPlayer->IsStunned() || cPlayer->IsTrading() || cPlayer->IsPrivateShop() || cPlayer->IsSleeping() || cPlayer->IsSkillAffecting() || cPlayer->IsKeepingEffect() || cPlayer->IsKnockedDown() || cPlayer->IsUsingHtb() || cPlayer->IsSandbag())
+		else if (cPlayer->IsStunned() || cPlayer->IsTrading() || cPlayer->IsPrivateShop() || cPlayer->IsSleeping() || cPlayer->IsSkillAffecting() || cPlayer->IsKeepingEffect() || cPlayer->IsKnockedDown() || cPlayer->IsUsingHtb() || cPlayer->IsSandbag())
 			wResultcode = GAME_CAN_NOT_TELEPORT_THIS_STATE;
 
 		else if (req->byTeleportIndex == TELEPORT_TYPE_RANKBATTLE && g_pRankbattleManager->DoesBattleStillExist(cPlayer->GetRankBattleRoomTblidx(), cPlayer->GetRankBattleRoomId()) == false)
@@ -11530,12 +11522,12 @@ void CClientSession::RecvTeleportConfirmationReq(CNtlPacket * pPacket)
 				CDojo* pDojo = g_pDojoWarManager->GetDojo(cPlayer->GetGuildID());
 				if (pDojo)
 				{
-					if(pDojo->CanEnterDojo(cPlayer->GetGuildID()))
+					if (pDojo->CanEnterDojo(cPlayer->GetGuildID()))
 						wResultcode = GAME_SUCCESS;
 					else
 						wResultcode = GAME_GUILD_DOJO_SCRAMBLE_MAX_COUNT_OVER;
 				}
-				else if(CDojo* pDojo = g_pDojoManager->GetDojo(cPlayer->GetGuildID()))
+				else if (CDojo* pDojo = g_pDojoManager->GetDojo(cPlayer->GetGuildID()))
 				{
 					wResultcode = GAME_SUCCESS;
 				}
@@ -11543,7 +11535,7 @@ void CClientSession::RecvTeleportConfirmationReq(CNtlPacket * pPacket)
 			}
 			else if (cPlayer->GetTeleportProposalType() == TELEPORT_TYPE_MINORMATCH)
 			{
-				if(g_pBudokaiManager->CanTeleportPrelim(cPlayer) == false)
+				if (g_pBudokaiManager->CanTeleportPrelim(cPlayer) == false)
 					wResultcode = GAME_CAN_NOT_TELEPORT;
 				else
 					wResultcode = GAME_SUCCESS;
@@ -11591,7 +11583,7 @@ void CClientSession::RecvTeleportConfirmationReq(CNtlPacket * pPacket)
 			if (req->byTeleportIndex == TELEPORT_TYPE_PARTY_POPO && pRequestor) //send to requestor that player declined the teleport request
 			{
 				CNtlPacket packetDecline(sizeof(sGU_CHAR_PARTY_POPO_REJECT_NFY));
-				sGU_CHAR_PARTY_POPO_REJECT_NFY * res2 = (sGU_CHAR_PARTY_POPO_REJECT_NFY *)packetDecline.GetPacketData();
+				sGU_CHAR_PARTY_POPO_REJECT_NFY* res2 = (sGU_CHAR_PARTY_POPO_REJECT_NFY*)packetDecline.GetPacketData();
 				res2->wOpCode = GU_CHAR_PARTY_POPO_REJECT_NFY;
 				res2->handle = cPlayer->GetID();
 				packetDecline.SetPacketLen(sizeof(sGU_CHAR_PARTY_POPO_REJECT_NFY));
@@ -11608,21 +11600,21 @@ void CClientSession::RecvTeleportConfirmationReq(CNtlPacket * pPacket)
 		//reset teleport data
 		cPlayer->ResetDirectPlay();
 		//reset teleport shit
-		cPlayer->event_TeleportProposal(); 
+		cPlayer->event_TeleportProposal();
 	}
 }
 
 //--------------------------------------------------------------------------------------//
 //		RESET SINGLE SKILL ( decrease level by 1 )
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvResetOneSkillReq(CNtlPacket * pPacket)
+void CClientSession::RecvResetOneSkillReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_SKILL_ONE_RESET_REQ * req = (sUG_SKILL_ONE_RESET_REQ*)pPacket->GetPacketData();
+	sUG_SKILL_ONE_RESET_REQ* req = (sUG_SKILL_ONE_RESET_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_SKILL_ONE_RESET_RES));
 	sGU_SKILL_ONE_RESET_RES* res = (sGU_SKILL_ONE_RESET_RES*)packet.GetPacketData();
@@ -11717,7 +11709,7 @@ void CClientSession::RecvResetOneSkillReq(CNtlPacket * pPacket)
 		else res->wResultCode = GAME_FAIL;
 	}
 	else res->wResultCode = GAME_SKILL_CANT_USE_WHEN_TRANSFORMED;
-	
+
 	packet.SetPacketLen(sizeof(sGU_SKILL_ONE_RESET_RES));
 	app->Send(GetHandle(), &packet);
 }
@@ -11726,12 +11718,12 @@ void CClientSession::RecvResetOneSkillReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CREATE AND ENTER ULTIMATE DUNGEON
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvUltimateDungeonEnterReq(CNtlPacket * pPacket)
+void CClientSession::RecvUltimateDungeonEnterReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_ULTIMATE_DUNGEON_ENTER_REQ * req = (sUG_ULTIMATE_DUNGEON_ENTER_REQ*)pPacket->GetPacketData();
+	sUG_ULTIMATE_DUNGEON_ENTER_REQ* req = (sUG_ULTIMATE_DUNGEON_ENTER_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_SUCCESS;
 
@@ -11740,7 +11732,7 @@ void CClientSession::RecvUltimateDungeonEnterReq(CNtlPacket * pPacket)
 		CNpc* pNpc = g_pObjectManager->GetNpc(req->hRequestNpc);
 		if (pNpc && cPlayer->IsInRange(pNpc, DBO_DISTANCE_CHECK_TOLERANCE))
 		{
-			if(BIT_FLAG_TEST(pNpc->GetTbldat()->dwFunc_Bit_Flag, NPC_FUNC_FLAG_GUARD) == false)
+			if (BIT_FLAG_TEST(pNpc->GetTbldat()->dwFunc_Bit_Flag, NPC_FUNC_FLAG_GUARD) == false)
 				wResultcode = GAME_TARGET_HAS_NOT_FUNCTION;
 			else if (cPlayer->GetParty() && cPlayer->GetPartyID() != INVALID_PARTYID)
 			{
@@ -11774,26 +11766,26 @@ void CClientSession::RecvUltimateDungeonEnterReq(CNtlPacket * pPacket)
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvDragonballScrambleJoinReq(CNtlPacket * pPacket)
+void CClientSession::RecvDragonballScrambleJoinReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DRAGONBALL_SCRAMBLE_JOIN_REQ * req = (sUG_DRAGONBALL_SCRAMBLE_JOIN_REQ*)pPacket->GetPacketData();
+	sUG_DRAGONBALL_SCRAMBLE_JOIN_REQ* req = (sUG_DRAGONBALL_SCRAMBLE_JOIN_REQ*)pPacket->GetPacketData();
 
 	g_pDragonballScramble->RequestJoin(cPlayer);
 }
 
-void CClientSession::RecvDragonballScrambleBallLocReq(CNtlPacket * pPacket)
+void CClientSession::RecvDragonballScrambleBallLocReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DRAGONBALL_SCRAMBLE_BALL_LOC_REQ * req = (sUG_DRAGONBALL_SCRAMBLE_BALL_LOC_REQ*)pPacket->GetPacketData();
+	sUG_DRAGONBALL_SCRAMBLE_BALL_LOC_REQ* req = (sUG_DRAGONBALL_SCRAMBLE_BALL_LOC_REQ*)pPacket->GetPacketData();
 
 	g_pDragonballScramble->RequestBallLoc(cPlayer, req->bEnable);
 }
@@ -11802,14 +11794,14 @@ void CClientSession::RecvDragonballScrambleBallLocReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		DISASSEMBLE ITEMS
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemDisassembleReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemDisassembleReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_ITEM_DISASSEMBLE_REQ * req = (sUG_ITEM_DISASSEMBLE_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_DISASSEMBLE_REQ* req = (sUG_ITEM_DISASSEMBLE_REQ*)pPacket->GetPacketData();
 
 	BYTE reward = 0;
 	WORD resultcode = GAME_SUCCESS;
@@ -11915,128 +11907,128 @@ void CClientSession::RecvItemDisassembleReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		DWC WORLDCOUNT INFO
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvDwcWorldCountInfoReq(CNtlPacket * pPacket)
+void	CClientSession::RecvDwcWorldCountInfoReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_DWC_WORLDCOUNT_INFO_REQ *req = (sUG_DWC_WORLDCOUNT_INFO_REQ*)pPacket->GetPacketData();
+	sUG_DWC_WORLDCOUNT_INFO_REQ* req = (sUG_DWC_WORLDCOUNT_INFO_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_DWC_WORLDCOUNT_INFO_RES));
 	sGU_DWC_WORLDCOUNT_INFO_RES* res = (sGU_DWC_WORLDCOUNT_INFO_RES*)packet.GetPacketData();
-		res->wOpCode = GU_DWC_WORLDCOUNT_INFO_RES;
-		res->wResultCode = GAME_SUCCESS;
-		res->hNpc = req->hNpc;
-		res->byWorldCount = 1;
-		res->byLimitCount = 1;
-		res->asWorldCountInfo[0].tblidx = 1;
-		res->asWorldCountInfo[0].wUseCount = 1;
-	packet.SetPacketLen( sizeof(sGU_DWC_WORLDCOUNT_INFO_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	res->wOpCode = GU_DWC_WORLDCOUNT_INFO_RES;
+	res->wResultCode = GAME_SUCCESS;
+	res->hNpc = req->hNpc;
+	res->byWorldCount = 1;
+	res->byLimitCount = 1;
+	res->asWorldCountInfo[0].tblidx = 1;
+	res->asWorldCountInfo[0].wUseCount = 1;
+	packet.SetPacketLen(sizeof(sGU_DWC_WORLDCOUNT_INFO_RES));
+	g_pApp->Send(GetHandle(), &packet);
 
 }
 //--------------------------------------------------------------------------------------//
 //		DWC WORLD ENTER
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvDwcWorldEnterReq(CNtlPacket * pPacket)
+void	CClientSession::RecvDwcWorldEnterReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DWC_ENTER_REQ *req = (sUG_DWC_ENTER_REQ*)pPacket->GetPacketData();
+	sUG_DWC_ENTER_REQ* req = (sUG_DWC_ENTER_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_DWC_ENTER_RES));
 	sGU_DWC_ENTER_RES* res = (sGU_DWC_ENTER_RES*)packet.GetPacketData();
-		res->wOpCode = GU_DWC_ENTER_RES;
-		res->wResultCode = GAME_SUCCESS;
-		res->hNpc = req->hNpc;
-		res->dwcTblidx = req->dwcTblidx;
-	packet.SetPacketLen( sizeof(sGU_DWC_ENTER_RES) );
-	app->Send(GetHandle(), &packet );
+	res->wOpCode = GU_DWC_ENTER_RES;
+	res->wResultCode = GAME_SUCCESS;
+	res->hNpc = req->hNpc;
+	res->dwcTblidx = req->dwcTblidx;
+	packet.SetPacketLen(sizeof(sGU_DWC_ENTER_RES));
+	app->Send(GetHandle(), &packet);
 
 	//send proposal
 	CNtlPacket packet2(sizeof(sGU_DWC_ENTER_PROPOSAL_NFY));
 	sGU_DWC_ENTER_PROPOSAL_NFY* res2 = (sGU_DWC_ENTER_PROPOSAL_NFY*)packet2.GetPacketData();
-		res2->wOpCode = GU_DWC_ENTER_PROPOSAL_NFY;
-		res2->byDWCLimitCount = 1;
-		res2->dwcTblidx = req->dwcTblidx;
-		res2->dwWaitTime = 60;
-	packet2.SetPacketLen( sizeof(sGU_DWC_ENTER_PROPOSAL_NFY) );
-	app->Send(GetHandle(), &packet2 );
+	res2->wOpCode = GU_DWC_ENTER_PROPOSAL_NFY;
+	res2->byDWCLimitCount = 1;
+	res2->dwcTblidx = req->dwcTblidx;
+	res2->dwWaitTime = 60;
+	packet2.SetPacketLen(sizeof(sGU_DWC_ENTER_PROPOSAL_NFY));
+	app->Send(GetHandle(), &packet2);
 }
 
 //--------------------------------------------------------------------------------------//
 //		DWC WORLD ENTER CONFIRM
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvDwcWorldEnterConfirmReq(CNtlPacket * pPacket)
+void	CClientSession::RecvDwcWorldEnterConfirmReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_DWC_ENTER_CONFIRM_REQ *req = (sUG_DWC_ENTER_CONFIRM_REQ*)pPacket->GetPacketData();
-	
+	sUG_DWC_ENTER_CONFIRM_REQ* req = (sUG_DWC_ENTER_CONFIRM_REQ*)pPacket->GetPacketData();
+
 	CGameServer* app = (CGameServer*)g_pApp;
 
 	CNtlPacket packet(sizeof(sGU_DWC_ENTER_CONFIRM_RES));
 	sGU_DWC_ENTER_CONFIRM_RES* res = (sGU_DWC_ENTER_CONFIRM_RES*)packet.GetPacketData();
-		res->wOpCode = GU_DWC_ENTER_CONFIRM_RES;
-		res->wResultCode = GAME_SUCCESS;
-		res->bEnter = req->bEnter;
-	packet.SetPacketLen( sizeof(sGU_DWC_ENTER_CONFIRM_RES) );
-	app->Send(GetHandle(), &packet );
+	res->wOpCode = GU_DWC_ENTER_CONFIRM_RES;
+	res->wResultCode = GAME_SUCCESS;
+	res->bEnter = req->bEnter;
+	packet.SetPacketLen(sizeof(sGU_DWC_ENTER_CONFIRM_RES));
+	app->Send(GetHandle(), &packet);
 
-	if(req->bEnter == false)
+	if (req->bEnter == false)
 	{
 		CNtlPacket packet2(sizeof(sGU_DWC_ENTER_CANCELED_NFY));
 		sGU_DWC_ENTER_CANCELED_NFY* res2 = (sGU_DWC_ENTER_CANCELED_NFY*)packet2.GetPacketData();
-			res2->wOpCode = GU_DWC_ENTER_CANCELED_NFY;
-			res2->wResultCode = GAME_SUCCESS;
-		packet2.SetPacketLen( sizeof(sGU_DWC_ENTER_CANCELED_NFY) );
-		app->Send(GetHandle(), &packet2 );
+		res2->wOpCode = GU_DWC_ENTER_CANCELED_NFY;
+		res2->wResultCode = GAME_SUCCESS;
+		packet2.SetPacketLen(sizeof(sGU_DWC_ENTER_CANCELED_NFY));
+		app->Send(GetHandle(), &packet2);
 	}
 }
 
 //--------------------------------------------------------------------------------------//
 //		DWC SCENARIO INFO //load finished dwcs
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvDwcScenarioInfoReq(CNtlPacket * pPacket)
+void	CClientSession::RecvDwcScenarioInfoReq(CNtlPacket* pPacket)
 {
-	sUG_DWC_SCENARIO_INFO_REQ *req = (sUG_DWC_SCENARIO_INFO_REQ*)pPacket->GetPacketData();
+	sUG_DWC_SCENARIO_INFO_REQ* req = (sUG_DWC_SCENARIO_INFO_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_DWC_SCENARIO_INFO_RES));
 	sGU_DWC_SCENARIO_INFO_RES* res = (sGU_DWC_SCENARIO_INFO_RES*)packet.GetPacketData();
 	res->wOpCode = GU_DWC_SCENARIO_INFO_RES;
 	res->byScenarioCount = 0;
-	packet.SetPacketLen( sizeof(sGU_DWC_SCENARIO_INFO_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_DWC_SCENARIO_INFO_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		DWC REWARD
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvDwcGetRewardReq(CNtlPacket * pPacket)
+void	CClientSession::RecvDwcGetRewardReq(CNtlPacket* pPacket)
 {
-	sUG_DWC_GET_REWARD_REQ *req = (sUG_DWC_GET_REWARD_REQ*)pPacket->GetPacketData();
+	sUG_DWC_GET_REWARD_REQ* req = (sUG_DWC_GET_REWARD_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_DWC_MISSION_REWARD_NFY));
 	sGU_DWC_MISSION_REWARD_NFY* res = (sGU_DWC_MISSION_REWARD_NFY*)packet.GetPacketData();
 	res->wOpCode = GU_DWC_MISSION_REWARD_NFY;
 	res->dwcMissionTblidx = 1;
-	packet.SetPacketLen( sizeof(sGU_DWC_MISSION_REWARD_NFY) );
+	packet.SetPacketLen(sizeof(sGU_DWC_MISSION_REWARD_NFY));
 	g_pApp->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		START EVENT ITEM SHOP
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvEventItemShopReq(CNtlPacket * pPacket)
+void	CClientSession::RecvEventItemShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SHOP_EVENTITEM_START_REQ *req = (sUG_SHOP_EVENTITEM_START_REQ*)pPacket->GetPacketData();
+	sUG_SHOP_EVENTITEM_START_REQ* req = (sUG_SHOP_EVENTITEM_START_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_FAIL;
 
@@ -12076,13 +12068,13 @@ void	CClientSession::RecvEventItemShopReq(CNtlPacket * pPacket)
 	res->wOpCode = GU_SHOP_EVENTITEM_START_RES;
 	res->handle = req->handle;
 	res->wResultCode = wResultCode;
-	packet.SetPacketLen( sizeof(sGU_SHOP_EVENTITEM_START_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_SHOP_EVENTITEM_START_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 //--------------------------------------------------------------------------------------//
 //		END EVENT ITEM SHOP
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvEndEventItemShopReq(CNtlPacket * pPacket)
+void	CClientSession::RecvEndEventItemShopReq(CNtlPacket* pPacket)
 {
 	WORD wResultCode = GAME_FAIL;
 
@@ -12101,24 +12093,24 @@ void	CClientSession::RecvEndEventItemShopReq(CNtlPacket * pPacket)
 	sGU_SHOP_EVENTITEM_END_RES* res = (sGU_SHOP_EVENTITEM_END_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SHOP_EVENTITEM_END_RES;
 	res->wResultCode = wResultCode;
-	g_pApp->Send(GetHandle(), &packet );
+	g_pApp->Send(GetHandle(), &packet);
 }
 //--------------------------------------------------------------------------------------//
 //		BUY EVENT ITEM SHOP
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvBuyEventItemShopReq(CNtlPacket * pPacket)
+void CClientSession::RecvBuyEventItemShopReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SHOP_EVENTITEM_BUY_REQ * req = (sUG_SHOP_EVENTITEM_BUY_REQ *)pPacket->GetPacketData();
+	sUG_SHOP_EVENTITEM_BUY_REQ* req = (sUG_SHOP_EVENTITEM_BUY_REQ*)pPacket->GetPacketData();
 
 	CMerchantTable* pMerchantItemTable = g_pTableContainer->GetMerchantTable();
-	CItemTable *itemTbl = g_pTableContainer->GetItemTable();
+	CItemTable* itemTbl = g_pTableContainer->GetItemTable();
 
 	WORD buy_item_result = GAME_SUCCESS;
 
-	if(req->byBuyCount == 0 || req->byBuyCount > NTL_MAX_BUY_SHOPPING_CART)
+	if (req->byBuyCount == 0 || req->byBuyCount > NTL_MAX_BUY_SHOPPING_CART)
 		buy_item_result = GAME_FAIL;
 	else if (cPlayer->GetNpcShopHandle() != req->handle) // check if viewing the same NPC
 		buy_item_result = GAME_FAIL;
@@ -12285,29 +12277,29 @@ void CClientSession::RecvBuyEventItemShopReq(CNtlPacket * pPacket)
 
 
 	CNtlPacket packet(sizeof(sGU_SHOP_EVENTITEM_BUY_RES));
-	sGU_SHOP_EVENTITEM_BUY_RES * res = (sGU_SHOP_EVENTITEM_BUY_RES *)packet.GetPacketData();
+	sGU_SHOP_EVENTITEM_BUY_RES* res = (sGU_SHOP_EVENTITEM_BUY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_SHOP_EVENTITEM_BUY_RES;
 	res->wResultCode = buy_item_result;
 	res->handle = req->handle;
-	packet.SetPacketLen( sizeof(sGU_SHOP_EVENTITEM_BUY_RES) );
-	g_pApp->Send(GetHandle(), &packet );
+	packet.SetPacketLen(sizeof(sGU_SHOP_EVENTITEM_BUY_RES));
+	g_pApp->Send(GetHandle(), &packet);
 }
 
 //--------------------------------------------------------------------------------------//
 //		BUY ITEM BY EXCHANGING ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemExchangeReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemExchangeReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_ITEM_EXCHANGE_REQ * req = (sUG_ITEM_EXCHANGE_REQ *)pPacket->GetPacketData();
+	sUG_ITEM_EXCHANGE_REQ* req = (sUG_ITEM_EXCHANGE_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 	CMerchantTable* pMerchantItemTable = g_pTableContainer->GetMerchantTable();
 
 	WORD buy_item_result = GAME_SUCCESS;
-	
+
 	if (cPlayer->GetNpcShopHandle() != req->handle) // check if viewing the same NPC
 		buy_item_result = GAME_FAIL;
 	else if (cPlayer->GetNpcShopType() != NPC_SHOP_TYPE_EXCHANGE) // check if same type
@@ -12465,7 +12457,7 @@ void CClientSession::RecvItemExchangeReq(CNtlPacket * pPacket)
 
 
 	CNtlPacket packet(sizeof(sGU_ITEM_EXCHANGE_RES));
-	sGU_ITEM_EXCHANGE_RES * res = (sGU_ITEM_EXCHANGE_RES *)packet.GetPacketData();
+	sGU_ITEM_EXCHANGE_RES* res = (sGU_ITEM_EXCHANGE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ITEM_EXCHANGE_RES;
 	res->wResultCode = buy_item_result;
 	packet.SetPacketLen(sizeof(sGU_ITEM_EXCHANGE_RES));
@@ -12476,56 +12468,56 @@ void CClientSession::RecvItemExchangeReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		BUY DURATION ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvDurationItemBuyReq(CNtlPacket * pPacket)
+void CClientSession::RecvDurationItemBuyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_DURATION_ITEM_BUY_REQ * req = (sUG_DURATION_ITEM_BUY_REQ *)pPacket->GetPacketData();
+	sUG_DURATION_ITEM_BUY_REQ* req = (sUG_DURATION_ITEM_BUY_REQ*)pPacket->GetPacketData();
 
 }
 
 //--------------------------------------------------------------------------------------//
 //		BUY ITEM FROM NETPY STORE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvNetPyBuyReq(CNtlPacket * pPacket)
+void CClientSession::RecvNetPyBuyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SHOP_NETPYITEM_BUY_REQ * req = (sUG_SHOP_NETPYITEM_BUY_REQ *)pPacket->GetPacketData();
+	sUG_SHOP_NETPYITEM_BUY_REQ* req = (sUG_SHOP_NETPYITEM_BUY_REQ*)pPacket->GetPacketData();
 }
 
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotRingActionReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotRingActionReq(CNtlPacket* pPacket)
 {
-	sUG_MASCOT_RING_ACTION_REQ * req = (sUG_MASCOT_RING_ACTION_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_RING_ACTION_REQ* req = (sUG_MASCOT_RING_ACTION_REQ*)pPacket->GetPacketData();
 
 }
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotRingRemoveAllReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotRingRemoveAllReq(CNtlPacket* pPacket)
 {
-	sUG_MASCOT_RING_REMOVE_ALL_REQ * req = (sUG_MASCOT_RING_REMOVE_ALL_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_RING_REMOVE_ALL_REQ* req = (sUG_MASCOT_RING_REMOVE_ALL_REQ*)pPacket->GetPacketData();
 
 }
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotSummonReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotSummonReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_SUMMON_REQ_EX * req = (sUG_MASCOT_SUMMON_REQ_EX *)pPacket->GetPacketData();
+	sUG_MASCOT_SUMMON_REQ_EX* req = (sUG_MASCOT_SUMMON_REQ_EX*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGU_MASCOT_SUMMON_EX_RES));
-	sGU_MASCOT_SUMMON_EX_RES * res = (sGU_MASCOT_SUMMON_EX_RES *)packet.GetPacketData();
+	sGU_MASCOT_SUMMON_EX_RES* res = (sGU_MASCOT_SUMMON_EX_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MASCOT_SUMMON_EX_RES;
 	res->byIndex = req->byIndex;
 
@@ -12549,7 +12541,7 @@ void CClientSession::RecvMascotSummonReq(CNtlPacket * pPacket)
 	if (resultcode == GAME_SUCCESS)
 	{
 		CNtlPacket packet2(sizeof(sGU_UPDATE_MASCOT_SUMMON));
-		sGU_UPDATE_MASCOT_SUMMON * res2 = (sGU_UPDATE_MASCOT_SUMMON *)packet2.GetPacketData();
+		sGU_UPDATE_MASCOT_SUMMON* res2 = (sGU_UPDATE_MASCOT_SUMMON*)packet2.GetPacketData();
 		res2->wOpCode = GU_UPDATE_MASCOT_SUMMON;
 		res2->handle = cPlayer->GetID();
 		res2->tblidx = cPlayer->GetMascotTblidx();
@@ -12560,17 +12552,17 @@ void CClientSession::RecvMascotSummonReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotUnsummonReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotUnsummonReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_UNSUMMON_REQ_EX * req = (sUG_MASCOT_UNSUMMON_REQ_EX *)pPacket->GetPacketData();
+	sUG_MASCOT_UNSUMMON_REQ_EX* req = (sUG_MASCOT_UNSUMMON_REQ_EX*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
-	
+
 	CNtlPacket packet(sizeof(sGU_MASCOT_UNSUMMON_EX_RES));
-	sGU_MASCOT_UNSUMMON_EX_RES * res = (sGU_MASCOT_UNSUMMON_EX_RES *)packet.GetPacketData();
+	sGU_MASCOT_UNSUMMON_EX_RES* res = (sGU_MASCOT_UNSUMMON_EX_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MASCOT_UNSUMMON_EX_RES;
 
 	if (cPlayer->GetMascotTblidx() != INVALID_TBLIDX)
@@ -12594,7 +12586,7 @@ void CClientSession::RecvMascotUnsummonReq(CNtlPacket * pPacket)
 	if (resultcode == GAME_SUCCESS)
 	{
 		CNtlPacket packet2(sizeof(sGU_UPDATE_MASCOT_SUMMON));
-		sGU_UPDATE_MASCOT_SUMMON * res2 = (sGU_UPDATE_MASCOT_SUMMON *)packet2.GetPacketData();
+		sGU_UPDATE_MASCOT_SUMMON* res2 = (sGU_UPDATE_MASCOT_SUMMON*)packet2.GetPacketData();
 		res2->wOpCode = GU_UPDATE_MASCOT_SUMMON;
 		res2->handle = cPlayer->GetID();
 		res2->tblidx = cPlayer->GetMascotTblidx();
@@ -12605,29 +12597,29 @@ void CClientSession::RecvMascotUnsummonReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotDelReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotDelReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_DELETE_REQ_EX * req = (sUG_MASCOT_DELETE_REQ_EX *)pPacket->GetPacketData();
+	sUG_MASCOT_DELETE_REQ_EX* req = (sUG_MASCOT_DELETE_REQ_EX*)pPacket->GetPacketData();
 
 	cPlayer->DeleteMascot(req->byIndex);
 }
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotRingMaterialDisassembleReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotRingMaterialDisassembleReq(CNtlPacket* pPacket)
 {
-	sUG_MASCOT_RING_MATERIAL_DISASSEMBLE_REQ * req = (sUG_MASCOT_RING_MATERIAL_DISASSEMBLE_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_RING_MATERIAL_DISASSEMBLE_REQ* req = (sUG_MASCOT_RING_MATERIAL_DISASSEMBLE_REQ*)pPacket->GetPacketData();
 
 }
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotRingActionEndReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotRingActionEndReq(CNtlPacket* pPacket)
 {
-	sUG_MASCOT_RING_ACTION_END_REQ * req = (sUG_MASCOT_RING_ACTION_END_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_RING_ACTION_END_REQ* req = (sUG_MASCOT_RING_ACTION_END_REQ*)pPacket->GetPacketData();
 
 	//printf("sUG_MASCOT_RING_ACTION_END_REQ: byRingPartsType=%u\n", req->byRingPartsType);
 
@@ -12641,37 +12633,37 @@ void CClientSession::RecvMascotRingActionEndReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		fusion(level up) pet
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotFusionReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotFusionReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_FUSION_REQ * req = (sUG_MASCOT_FUSION_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_FUSION_REQ* req = (sUG_MASCOT_FUSION_REQ*)pPacket->GetPacketData();
 
 	cPlayer->FusionMascot(req->byItemPlace, req->byItemPos, req->byMascotLevelUpSlot, req->byMascotOfferingSlot);
 }
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotSkillAddReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotSkillAddReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_SKILL_ADD_REQ * req = (sUG_MASCOT_SKILL_ADD_REQ *)pPacket->GetPacketData();
-	
+	sUG_MASCOT_SKILL_ADD_REQ* req = (sUG_MASCOT_SKILL_ADD_REQ*)pPacket->GetPacketData();
+
 	if (cPlayer->GetCurrentMascot())
 		cPlayer->GetCurrentMascot()->LearnRandomSkill(req->bySkillSlot);
 }
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotSkillUpdateReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotSkillUpdateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_SKILL_UPDATE_REQ * req = (sUG_MASCOT_SKILL_UPDATE_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_SKILL_UPDATE_REQ* req = (sUG_MASCOT_SKILL_UPDATE_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetCurrentMascot())
 		cPlayer->GetCurrentMascot()->UpdateSkill(req->bySkillSlot, req->byItemPlace, req->byItemPos);
@@ -12679,12 +12671,12 @@ void CClientSession::RecvMascotSkillUpdateReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotSkillUpgradeReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotSkillUpgradeReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_SKILL_UPGRADE_REQ * req = (sUG_MASCOT_SKILL_UPGRADE_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_SKILL_UPGRADE_REQ* req = (sUG_MASCOT_SKILL_UPGRADE_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetCurrentMascot())
 		cPlayer->GetCurrentMascot()->UpgradeSkill(req->bySkillSlot, req->byItemPlace, req->byItemPos);
@@ -12692,12 +12684,12 @@ void CClientSession::RecvMascotSkillUpgradeReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		MASCOT USE SKILL
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotSkillReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotSkillReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_SKILL_REQ * req = (sUG_MASCOT_SKILL_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_SKILL_REQ* req = (sUG_MASCOT_SKILL_REQ*)pPacket->GetPacketData();
 
 	WORD wResultcode = GAME_FAIL;
 	DWORD dwNewVP = 0;
@@ -12720,158 +12712,158 @@ void CClientSession::RecvMascotSkillReq(CNtlPacket * pPacket)
 			{
 				if (pData->dwCurVP >= pSkill->dwRequire_VP)
 				{
-				//	printf("mascot skill tblidx %u dwRequire_VP %u byUse_Type %u dwFunction_Bit_Flag %u skill_Effect %u bySkill_Effect_Type %u\n", pSkill->tblidx, pSkill->dwRequire_VP, pSkill->byUse_Type, pSkill->dwFunction_Bit_Flag, pSkill->skill_Effect[0], pSkill->bySkill_Effect_Type[0]);
+					//	printf("mascot skill tblidx %u dwRequire_VP %u byUse_Type %u dwFunction_Bit_Flag %u skill_Effect %u bySkill_Effect_Type %u\n", pSkill->tblidx, pSkill->dwRequire_VP, pSkill->byUse_Type, pSkill->dwFunction_Bit_Flag, pSkill->skill_Effect[0], pSkill->bySkill_Effect_Type[0]);
 					sSYSTEM_EFFECT_TBLDAT* pEffect = (sSYSTEM_EFFECT_TBLDAT*)g_pTableContainer->GetSystemEffectTable()->FindData(pSkill->skill_Effect[0]);
 					if (pEffect)
 					{
 						switch (pEffect->effectCode)
 						{
-							case ACTIVE_AUTO_LOOTING:
-							{
-								wResultcode = GAME_SUCCESS;
+						case ACTIVE_AUTO_LOOTING:
+						{
+							wResultcode = GAME_SUCCESS;
 
-								cPlayer->GetCurrentMascot()->SetCanLoot(true);
-							}
-							break;
-							case ACTIVE_NPC_TELEPORT:
+							cPlayer->GetCurrentMascot()->SetCanLoot(true);
+						}
+						break;
+						case ACTIVE_NPC_TELEPORT:
+						{
+							if (cPlayer->GetCurWorld() && cPlayer->GetCurWorld()->GetTbldat()->bDynamic == false && cPlayer->GetCombatMode() == false && cPlayer->GetDragonballScrambleBallFlag() == 0)
 							{
-								if (cPlayer->GetCurWorld() && cPlayer->GetCurWorld()->GetTbldat()->bDynamic == false && cPlayer->GetCombatMode() == false && cPlayer->GetDragonballScrambleBallFlag() == 0)
+								CGameServer* app = (CGameServer*)g_pApp;
+
+								CWorld* pWorld = app->GetGameMain()->GetWorldManager()->FindWorld(req->worldTblidx);
+								if (pWorld && pWorld->GetTbldat()->bDynamic == false)
 								{
-									CGameServer* app = (CGameServer*)g_pApp;
-
-									CWorld* pWorld = app->GetGameMain()->GetWorldManager()->FindWorld(req->worldTblidx);
-									if (pWorld && pWorld->GetTbldat()->bDynamic == false)
+									CTriggerObject* obj = pWorld->FindStaticObjectByIdx(req->targetTblidx);
+									if (obj)
 									{
-										CTriggerObject* obj = pWorld->FindStaticObjectByIdx(req->targetTblidx);
-										if (obj)
+										wResultcode = GAME_SUCCESS;
+
+										CNtlVector vDestLoc(obj->GetCurLoc());
+										vDestLoc.x += 2.0f;
+
+										cPlayer->StartTeleport(vDestLoc, cPlayer->GetCurDir(), req->worldTblidx, TELEPORT_TYPE_SKILL);
+
+										break;
+									}
+									else
+									{
+										CNpc* pNpc = pWorld->FindNpc(req->targetTblidx);
+										if (pNpc)
 										{
 											wResultcode = GAME_SUCCESS;
 
-											CNtlVector vDestLoc(obj->GetCurLoc());
+											CNtlVector vDestLoc(pNpc->GetCurLoc());
 											vDestLoc.x += 2.0f;
 
 											cPlayer->StartTeleport(vDestLoc, cPlayer->GetCurDir(), req->worldTblidx, TELEPORT_TYPE_SKILL);
 
 											break;
 										}
-										else
-										{
-											CNpc* pNpc = pWorld->FindNpc(req->targetTblidx);
-											if (pNpc)
-											{
-												wResultcode = GAME_SUCCESS;
-
-												CNtlVector vDestLoc(pNpc->GetCurLoc());
-												vDestLoc.x += 2.0f;
-
-												cPlayer->StartTeleport(vDestLoc, cPlayer->GetCurDir(), req->worldTblidx, TELEPORT_TYPE_SKILL);
-
-												break;
-											}
-										}
 									}
-									else wResultcode = GAME_WORLD_NOT_EXIST;
 								}
-								else wResultcode = GAME_CAN_NOT_TELEPORT;
+								else wResultcode = GAME_WORLD_NOT_EXIST;
 							}
-							break;
-							case ACTIVE_PARTY_SUMMON:
+							else wResultcode = GAME_CAN_NOT_TELEPORT;
+						}
+						break;
+						case ACTIVE_PARTY_SUMMON:
+						{
+							if (cPlayer->GetParty())
 							{
-								if (cPlayer->GetParty())
+								if (cPlayer->GetCurWorld() && cPlayer->GetCurWorld()->GetTbldat()->bDynamic == false)
 								{
-									if (cPlayer->GetCurWorld() && cPlayer->GetCurWorld()->GetTbldat()->bDynamic == false)
-									{
-										wResultcode = GAME_SUCCESS;
-										cPlayer->GetParty()->StartPartyTeleport(cPlayer);
-									}
-									else wResultcode = GAME_FAIL;
-								}
-								else wResultcode = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
-							}
-							break;
-							case ACTIVE_GUILD_SUMMON:
-							{
-								if (cPlayer->GetGuildID() != 0)
-								{
-									if (cPlayer->GetCurWorld() && cPlayer->GetCurWorld()->GetTbldat()->bDynamic == false)
-									{
-										wResultcode = GAME_SUCCESS;
-										g_pGuildManager->GuildTeleportProposal(cPlayer, cPlayer->GetGuildID());
-									}
-									else wResultcode = GAME_FAIL;
-								}
-								else wResultcode = GAME_GUILD_NO_GUILD_FOUND;
-							}
-							break;
-							case PASSIVE_SELF_RESCUE:
-							{
-								if (cPlayer->IsFainting())
-								{
-									if (cPlayer->GetCurWorld())
-									{
-										if (cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_RANKBATTLE || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_MINORMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_MAJORMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_FINALMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_CCBATTLEDUNGEON)
-											wResultcode = GAME_FAIL;
-										else
-										{
-											wResultcode = GAME_SUCCESS;
-											cPlayer->Revival(cPlayer->GetCurLoc(), cPlayer->GetWorldID(), REVIVAL_TYPE_CURRENT_POSITION, TELEPORT_TYPE_SKILL);
-											cPlayer->UpdateCurLpEp(cPlayer->GetMaxLP() * (int)pSkill->aSkill_Effect_Value[0] / 100, cPlayer->GetMaxEP() * (WORD)pSkill->aSkill_Effect_Value[1] / 100, true, false);
-										}
-									}
-									else wResultcode = GAME_FAIL;
+									wResultcode = GAME_SUCCESS;
+									cPlayer->GetParty()->StartPartyTeleport(cPlayer);
 								}
 								else wResultcode = GAME_FAIL;
 							}
-							break;
-							case ACTIVE_REMOTE_SELL:
+							else wResultcode = GAME_COMMON_YOU_ARE_NOT_IN_A_PARTY;
+						}
+						break;
+						case ACTIVE_GUILD_SUMMON:
+						{
+							if (cPlayer->GetGuildID() != 0)
+							{
+								if (cPlayer->GetCurWorld() && cPlayer->GetCurWorld()->GetTbldat()->bDynamic == false)
+								{
+									wResultcode = GAME_SUCCESS;
+									g_pGuildManager->GuildTeleportProposal(cPlayer, cPlayer->GetGuildID());
+								}
+								else wResultcode = GAME_FAIL;
+							}
+							else wResultcode = GAME_GUILD_NO_GUILD_FOUND;
+						}
+						break;
+						case PASSIVE_SELF_RESCUE:
+						{
+							if (cPlayer->IsFainting())
+							{
+								if (cPlayer->GetCurWorld())
+								{
+									if (cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_RANKBATTLE || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_MINORMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_MAJORMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_FINALMATCH || cPlayer->GetCurWorld()->GetRuleType() == GAMERULE_CCBATTLEDUNGEON)
+										wResultcode = GAME_FAIL;
+									else
+									{
+										wResultcode = GAME_SUCCESS;
+										cPlayer->Revival(cPlayer->GetCurLoc(), cPlayer->GetWorldID(), REVIVAL_TYPE_CURRENT_POSITION, TELEPORT_TYPE_SKILL);
+										cPlayer->UpdateCurLpEp(cPlayer->GetMaxLP() * (int)pSkill->aSkill_Effect_Value[0] / 100, cPlayer->GetMaxEP() * (WORD)pSkill->aSkill_Effect_Value[1] / 100, true, false);
+									}
+								}
+								else wResultcode = GAME_FAIL;
+							}
+							else wResultcode = GAME_FAIL;
+						}
+						break;
+						case ACTIVE_REMOTE_SELL:
+						{
+							wResultcode = GAME_SUCCESS;
+
+							cPlayer->GetCurrentMascot()->SetCanRemoteSell(true);
+						}
+						break;
+						case ACTIVE_REMOTE_WAREHOUSE:
+						{
+							if (cPlayer->IsUsingBank() == true)	//check if has the bank open
+								wResultcode = GAME_FAIL;
+							else
 							{
 								wResultcode = GAME_SUCCESS;
 
-								cPlayer->GetCurrentMascot()->SetCanRemoteSell(true);
-							}
-							break;
-							case ACTIVE_REMOTE_WAREHOUSE:
-							{
-								if (cPlayer->IsUsingBank() == true)	//check if has the bank open
-									wResultcode = GAME_FAIL;
+								cPlayer->SetRemoteBankSkillUsed(true);
+
+								if (cPlayer->IsBankLoaded())
+								{
+									CNtlPacket packet2(sizeof(sGU_BANK_LOAD_RES));
+									sGU_BANK_LOAD_RES* res2 = (sGU_BANK_LOAD_RES*)packet2.GetPacketData();
+									res2->wOpCode = GU_BANK_LOAD_RES;
+									res2->handle = cPlayer->GetID();
+									res2->wResultCode = wResultcode;
+									packet2.SetPacketLen(sizeof(sGU_BANK_LOAD_RES));
+									g_pApp->Send(GetHandle(), &packet2);
+								}
 								else
 								{
-									wResultcode = GAME_SUCCESS;
+									CGameServer* app = (CGameServer*)g_pApp;
 
-									cPlayer->SetRemoteBankSkillUsed(true);
-
-									if (cPlayer->IsBankLoaded())
-									{
-										CNtlPacket packet2(sizeof(sGU_BANK_LOAD_RES));
-										sGU_BANK_LOAD_RES * res2 = (sGU_BANK_LOAD_RES *)packet2.GetPacketData();
-										res2->wOpCode = GU_BANK_LOAD_RES;
-										res2->handle = cPlayer->GetID();
-										res2->wResultCode = wResultcode;
-										packet2.SetPacketLen(sizeof(sGU_BANK_LOAD_RES));
-										g_pApp->Send(GetHandle(), &packet2);
-									}
-									else
-									{
-										CGameServer* app = (CGameServer*)g_pApp;
-
-										CNtlPacket packet2(sizeof(sGQ_LOAD_PC_BANK_DATA_REQ));
-										sGQ_LOAD_PC_BANK_DATA_REQ * res2 = (sGQ_LOAD_PC_BANK_DATA_REQ *)packet2.GetPacketData();
-										res2->wOpCode = GQ_LOAD_PC_BANK_DATA_REQ;
-										res2->accountId = cPlayer->GetAccountID();
-										res2->charId = cPlayer->GetCharID();
-										res2->handle = cPlayer->GetID();
-										res2->npchandle = INVALID_HOBJECT;
-										packet2.SetPacketLen(sizeof(sGQ_LOAD_PC_BANK_DATA_REQ));
-										app->SendTo(app->GetQueryServerSession(), &packet2);
-									}
+									CNtlPacket packet2(sizeof(sGQ_LOAD_PC_BANK_DATA_REQ));
+									sGQ_LOAD_PC_BANK_DATA_REQ* res2 = (sGQ_LOAD_PC_BANK_DATA_REQ*)packet2.GetPacketData();
+									res2->wOpCode = GQ_LOAD_PC_BANK_DATA_REQ;
+									res2->accountId = cPlayer->GetAccountID();
+									res2->charId = cPlayer->GetCharID();
+									res2->handle = cPlayer->GetID();
+									res2->npchandle = INVALID_HOBJECT;
+									packet2.SetPacketLen(sizeof(sGQ_LOAD_PC_BANK_DATA_REQ));
+									app->SendTo(app->GetQueryServerSession(), &packet2);
 								}
 							}
-							break;
-							default:
-							{
-								ERR_LOG(LOG_USER, "ERROR mascot skill effectcode %u not set. Skill tblidx %u", pEffect->effectCode, pSkill->tblidx);
-							}
-							break;
+						}
+						break;
+						default:
+						{
+							ERR_LOG(LOG_USER, "ERROR mascot skill effectcode %u not set. Skill tblidx %u", pEffect->effectCode, pSkill->tblidx);
+						}
+						break;
 						}
 
 						if (wResultcode == GAME_SUCCESS)
@@ -12900,7 +12892,7 @@ void CClientSession::RecvMascotSkillReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_MASCOT_SKILL_RES));
-	sGU_MASCOT_SKILL_RES * res = (sGU_MASCOT_SKILL_RES*)packet.GetPacketData();
+	sGU_MASCOT_SKILL_RES* res = (sGU_MASCOT_SKILL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MASCOT_SKILL_RES;
 	res->wResultCode = wResultcode;
 	res->bySkillSlot = req->bySkillSlot;
@@ -12911,9 +12903,9 @@ void CClientSession::RecvMascotSkillReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvMascotSealSetReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotSealSetReq(CNtlPacket* pPacket)
 {
-	sUG_MASCOT_SEAL_SET_REQ * req = (sUG_MASCOT_SEAL_SET_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_SEAL_SET_REQ* req = (sUG_MASCOT_SEAL_SET_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_FAIL;
 
@@ -12959,7 +12951,7 @@ void CClientSession::RecvMascotSealSetReq(CNtlPacket * pPacket)
 						CGameServer* app = (CGameServer*)g_pApp;
 
 						CNtlPacket packet2(sizeof(sGQ_MASCOT_SEAL_SET_REQ));
-						sGQ_MASCOT_SEAL_SET_REQ * res2 = (sGQ_MASCOT_SEAL_SET_REQ *)packet2.GetPacketData();
+						sGQ_MASCOT_SEAL_SET_REQ* res2 = (sGQ_MASCOT_SEAL_SET_REQ*)packet2.GetPacketData();
 						res2->wOpCode = GQ_MASCOT_SEAL_SET_REQ;
 						res2->handle = cPlayer->GetID();
 						res2->charId = cPlayer->GetCharID();
@@ -12999,39 +12991,39 @@ void CClientSession::RecvMascotSealSetReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_MASCOT_SEAL_SET_RES));
-	sGU_MASCOT_SEAL_SET_RES * res = (sGU_MASCOT_SEAL_SET_RES*)packet.GetPacketData();
+	sGU_MASCOT_SEAL_SET_RES* res = (sGU_MASCOT_SEAL_SET_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MASCOT_SEAL_SET_RES;
 	res->wResultCode = wResultCode;
 	packet.SetPacketLen(sizeof(sGU_MASCOT_SEAL_SET_RES));
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvMascotSealClearReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotSealClearReq(CNtlPacket* pPacket)
 {
-	sUG_MASCOT_SEAL_CLEAR_REQ * req = (sUG_MASCOT_SEAL_CLEAR_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_SEAL_CLEAR_REQ* req = (sUG_MASCOT_SEAL_CLEAR_REQ*)pPacket->GetPacketData();
 }
 
 
 
-void CClientSession::RecvMascotAutoLootingReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotAutoLootingReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_AUTO_LOOTING_REQ * req = (sUG_MASCOT_AUTO_LOOTING_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_AUTO_LOOTING_REQ* req = (sUG_MASCOT_AUTO_LOOTING_REQ*)pPacket->GetPacketData();
 
 	WORD wRes = GAME_SUCCESS;
 	int nCount = 0;
 
 	if (cPlayer->IsTrading())
 		wRes = GAME_LOOTING_FAIL;
-	else if(cPlayer->HasPrivateShop())
+	else if (cPlayer->HasPrivateShop())
 		wRes = GAME_LOOTING_FAIL;
 	else if (req->byItemCount == 0 || req->byItemCount > DBO_MASCOT_MAX_LOOT)
 		wRes = GAME_LOOTING_FAIL;
-	else if(cPlayer->GetCurrentMascot() == NULL || cPlayer->GetCurrentMascot()->CanLoot() == false)
+	else if (cPlayer->GetCurrentMascot() == NULL || cPlayer->GetCurrentMascot()->CanLoot() == false)
 		wRes = MASCOT_WAS_NOT_SUMMONED;
-	else if(cPlayer->IsFainting())
+	else if (cPlayer->IsFainting())
 		wRes = GAME_CHAR_IS_WRONG_STATE;
 	else
 	{
@@ -13056,34 +13048,34 @@ void CClientSession::RecvMascotAutoLootingReq(CNtlPacket * pPacket)
 
 				switch (item->GetObjType())
 				{
-					case OBJTYPE_DROPMONEY: item->PickUpZeni(cPlayer); nCount++; break;
-					case OBJTYPE_DROPITEM: item->PickUpItem(cPlayer); nCount++; break;
+				case OBJTYPE_DROPMONEY: item->PickUpZeni(cPlayer); nCount++; break;
+				case OBJTYPE_DROPITEM: item->PickUpItem(cPlayer); nCount++; break;
 
-					default: break;
+				default: break;
 				}
 			}
 		}
 	}
 
-	if(nCount == 0)
+	if (nCount == 0)
 		wRes = GAME_LOOTING_FAIL;
 
 	CNtlPacket packet(sizeof(sGU_MASCOT_AUTO_LOOTING_RES));
-	sGU_MASCOT_AUTO_LOOTING_RES * res = (sGU_MASCOT_AUTO_LOOTING_RES *)packet.GetPacketData();
+	sGU_MASCOT_AUTO_LOOTING_RES* res = (sGU_MASCOT_AUTO_LOOTING_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MASCOT_AUTO_LOOTING_RES;
 	res->wResultCode = wRes;
 	packet.SetPacketLen(sizeof(sGU_MASCOT_AUTO_LOOTING_RES));
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvMascotRemoteShopSellReq(CNtlPacket * pPacket)
+void CClientSession::RecvMascotRemoteShopSellReq(CNtlPacket* pPacket)
 {
 	CGameServer* app = (CGameServer*)g_pApp;
 
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_MASCOT_REMOTE_SHOP_SELL_REQ * req = (sUG_MASCOT_REMOTE_SHOP_SELL_REQ *)pPacket->GetPacketData();
+	sUG_MASCOT_REMOTE_SHOP_SELL_REQ* req = (sUG_MASCOT_REMOTE_SHOP_SELL_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 	DWORD dwZeni = 0;
@@ -13094,7 +13086,7 @@ void CClientSession::RecvMascotRemoteShopSellReq(CNtlPacket * pPacket)
 	{
 		resultcode = GAME_FAIL;
 	}
-	else if(req->bySellCount == 0 || req->bySellCount > NTL_MAX_SELL_SHOPPING_CART)
+	else if (req->bySellCount == 0 || req->bySellCount > NTL_MAX_SELL_SHOPPING_CART)
 		resultcode = GAME_FAIL;
 	else if (cPlayer->GetCurrentMascot() == NULL || cPlayer->GetCurrentMascot()->CanRemoteSell() == false)
 		resultcode = MASCOT_WAS_NOT_SUMMONED;
@@ -13150,7 +13142,7 @@ void CClientSession::RecvMascotRemoteShopSellReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_MASCOT_REMOTE_SHOP_SELL_RES));
-	sGU_MASCOT_REMOTE_SHOP_SELL_RES * res = (sGU_MASCOT_REMOTE_SHOP_SELL_RES *)packet.GetPacketData();
+	sGU_MASCOT_REMOTE_SHOP_SELL_RES* res = (sGU_MASCOT_REMOTE_SHOP_SELL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_MASCOT_REMOTE_SHOP_SELL_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_MASCOT_REMOTE_SHOP_SELL_RES));
@@ -13160,7 +13152,7 @@ void CClientSession::RecvMascotRemoteShopSellReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		ENTER LAVA FIELD
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvLavaEnteredNfy(CNtlPacket * pPacket)
+void CClientSession::RecvLavaEnteredNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -13171,7 +13163,7 @@ void CClientSession::RecvLavaEnteredNfy(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		LEAVE LAVA FIELD
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvLavaLeftNfy(CNtlPacket * pPacket)
+void CClientSession::RecvLavaLeftNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -13193,17 +13185,17 @@ void CClientSession::RecvClientInfoNfy(CNtlPacket* pPacket)
 //--------------------------------------------------------------------------------------//
 //		ENTER TIME QUEST DUNGEON REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTimeQuestEnterReq(CNtlPacket * pPacket)
+void CClientSession::RecvTimeQuestEnterReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TIMEQUEST_ENTER_REQ * req = (sUG_TIMEQUEST_ENTER_REQ *)pPacket->GetPacketData();
+	sUG_TIMEQUEST_ENTER_REQ* req = (sUG_TIMEQUEST_ENTER_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_TIMEQUEST_ENTER_RES));
-	sGU_TIMEQUEST_ENTER_RES * res = (sGU_TIMEQUEST_ENTER_RES *)packet.GetPacketData();
+	sGU_TIMEQUEST_ENTER_RES* res = (sGU_TIMEQUEST_ENTER_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TIMEQUEST_ENTER_RES;
 	res->wResultCode = GAME_SUCCESS;
 	res->byDifficult = req->byDifficult;
@@ -13215,17 +13207,17 @@ void CClientSession::RecvTimeQuestEnterReq(CNtlPacket * pPacket)
 		res->wResultCode = GAME_TARGET_NOT_FOUND;
 	else if (pNpc->IsInRange(cPlayer, DBO_DISTANCE_CHECK_TOLERANCE) == false)
 		res->wResultCode = GAME_TARGET_TOO_FAR;
-	else if(req->byDifficult >= MAX_TIMEQUEST_DIFFICULTY)
+	else if (req->byDifficult >= MAX_TIMEQUEST_DIFFICULTY)
 		res->wResultCode = GAME_FAIL;
-	else if(pNpc->GetTbldat()->byJob != NPC_JOB_TIMEMACHINE_MERCHANT)
+	else if (pNpc->GetTbldat()->byJob != NPC_JOB_TIMEMACHINE_MERCHANT)
 		res->wResultCode = GAME_TARGET_HAS_DIFFERENT_JOB;
-	else if(cPlayer->GetPartyID() == INVALID_PARTYID)
+	else if (cPlayer->GetPartyID() == INVALID_PARTYID)
 		res->wResultCode = GAME_PARTY_YOU_ARE_NOT_IN_PARTY;
 	else if (cPlayer->GetParty()->GetPartyLeaderID() != cPlayer->GetID())
 		res->wResultCode = GAME_PARTY_ONLY_ALLOWED_TO_PARTY_LEADER;
-	else if(cPlayer->GetParty()->IsSomeoneInDynamic(INVALID_WORLDID))
+	else if (cPlayer->GetParty()->IsSomeoneInDynamic(INVALID_WORLDID))
 		res->wResultCode = GAME_PARTYMATCHING_ANY_MEMBER_IN_DYNAMIC_WORLD;
-	else if(app->IsDojoChannel() == true)
+	else if (app->IsDojoChannel() == true)
 		res->wResultCode = GAME_FAIL;
 	else
 	{
@@ -13241,12 +13233,12 @@ void CClientSession::RecvTimeQuestEnterReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		SORT INVENTORY REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvInventorySortReq(CNtlPacket * pPacket)
+void CClientSession::RecvInventorySortReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_INVENTORY_SORT_REQ * req = (sUG_INVENTORY_SORT_REQ *)pPacket->GetPacketData();
+	sUG_INVENTORY_SORT_REQ* req = (sUG_INVENTORY_SORT_REQ*)pPacket->GetPacketData();
 
 	/* req->byInventoryType
 		- 0 = INVENTORY
@@ -13262,34 +13254,34 @@ void CClientSession::RecvInventorySortReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		GM Command
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvServerCommand(CNtlPacket * pPacket)
+void CClientSession::RecvServerCommand(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SERVER_COMMAND * pServerCmd = (sUG_SERVER_COMMAND*)pPacket->GetPacketData();
-	
+	sUG_SERVER_COMMAND* pServerCmd = (sUG_SERVER_COMMAND*)pPacket->GetPacketData();
+
 	gm_read_command(pServerCmd, cPlayer);
 }
 
 //--------------------------------------------------------------------------------------//
 //		show/hide costume
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvInvisibleCostumeUpdateReq(CNtlPacket * pPacket)
+void CClientSession::RecvInvisibleCostumeUpdateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_INVISIBLE_COSTUME_UPDATE_REQ * req = (sUG_INVISIBLE_COSTUME_UPDATE_REQ*)pPacket->GetPacketData();
+	sUG_INVISIBLE_COSTUME_UPDATE_REQ* req = (sUG_INVISIBLE_COSTUME_UPDATE_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetCostumeInvisible() != req->bInvisibleCostume)
 	{
 		cPlayer->SetCostumeInvisible(req->bInvisibleCostume);
 
 		CNtlPacket packet(sizeof(sGU_INVISIBLE_COSTUME_UPDATE_RES));
-		sGU_INVISIBLE_COSTUME_UPDATE_RES * res = (sGU_INVISIBLE_COSTUME_UPDATE_RES *)packet.GetPacketData();
+		sGU_INVISIBLE_COSTUME_UPDATE_RES* res = (sGU_INVISIBLE_COSTUME_UPDATE_RES*)packet.GetPacketData();
 		res->wOpCode = GU_INVISIBLE_COSTUME_UPDATE_RES;
 		res->bInvisibleCostume = req->bInvisibleCostume;
 		res->wResultCode = GAME_SUCCESS;
@@ -13298,7 +13290,7 @@ void CClientSession::RecvInvisibleCostumeUpdateReq(CNtlPacket * pPacket)
 
 		// broadcast to others
 		CNtlPacket packet2(sizeof(sGU_INVISIBLE_COSTUME_UPDATE_NFY));
-		sGU_INVISIBLE_COSTUME_UPDATE_NFY * res2 = (sGU_INVISIBLE_COSTUME_UPDATE_NFY *)packet2.GetPacketData();
+		sGU_INVISIBLE_COSTUME_UPDATE_NFY* res2 = (sGU_INVISIBLE_COSTUME_UPDATE_NFY*)packet2.GetPacketData();
 		res2->wOpCode = GU_INVISIBLE_COSTUME_UPDATE_NFY;
 		res2->bInvisibleCostume = req->bInvisibleCostume;
 		res2->hHandle = cPlayer->GetID();
@@ -13307,7 +13299,7 @@ void CClientSession::RecvInvisibleCostumeUpdateReq(CNtlPacket * pPacket)
 
 
 		CNtlPacket pQry(sizeof(sGQ_INVISIBLE_COSTUME_UPDATE_REQ));
-		sGQ_INVISIBLE_COSTUME_UPDATE_REQ * qRes = (sGQ_INVISIBLE_COSTUME_UPDATE_REQ *)pQry.GetPacketData();
+		sGQ_INVISIBLE_COSTUME_UPDATE_REQ* qRes = (sGQ_INVISIBLE_COSTUME_UPDATE_REQ*)pQry.GetPacketData();
 		qRes->wOpCode = GQ_INVISIBLE_COSTUME_UPDATE_REQ;
 		qRes->charId = cPlayer->GetCharID();
 		qRes->bInvisibleCostume = req->bInvisibleCostume;
@@ -13317,26 +13309,26 @@ void CClientSession::RecvInvisibleCostumeUpdateReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvBudokaiJoinInfoReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiJoinInfoReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_JOIN_INFO_REQ * req = (sUG_BUDOKAI_JOIN_INFO_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_JOIN_INFO_REQ* req = (sUG_BUDOKAI_JOIN_INFO_REQ*)pPacket->GetPacketData();
 
 
 }
 
-void CClientSession::RecvBudokaiJoinStateReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiJoinStateReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_JOIN_STATE_REQ * req = (sUG_BUDOKAI_JOIN_STATE_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_JOIN_STATE_REQ* req = (sUG_BUDOKAI_JOIN_STATE_REQ*)pPacket->GetPacketData();
 
 	g_pBudokaiManager->JoinStateReq(cPlayer);
 }
 
-void CClientSession::RecvBudokaiMudosaInfoReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiMudosaInfoReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_MUDOSA_INFO_REQ * req = (sUG_BUDOKAI_MUDOSA_INFO_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_MUDOSA_INFO_REQ* req = (sUG_BUDOKAI_MUDOSA_INFO_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_BUDOKAI_MUDOSA_INFO_RES));
-	sGU_BUDOKAI_MUDOSA_INFO_RES * res = (sGU_BUDOKAI_MUDOSA_INFO_RES*)packet.GetPacketData();
+	sGU_BUDOKAI_MUDOSA_INFO_RES* res = (sGU_BUDOKAI_MUDOSA_INFO_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BUDOKAI_MUDOSA_INFO_RES;
 	res->aMudosaInfo[0].wCurrentUserCount = 0;
 	NTL_SAFE_WCSCPY(res->aMudosaInfo[0].wszMudosaName, L"Mudosa");
@@ -13344,27 +13336,27 @@ void CClientSession::RecvBudokaiMudosaInfoReq(CNtlPacket * pPacket)
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvBudokaiMudosaTeleportReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiMudosaTeleportReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_BUDOKAI_MUDOSA_TELEPORT_REQ * req = (sUG_BUDOKAI_MUDOSA_TELEPORT_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_MUDOSA_TELEPORT_REQ* req = (sUG_BUDOKAI_MUDOSA_TELEPORT_REQ*)pPacket->GetPacketData();
 	UNREFERENCED_PARAMETER(req);
 
 	CNtlPacket packet(sizeof(sGU_BUDOKAI_MUDOSA_TELEPORT_RES));
-	sGU_BUDOKAI_MUDOSA_TELEPORT_RES * res = (sGU_BUDOKAI_MUDOSA_TELEPORT_RES*)packet.GetPacketData();
+	sGU_BUDOKAI_MUDOSA_TELEPORT_RES* res = (sGU_BUDOKAI_MUDOSA_TELEPORT_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BUDOKAI_MUDOSA_TELEPORT_RES;
 	res->wResultCode = GAME_SUCCESS;
 
 	sWORLD_TBLDAT* pWorld = (sWORLD_TBLDAT*)g_pTableContainer->GetWorldTable()->FindData(200);
 	if (pWorld == NULL)
 		res->wResultCode = GAME_WORLD_NOT_FOUND;
-	else if(cPlayer->GetZeni() < 200000) //200k fee
+	else if (cPlayer->GetZeni() < 200000) //200k fee
 		res->wResultCode = GAME_ZENNY_NOT_ENOUGH;
 
 	g_pApp->Send(GetHandle(), &packet);
-	
+
 	if (res->wResultCode == GAME_SUCCESS)
 	{
 		cPlayer->UpdateZeni(ZENNY_CHANGE_TYPE_PORTAL_ADD, 200000, false, true);
@@ -13372,9 +13364,9 @@ void CClientSession::RecvBudokaiMudosaTeleportReq(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvBudokaiPartyMakerReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiPartyMakerReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_PARTY_MAKER_REQ * req = (sUG_BUDOKAI_PARTY_MAKER_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_PARTY_MAKER_REQ* req = (sUG_BUDOKAI_PARTY_MAKER_REQ*)pPacket->GetPacketData();
 
 
 }
@@ -13382,14 +13374,14 @@ void CClientSession::RecvBudokaiPartyMakerReq(CNtlPacket * pPacket)
 //-------------------------------------------------
 //     SEND BUDOKAI SOCIAL ACTION SKILL
 //-------------------------------------------------
-void CClientSession::RecvBudokaiSocialAction(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiSocialAction(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_BUDOKAI_SOCIAL_ACTION * req = (sUG_BUDOKAI_SOCIAL_ACTION*)pPacket->GetPacketData();
+	sUG_BUDOKAI_SOCIAL_ACTION* req = (sUG_BUDOKAI_SOCIAL_ACTION*)pPacket->GetPacketData();
 
 	if (cPlayer->GetCharStateID() != CHARSTATE_STANDING)
 	{
@@ -13422,7 +13414,7 @@ void CClientSession::RecvBudokaiSocialAction(CNtlPacket * pPacket)
 		return;
 
 	CNtlPacket packet(sizeof(sGU_BUDOKAI_SOCIAL_ACTION_NFY));
-	sGU_BUDOKAI_SOCIAL_ACTION_NFY * res = (sGU_BUDOKAI_SOCIAL_ACTION_NFY*)packet.GetPacketData();
+	sGU_BUDOKAI_SOCIAL_ACTION_NFY* res = (sGU_BUDOKAI_SOCIAL_ACTION_NFY*)packet.GetPacketData();
 	res->wOpCode = GU_BUDOKAI_SOCIAL_ACTION_NFY;
 	res->hSubject = cPlayer->GetID();
 	res->socialAction = req->socialAction;
@@ -13430,35 +13422,35 @@ void CClientSession::RecvBudokaiSocialAction(CNtlPacket * pPacket)
 	cPlayer->Broadcast(&packet, cPlayer);
 }
 
-void CClientSession::RecvBudokaiPrizeWinnerNameReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiPrizeWinnerNameReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_PRIZEWINNER_NAME_REQ * req = (sUG_BUDOKAI_PRIZEWINNER_NAME_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_PRIZEWINNER_NAME_REQ* req = (sUG_BUDOKAI_PRIZEWINNER_NAME_REQ*)pPacket->GetPacketData();
 	UNREFERENCED_PARAMETER(req);
 
 }
 
-void CClientSession::RecvBudokaiJoinIndividualReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiJoinIndividualReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_JOIN_INDIVIDUAL_REQ * req = (sUG_BUDOKAI_JOIN_INDIVIDUAL_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_JOIN_INDIVIDUAL_REQ* req = (sUG_BUDOKAI_JOIN_INDIVIDUAL_REQ*)pPacket->GetPacketData();
 	UNREFERENCED_PARAMETER(req);
 
 	g_pBudokaiManager->JoinIndividualReq(cPlayer);
 }
 
-void CClientSession::RecvBudokaiLeaveIndividualReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiLeaveIndividualReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_LEAVE_INDIVIDUAL_REQ * req = (sUG_BUDOKAI_LEAVE_INDIVIDUAL_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_LEAVE_INDIVIDUAL_REQ* req = (sUG_BUDOKAI_LEAVE_INDIVIDUAL_REQ*)pPacket->GetPacketData();
 	UNREFERENCED_PARAMETER(req);
 
 	g_pBudokaiManager->LeaveIndividualReq(cPlayer);
 }
 
-void CClientSession::RecvBudokaiJoinTeamInfoReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiJoinTeamInfoReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_JOIN_TEAM_INFO_REQ * req = (sUG_BUDOKAI_JOIN_TEAM_INFO_REQ*)pPacket->GetPacketData();
-	
+	sUG_BUDOKAI_JOIN_TEAM_INFO_REQ* req = (sUG_BUDOKAI_JOIN_TEAM_INFO_REQ*)pPacket->GetPacketData();
+
 	CNtlPacket packet(sizeof(sGU_BUDOKAI_JOIN_TEAM_INFO_RES));
-	sGU_BUDOKAI_JOIN_TEAM_INFO_RES * res = (sGU_BUDOKAI_JOIN_TEAM_INFO_RES *)packet.GetPacketData();
+	sGU_BUDOKAI_JOIN_TEAM_INFO_RES* res = (sGU_BUDOKAI_JOIN_TEAM_INFO_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BUDOKAI_JOIN_TEAM_INFO_RES;
 	res->wResultCode = GAME_SUCCESS;
 	res->byMemberCount = 0;
@@ -13486,29 +13478,29 @@ void CClientSession::RecvBudokaiJoinTeamInfoReq(CNtlPacket * pPacket)
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvBudokaiJoinTeamReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiJoinTeamReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_JOIN_TEAM_REQ * req = (sUG_BUDOKAI_JOIN_TEAM_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_JOIN_TEAM_REQ* req = (sUG_BUDOKAI_JOIN_TEAM_REQ*)pPacket->GetPacketData();
 
 	g_pBudokaiManager->JoinTeamReq(cPlayer, req->wszTeamName);
 }
 
-void CClientSession::RecvBudokaiLeaveTeamReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiLeaveTeamReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_LEAVE_TEAM_REQ * req = (sUG_BUDOKAI_LEAVE_TEAM_REQ*)pPacket->GetPacketData();
+	sUG_BUDOKAI_LEAVE_TEAM_REQ* req = (sUG_BUDOKAI_LEAVE_TEAM_REQ*)pPacket->GetPacketData();
 	UNREFERENCED_PARAMETER(req);
 
 	g_pBudokaiManager->LeaveTeamReq(cPlayer);
 }
 
-void CClientSession::RecvBudokaiLeaveTeamMemberReq(CNtlPacket * pPacket)
+void CClientSession::RecvBudokaiLeaveTeamMemberReq(CNtlPacket* pPacket)
 {
-	sUG_BUDOKAI_LEAVE_TEAM_MEMBER_REQ * req = (sUG_BUDOKAI_LEAVE_TEAM_MEMBER_REQ*)pPacket->GetPacketData();
-	
+	sUG_BUDOKAI_LEAVE_TEAM_MEMBER_REQ* req = (sUG_BUDOKAI_LEAVE_TEAM_MEMBER_REQ*)pPacket->GetPacketData();
+
 	// SEND GAME FAIL BECAUSE WE DO ONLY ALLOW TEAMS WITH FULL PARTY TO JOIN BUDOKAI
 
 	CNtlPacket packet(sizeof(sGU_BUDOKAI_LEAVE_TEAM_MEMBER_RES));
-	sGU_BUDOKAI_LEAVE_TEAM_MEMBER_RES * res = (sGU_BUDOKAI_LEAVE_TEAM_MEMBER_RES *)packet.GetPacketData();
+	sGU_BUDOKAI_LEAVE_TEAM_MEMBER_RES* res = (sGU_BUDOKAI_LEAVE_TEAM_MEMBER_RES*)packet.GetPacketData();
 	res->wOpCode = GU_BUDOKAI_LEAVE_TEAM_MEMBER_RES;
 	res->wResultCode = GAME_FAIL;
 	packet.SetPacketLen(sizeof(sGU_BUDOKAI_LEAVE_TEAM_MEMBER_RES));
@@ -13519,17 +13511,17 @@ void CClientSession::RecvBudokaiLeaveTeamMemberReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		SCS SYSTEM. SEND Q CODE TO CLIENT
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvScsCheckStartRes(CNtlPacket * pPacket)
+void CClientSession::RecvScsCheckStartRes(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SCS_CHECK_START_RES * req = (sUG_SCS_CHECK_START_RES*)pPacket->GetPacketData();
+	sUG_SCS_CHECK_START_RES* req = (sUG_SCS_CHECK_START_RES*)pPacket->GetPacketData();
 	printf("RecvScsCheckStartRes: %i\n", req->bRet);
 
 	if (req->bRet == true)
 	{
-		
+
 
 	}
 	else
@@ -13539,30 +13531,30 @@ void CClientSession::RecvScsCheckStartRes(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvScsCheckRes(CNtlPacket * pPacket)
+void CClientSession::RecvScsCheckRes(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SCS_CHECK_RES * req = (sUG_SCS_CHECK_RES*)pPacket->GetPacketData();
+	sUG_SCS_CHECK_RES* req = (sUG_SCS_CHECK_RES*)pPacket->GetPacketData();
 	printf("RecvScsCheckRes: %i %i\n", req->bRet, req->byCount);
 
 	//if we send 15 count in sGU_SCS_CHECK_REQ then we will receive 16 here (+1)
-	
+
 	if (req->bRet == true)
 	{
-		
+
 	}
 
 }
 
-void CClientSession::RecvScsReplyReq(CNtlPacket * pPacket)
+void CClientSession::RecvScsReplyReq(CNtlPacket* pPacket)
 {
-	sUG_SCS_REPLY_REQ * req = (sUG_SCS_REPLY_REQ*)pPacket->GetPacketData();
+	sUG_SCS_REPLY_REQ* req = (sUG_SCS_REPLY_REQ*)pPacket->GetPacketData();
 
 	/*
 		INFO: data contains numbers from 1-15.
-		1 = I_CDE_IMG_01 
+		1 = I_CDE_IMG_01
 		15 = I_CDE_IMG_15
 	*/
 
@@ -13572,10 +13564,10 @@ void CClientSession::RecvScsReplyReq(CNtlPacket * pPacket)
 	}
 }
 
-void CClientSession::RecvScsRemakeReq(CNtlPacket * pPacket)
+void CClientSession::RecvScsRemakeReq(CNtlPacket* pPacket)
 {
-	sUG_SCS_REMAKE_REQ * req = (sUG_SCS_REMAKE_REQ*)pPacket->GetPacketData();
-	
+	sUG_SCS_REMAKE_REQ* req = (sUG_SCS_REMAKE_REQ*)pPacket->GetPacketData();
+
 
 }
 
@@ -13584,12 +13576,12 @@ void CClientSession::RecvScsRemakeReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		DOJO CREATE, DELETE & ADD FUNCTION 
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvDojoCreateReq(CNtlPacket * pPacket)
+void CClientSession::RecvDojoCreateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_DOJO_CREATE_REQ * req = (sUG_DOJO_CREATE_REQ*)pPacket->GetPacketData();
+	sUG_DOJO_CREATE_REQ* req = (sUG_DOJO_CREATE_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
@@ -13608,7 +13600,7 @@ void CClientSession::RecvDojoCreateReq(CNtlPacket * pPacket)
 					if (app->GetChatServerSession())
 					{
 						CNtlPacket packet(sizeof(sGT_DOJO_CREATE_REQ));
-						sGT_DOJO_CREATE_REQ * res = (sGT_DOJO_CREATE_REQ *)packet.GetPacketData();
+						sGT_DOJO_CREATE_REQ* res = (sGT_DOJO_CREATE_REQ*)packet.GetPacketData();
 						res->wOpCode = GT_DOJO_CREATE_REQ;
 						res->charId = cPlayer->GetCharID();
 						res->dojoTblidx = dojo->tblidx;
@@ -13628,21 +13620,21 @@ void CClientSession::RecvDojoCreateReq(CNtlPacket * pPacket)
 	else resultcode = GAME_GUILD_NO_DOJO_MANAGER_NPC_FOUND;
 
 	CNtlPacket packet(sizeof(sGU_DOJO_CREATE_RES));
-	sGU_DOJO_CREATE_RES * res = (sGU_DOJO_CREATE_RES *)packet.GetPacketData();
+	sGU_DOJO_CREATE_RES* res = (sGU_DOJO_CREATE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_DOJO_CREATE_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_DOJO_CREATE_RES));
 	app->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvDojoDeleteReq(CNtlPacket * pPacket)
+void CClientSession::RecvDojoDeleteReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DOJO_DELETE_REQ * req = (sUG_DOJO_DELETE_REQ*)pPacket->GetPacketData();
+	sUG_DOJO_DELETE_REQ* req = (sUG_DOJO_DELETE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -13657,7 +13649,7 @@ void CClientSession::RecvDojoDeleteReq(CNtlPacket * pPacket)
 				if (dojo)
 				{
 					CNtlPacket packet(sizeof(sGT_DOJO_DELETE_REQ));
-					sGT_DOJO_DELETE_REQ * res = (sGT_DOJO_DELETE_REQ *)packet.GetPacketData();
+					sGT_DOJO_DELETE_REQ* res = (sGT_DOJO_DELETE_REQ*)packet.GetPacketData();
 					res->wOpCode = GT_DOJO_DELETE_REQ;
 					res->charId = cPlayer->GetCharID();
 					res->dojoTblidx = dojo->tblidx;
@@ -13675,21 +13667,21 @@ void CClientSession::RecvDojoDeleteReq(CNtlPacket * pPacket)
 	else resultcode = GAME_GUILD_NO_DOJO_MANAGER_NPC_FOUND;
 
 	CNtlPacket packet(sizeof(sGU_DOJO_DELETE_RES));
-	sGU_DOJO_DELETE_RES * res = (sGU_DOJO_DELETE_RES *)packet.GetPacketData();
+	sGU_DOJO_DELETE_RES* res = (sGU_DOJO_DELETE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_DOJO_DELETE_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_DOJO_DELETE_RES));
 	app->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvDojoFunctionAddReq(CNtlPacket * pPacket)
+void CClientSession::RecvDojoFunctionAddReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DOJO_FUNCTION_ADD_REQ * req = (sUG_DOJO_FUNCTION_ADD_REQ*)pPacket->GetPacketData();
+	sUG_DOJO_FUNCTION_ADD_REQ* req = (sUG_DOJO_FUNCTION_ADD_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 	DWORD dwNeedZeni = 0;
@@ -13725,7 +13717,7 @@ void CClientSession::RecvDojoFunctionAddReq(CNtlPacket * pPacket)
 	if (resultcode == GAME_SUCCESS)
 	{
 		CNtlPacket cPacket(sizeof(sGT_DOJO_FUNCTION_ADD_REQ));
-		sGT_DOJO_FUNCTION_ADD_REQ * cRes = (sGT_DOJO_FUNCTION_ADD_REQ *)cPacket.GetPacketData();
+		sGT_DOJO_FUNCTION_ADD_REQ* cRes = (sGT_DOJO_FUNCTION_ADD_REQ*)cPacket.GetPacketData();
 		cRes->wOpCode = GT_DOJO_FUNCTION_ADD_REQ;
 		cRes->masterCharId = cPlayer->GetCharID();
 		cRes->byFunction = req->byFunction;
@@ -13736,7 +13728,7 @@ void CClientSession::RecvDojoFunctionAddReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_DOJO_FUNCTION_ADD_RES));
-		sGU_DOJO_FUNCTION_ADD_RES * res = (sGU_DOJO_FUNCTION_ADD_RES *)packet.GetPacketData();
+		sGU_DOJO_FUNCTION_ADD_RES* res = (sGU_DOJO_FUNCTION_ADD_RES*)packet.GetPacketData();
 		res->wOpCode = GU_DOJO_FUNCTION_ADD_RES;
 		res->wResultCode = resultcode;
 		res->byFunction = req->byFunction;
@@ -13746,7 +13738,7 @@ void CClientSession::RecvDojoFunctionAddReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvDojoScrambleReq(CNtlPacket * pPacket)
+void CClientSession::RecvDojoScrambleReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -13754,7 +13746,7 @@ void CClientSession::RecvDojoScrambleReq(CNtlPacket * pPacket)
 	WORD resultcode = GAME_SUCCESS;
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DOJO_SCRAMBLE_REQ * req = (sUG_DOJO_SCRAMBLE_REQ*)pPacket->GetPacketData();
+	sUG_DOJO_SCRAMBLE_REQ* req = (sUG_DOJO_SCRAMBLE_REQ*)pPacket->GetPacketData();
 
 	CNpc* pNpc = g_pObjectManager->GetNpc(req->hNpcHandle);
 
@@ -13766,11 +13758,11 @@ void CClientSession::RecvDojoScrambleReq(CNtlPacket * pPacket)
 
 	else if (cPlayer->IsInRange(pNpc, DBO_DISTANCE_CHECK_TOLERANCE) == false)
 		resultcode = GAME_GUILD_DOJO_MANAGER_IS_TOO_FAR;
-	else if(pNpc->GetTbldat()->byJob != NPC_JOB_DOJO_MANAGER)
+	else if (pNpc->GetTbldat()->byJob != NPC_JOB_DOJO_MANAGER)
 		resultcode = GAME_GUILD_NOT_GUILD_MANAGER_NPC;
-	else if(cPlayer->GetZeni() < DBO_DOJO_SCRAMBLE_REQUEST_FARE)
+	else if (cPlayer->GetZeni() < DBO_DOJO_SCRAMBLE_REQUEST_FARE)
 		resultcode = GAME_GUILD_DOJO_YOU_ARE_NOT_ENOUGH_ZENNY;
-	else if(cPlayer->GetGuildID() == INVALID_GUILDID)
+	else if (cPlayer->GetGuildID() == INVALID_GUILDID)
 		resultcode = GAME_GUILD_NO_GUILD_FOUND;
 	else
 	{
@@ -13781,7 +13773,7 @@ void CClientSession::RecvDojoScrambleReq(CNtlPacket * pPacket)
 			if (pDojo)
 			{
 				CNtlPacket packet(sizeof(sGT_DOJO_SCRAMBLE_REQ));
-				sGT_DOJO_SCRAMBLE_REQ * res = (sGT_DOJO_SCRAMBLE_REQ *)packet.GetPacketData();
+				sGT_DOJO_SCRAMBLE_REQ* res = (sGT_DOJO_SCRAMBLE_REQ*)packet.GetPacketData();
 				res->wOpCode = GT_DOJO_SCRAMBLE_REQ;
 				res->charId = cPlayer->GetCharID();
 				res->dojoTblidx = pDojoTbldat->tblidx;
@@ -13795,9 +13787,9 @@ void CClientSession::RecvDojoScrambleReq(CNtlPacket * pPacket)
 		}
 		else resultcode = GAME_GUILD_DOJO_NOT_FOUND_TABLE;
 	}
-	
+
 	CNtlPacket packet(sizeof(sGU_DOJO_SCRAMBLE_RES));
-	sGU_DOJO_SCRAMBLE_RES * res = (sGU_DOJO_SCRAMBLE_RES *)packet.GetPacketData();
+	sGU_DOJO_SCRAMBLE_RES* res = (sGU_DOJO_SCRAMBLE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_DOJO_SCRAMBLE_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_DOJO_SCRAMBLE_RES));
@@ -13805,7 +13797,7 @@ void CClientSession::RecvDojoScrambleReq(CNtlPacket * pPacket)
 }
 
 
-void CClientSession::RecvDojoScrambleResponseReq(CNtlPacket * pPacket)
+void CClientSession::RecvDojoScrambleResponseReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -13813,7 +13805,7 @@ void CClientSession::RecvDojoScrambleResponseReq(CNtlPacket * pPacket)
 	WORD resultcode = GAME_SUCCESS;
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DOJO_SCRAMBLE_RESPONSE_REQ * req = (sUG_DOJO_SCRAMBLE_RESPONSE_REQ*)pPacket->GetPacketData();
+	sUG_DOJO_SCRAMBLE_RESPONSE_REQ* req = (sUG_DOJO_SCRAMBLE_RESPONSE_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetGuildID() == INVALID_GUILDID)
 		resultcode = GAME_GUILD_NO_GUILD_FOUND;
@@ -13822,7 +13814,7 @@ void CClientSession::RecvDojoScrambleResponseReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGT_DOJO_SCRAMBLE_RESPONSE));
-		sGT_DOJO_SCRAMBLE_RESPONSE * res = (sGT_DOJO_SCRAMBLE_RESPONSE *)packet.GetPacketData();
+		sGT_DOJO_SCRAMBLE_RESPONSE* res = (sGT_DOJO_SCRAMBLE_RESPONSE*)packet.GetPacketData();
 		res->wOpCode = GT_DOJO_SCRAMBLE_RESPONSE;
 		res->charId = cPlayer->GetCharID();
 		res->bIsAccept = req->bIsAccept;
@@ -13833,24 +13825,24 @@ void CClientSession::RecvDojoScrambleResponseReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_DOJO_SCRAMBLE_RESPONSE_RES));
-	sGU_DOJO_SCRAMBLE_RESPONSE_RES * res = (sGU_DOJO_SCRAMBLE_RESPONSE_RES *)packet.GetPacketData();
+	sGU_DOJO_SCRAMBLE_RESPONSE_RES* res = (sGU_DOJO_SCRAMBLE_RESPONSE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_DOJO_SCRAMBLE_RESPONSE_RES;
 	res->wResultCode = resultcode;
 	res->bIsRetry = true;
-//	res->wszGuildName 
+	//	res->wszGuildName 
 	packet.SetPacketLen(sizeof(sGU_DOJO_SCRAMBLE_RESPONSE_RES));
 	app->Send(GetHandle(), &packet);
 }
 
 
-void CClientSession::RecvDojoNpcInfoReq(CNtlPacket * pPacket)
+void CClientSession::RecvDojoNpcInfoReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_DOJO_NPC_INFO_REQ * req = (sUG_DOJO_NPC_INFO_REQ*)pPacket->GetPacketData();
+	sUG_DOJO_NPC_INFO_REQ* req = (sUG_DOJO_NPC_INFO_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
@@ -13865,7 +13857,7 @@ void CClientSession::RecvDojoNpcInfoReq(CNtlPacket * pPacket)
 				if (dojo)
 				{
 					CNtlPacket packet(sizeof(sGT_DOJO_NPC_INFO_REQ));
-					sGT_DOJO_NPC_INFO_REQ * res = (sGT_DOJO_NPC_INFO_REQ *)packet.GetPacketData();
+					sGT_DOJO_NPC_INFO_REQ* res = (sGT_DOJO_NPC_INFO_REQ*)packet.GetPacketData();
 					res->wOpCode = GT_DOJO_NPC_INFO_REQ;
 					res->charId = cPlayer->GetCharID();
 					res->dojoTblidx = dojo->tblidx;
@@ -13883,7 +13875,7 @@ void CClientSession::RecvDojoNpcInfoReq(CNtlPacket * pPacket)
 	else resultcode = GAME_GUILD_NO_DOJO_MANAGER_NPC_FOUND;
 
 	CNtlPacket packet(sizeof(sGU_DOJO_NPC_INFO_RES));
-	sGU_DOJO_NPC_INFO_RES * res = (sGU_DOJO_NPC_INFO_RES *)packet.GetPacketData();
+	sGU_DOJO_NPC_INFO_RES* res = (sGU_DOJO_NPC_INFO_RES*)packet.GetPacketData();
 	res->wOpCode = GU_DOJO_NPC_INFO_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_DOJO_NPC_INFO_RES));
@@ -13894,14 +13886,14 @@ void CClientSession::RecvDojoNpcInfoReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //	CREATE ITEM (NEW)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvHoiPoiItemCreateReq(CNtlPacket * pPacket)
+void CClientSession::RecvHoiPoiItemCreateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_HOIPOIMIX_ITEM_CREATE_REQ * req = (sUG_HOIPOIMIX_ITEM_CREATE_REQ*)pPacket->GetPacketData();
+	sUG_HOIPOIMIX_ITEM_CREATE_REQ* req = (sUG_HOIPOIMIX_ITEM_CREATE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 	DWORD addexp = 0;
@@ -13916,7 +13908,7 @@ void CClientSession::RecvHoiPoiItemCreateReq(CNtlPacket * pPacket)
 	resQry->recipeTblidx = req->recipeTblidx;
 	resQry->bIsNew = false;
 
-	sITEM_RECIPE_TBLDAT * pRecipeTbldat = (sITEM_RECIPE_TBLDAT*)g_pTableContainer->GetItemRecipeTable()->FindData(req->recipeTblidx);
+	sITEM_RECIPE_TBLDAT* pRecipeTbldat = (sITEM_RECIPE_TBLDAT*)g_pTableContainer->GetItemRecipeTable()->FindData(req->recipeTblidx);
 	if (pRecipeTbldat && pRecipeTbldat->bValidityAble)
 	{
 		if (cPlayer->GetHoiPoiMixLv() >= pRecipeTbldat->byNeedMixLevel) //check required recipe lv
@@ -14096,7 +14088,7 @@ GOTO_END:
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_HOIPOIMIX_ITEM_CREATE_RES));
-		sGU_HOIPOIMIX_ITEM_CREATE_RES * res = (sGU_HOIPOIMIX_ITEM_CREATE_RES *)packet.GetPacketData();
+		sGU_HOIPOIMIX_ITEM_CREATE_RES* res = (sGU_HOIPOIMIX_ITEM_CREATE_RES*)packet.GetPacketData();
 		res->wOpCode = GU_HOIPOIMIX_ITEM_CREATE_RES;
 		res->objHandle = req->objHandle;
 		res->recipeTblidx = req->recipeTblidx;
@@ -14110,12 +14102,12 @@ GOTO_END:
 //--------------------------------------------------------------------------------------//
 //		START TRADE REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeStartReq(CNtlPacket * pPacket)
+void CClientSession::RecvTradeStartReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_TRADE_START_REQ* req = (sUG_TRADE_START_REQ *)pPacket->GetPacketData();
+	sUG_TRADE_START_REQ* req = (sUG_TRADE_START_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 	WORD resultcode = GAME_SUCCESS;
@@ -14124,7 +14116,7 @@ void CClientSession::RecvTradeStartReq(CNtlPacket * pPacket)
 	CPlayer* target = g_pObjectManager->GetPC(req->hTarget);
 	if (target && target->GetCharID() != cPlayer->GetCharID())
 	{
-		if(app->GetGsChannel() == DOJO_CHANNEL_INDEX)
+		if (app->GetGsChannel() == DOJO_CHANNEL_INDEX)
 			resultcode = GAME_FAIL;
 		else if (!target->IsPC() || target->GetCharStateID() != CHARSTATE_STANDING || cPlayer->GetCharStateID() != CHARSTATE_STANDING) //Check if target is pc
 			resultcode = GAME_TRADE_TARGET_WRONG_STATE;
@@ -14138,9 +14130,9 @@ void CClientSession::RecvTradeStartReq(CNtlPacket * pPacket)
 			resultcode = GAME_FAIL;
 		else if (cPlayer->IsPvpZone() || target->IsPvpZone()) //dont allow trading while someone in pvp platform
 			resultcode = GAME_FAIL;
-		else if(cPlayer->GetFreeBattleTarget() != INVALID_CHARACTERID || target->GetFreeBattleTarget() != INVALID_CHARACTERID)
+		else if (cPlayer->GetFreeBattleTarget() != INVALID_CHARACTERID || target->GetFreeBattleTarget() != INVALID_CHARACTERID)
 			resultcode = GAME_FAIL;
-		else if(cPlayer->GetFacingHandle() != INVALID_HOBJECT || target->GetFacingHandle() != INVALID_HOBJECT)
+		else if (cPlayer->GetFacingHandle() != INVALID_HOBJECT || target->GetFacingHandle() != INVALID_HOBJECT)
 			resultcode = GAME_FAIL;
 
 	}
@@ -14154,7 +14146,7 @@ void CClientSession::RecvTradeStartReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_TRADE_START_RES));
-		sGU_TRADE_START_RES * res = (sGU_TRADE_START_RES *)packet.GetPacketData();
+		sGU_TRADE_START_RES* res = (sGU_TRADE_START_RES*)packet.GetPacketData();
 		res->wOpCode = GU_TRADE_START_RES;
 		res->handle = cPlayer->GetID();
 		res->wResultCode = resultcode;
@@ -14166,14 +14158,14 @@ void CClientSession::RecvTradeStartReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CANCEL OR ACCEPT TRADE REQUEST
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeOkRes(CNtlPacket * pPacket)
+void CClientSession::RecvTradeOkRes(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TRADE_OK_RES* req = (sUG_TRADE_OK_RES *)pPacket->GetPacketData();
+	sUG_TRADE_OK_RES* req = (sUG_TRADE_OK_RES*)pPacket->GetPacketData();
 
 	CTrade* trade = cPlayer->GetTrade();
 	CPlayer* requestor = g_pObjectManager->GetPC(req->handle);
@@ -14197,7 +14189,7 @@ void CClientSession::RecvTradeOkRes(CNtlPacket * pPacket)
 
 				//## SEND TO PLAYER
 				CNtlPacket packet(sizeof(sGU_TRADE_START_RES));
-				sGU_TRADE_START_RES * res = (sGU_TRADE_START_RES *)packet.GetPacketData();
+				sGU_TRADE_START_RES* res = (sGU_TRADE_START_RES*)packet.GetPacketData();
 				res->wOpCode = GU_TRADE_START_RES;
 				res->wResultCode = GAME_SUCCESS;
 				res->byEmptyInven = byReqEmpty;
@@ -14209,7 +14201,7 @@ void CClientSession::RecvTradeOkRes(CNtlPacket * pPacket)
 
 				//## SEND TO REQUESTOR
 				CNtlPacket packet4(sizeof(sGU_TRADE_START_RES));
-				sGU_TRADE_START_RES * res4 = (sGU_TRADE_START_RES *)packet4.GetPacketData();
+				sGU_TRADE_START_RES* res4 = (sGU_TRADE_START_RES*)packet4.GetPacketData();
 				res4->wOpCode = GU_TRADE_START_RES;
 				res4->wResultCode = GAME_SUCCESS;
 				res4->byEmptyInven = byEmpty;
@@ -14222,7 +14214,7 @@ void CClientSession::RecvTradeOkRes(CNtlPacket * pPacket)
 			else
 			{
 				CNtlPacket packet(sizeof(sGU_TRADE_DENY_RES));
-				sGU_TRADE_DENY_RES* res = (sGU_TRADE_DENY_RES *)packet.GetPacketData();
+				sGU_TRADE_DENY_RES* res = (sGU_TRADE_DENY_RES*)packet.GetPacketData();
 				res->wOpCode = GU_TRADE_DENY_RES;
 				res->wResultCode = GAME_TRADE_DENY_USE;
 				res->bIsDeny = true;
@@ -14241,7 +14233,7 @@ void CClientSession::RecvTradeOkRes(CNtlPacket * pPacket)
 	else //requestor not anymore online so send error
 	{
 		CNtlPacket packet(sizeof(sGU_TRADE_START_RES));
-		sGU_TRADE_START_RES* res = (sGU_TRADE_START_RES *)packet.GetPacketData();
+		sGU_TRADE_START_RES* res = (sGU_TRADE_START_RES*)packet.GetPacketData();
 		res->wOpCode = GU_TRADE_START_RES;
 		res->wResultCode = GAME_TRADE_TARGET_WRONG_STATE;
 		res->handle = cPlayer->GetID();
@@ -14254,19 +14246,19 @@ void CClientSession::RecvTradeOkRes(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		ADD ITEM INTO EXCHANGE WINDOW
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeAddReq(CNtlPacket * pPacket)
+void CClientSession::RecvTradeAddReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TRADE_ADD_REQ* req = (sUG_TRADE_ADD_REQ *)pPacket->GetPacketData();
+	sUG_TRADE_ADD_REQ* req = (sUG_TRADE_ADD_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGU_TRADE_ADD_RES));
-	sGU_TRADE_ADD_RES* res = (sGU_TRADE_ADD_RES *)packet.GetPacketData();
+	sGU_TRADE_ADD_RES* res = (sGU_TRADE_ADD_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TRADE_ADD_RES;
 	res->byCount = req->byCount;
 	res->hItem = req->hItem;
@@ -14284,7 +14276,7 @@ void CClientSession::RecvTradeAddReq(CNtlPacket * pPacket)
 					CItem* pItem = cPlayer->GetPlayerItemContainer()->GetItem(req->hItem);
 					if (pItem && pItem->CanTrade() && IsInvenContainer(pItem->GetPlace()))
 					{
-						if ( (pItem->GetCount() >= req->byCount && pItem->GetCount() > 0 && req->byCount > 0)
+						if ((pItem->GetCount() >= req->byCount && pItem->GetCount() > 0 && req->byCount > 0)
 							&& (pItem->GetTbldat()->byMax_Stack >= req->byCount)) //check if has enough stack
 						{
 							if (trade->GetItemCount() < partner->GetTrade()->GetOtherFreeSlotCount())
@@ -14323,19 +14315,19 @@ void CClientSession::RecvTradeAddReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		DELETE ITEM FROM EXCHANGE WINDOW
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeDelReq(CNtlPacket * pPacket)
+void CClientSession::RecvTradeDelReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TRADE_DEL_REQ* req = (sUG_TRADE_DEL_REQ *)pPacket->GetPacketData();
+	sUG_TRADE_DEL_REQ* req = (sUG_TRADE_DEL_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGU_TRADE_DEL_RES));
-	sGU_TRADE_DEL_RES* res = (sGU_TRADE_DEL_RES *)packet.GetPacketData();
+	sGU_TRADE_DEL_RES* res = (sGU_TRADE_DEL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TRADE_DEL_RES;
 	res->hItem = req->hItem;
 
@@ -14355,7 +14347,7 @@ void CClientSession::RecvTradeDelReq(CNtlPacket * pPacket)
 
 						//send to partner
 						CNtlPacket packet2(sizeof(sGU_TRADE_DEL_NFY));
-						sGU_TRADE_DEL_NFY* res2 = (sGU_TRADE_DEL_NFY *)packet2.GetPacketData();
+						sGU_TRADE_DEL_NFY* res2 = (sGU_TRADE_DEL_NFY*)packet2.GetPacketData();
 						res2->wOpCode = GU_TRADE_DEL_NFY;
 						res2->hItem = req->hItem;
 						packet2.SetPacketLen(sizeof(sGU_TRADE_DEL_NFY));
@@ -14380,19 +14372,19 @@ void CClientSession::RecvTradeDelReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeModifyReq(CNtlPacket * pPacket)
+void CClientSession::RecvTradeModifyReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TRADE_MODIFY_REQ* req = (sUG_TRADE_MODIFY_REQ *)pPacket->GetPacketData();
+	sUG_TRADE_MODIFY_REQ* req = (sUG_TRADE_MODIFY_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGU_TRADE_MODIFY_RES));
-	sGU_TRADE_MODIFY_RES* res = (sGU_TRADE_MODIFY_RES *)packet.GetPacketData();
+	sGU_TRADE_MODIFY_RES* res = (sGU_TRADE_MODIFY_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TRADE_MODIFY_RES;
 	res->hItem = req->hItem;
 	res->byCount = req->byCount;
@@ -14420,7 +14412,7 @@ void CClientSession::RecvTradeModifyReq(CNtlPacket * pPacket)
 
 								//send to partner
 								CNtlPacket packet2(sizeof(sGU_TRADE_MODIFY_NFY));
-								sGU_TRADE_MODIFY_NFY* res2 = (sGU_TRADE_MODIFY_NFY *)packet2.GetPacketData();
+								sGU_TRADE_MODIFY_NFY* res2 = (sGU_TRADE_MODIFY_NFY*)packet2.GetPacketData();
 								res2->wOpCode = GU_TRADE_MODIFY_NFY;
 								res2->hItem = req->hItem;
 								res2->byCount = req->byCount;
@@ -14453,19 +14445,19 @@ void CClientSession::RecvTradeModifyReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE ZENNY
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeZeniUpdateReq(CNtlPacket * pPacket)
+void CClientSession::RecvTradeZeniUpdateReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TRADE_ZENNY_UPDATE_REQ* req = (sUG_TRADE_ZENNY_UPDATE_REQ *)pPacket->GetPacketData();
+	sUG_TRADE_ZENNY_UPDATE_REQ* req = (sUG_TRADE_ZENNY_UPDATE_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_SUCCESS;
 
 	CNtlPacket packet(sizeof(sGU_TRADE_ZENNY_UPDATE_RES));
-	sGU_TRADE_ZENNY_UPDATE_RES* res = (sGU_TRADE_ZENNY_UPDATE_RES *)packet.GetPacketData();
+	sGU_TRADE_ZENNY_UPDATE_RES* res = (sGU_TRADE_ZENNY_UPDATE_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TRADE_ZENNY_UPDATE_RES;
 	res->dwZenny = req->dwZenny;
 	res->hTarget = req->hTarget;
@@ -14491,7 +14483,7 @@ void CClientSession::RecvTradeZeniUpdateReq(CNtlPacket * pPacket)
 							{
 								//send to partner
 								CNtlPacket packet2(sizeof(sGU_TRADE_ZENNY_UPDATE_NFY));
-								sGU_TRADE_ZENNY_UPDATE_NFY* res2 = (sGU_TRADE_ZENNY_UPDATE_NFY *)packet2.GetPacketData();
+								sGU_TRADE_ZENNY_UPDATE_NFY* res2 = (sGU_TRADE_ZENNY_UPDATE_NFY*)packet2.GetPacketData();
 								res2->wOpCode = GU_TRADE_ZENNY_UPDATE_NFY;
 								res2->dwZenny = req->dwZenny;
 								res2->hTarget = cPlayer->GetID();
@@ -14527,19 +14519,19 @@ void CClientSession::RecvTradeZeniUpdateReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CANCEL TRADE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeCancelReq(CNtlPacket * pPacket)
+void CClientSession::RecvTradeCancelReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_TRADE_CANCEL_REQ* req = (sUG_TRADE_CANCEL_REQ *)pPacket->GetPacketData();
+	sUG_TRADE_CANCEL_REQ* req = (sUG_TRADE_CANCEL_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetTrade() && cPlayer->GetTrade()->GetTradeState() == eTRADE_STATE_TRADING)
 	{
 		CNtlPacket packet(sizeof(sGU_TRADE_CANCEL_RES));
-		sGU_TRADE_CANCEL_RES* res = (sGU_TRADE_CANCEL_RES *)packet.GetPacketData();
+		sGU_TRADE_CANCEL_RES* res = (sGU_TRADE_CANCEL_RES*)packet.GetPacketData();
 		res->wOpCode = GU_TRADE_CANCEL_RES;
 		res->wResultCode = GAME_SUCCESS;
 		res->hTarget = req->hTarget;
@@ -14550,7 +14542,7 @@ void CClientSession::RecvTradeCancelReq(CNtlPacket * pPacket)
 		if (partner && partner->GetCharID() != cPlayer->GetCharID())
 		{
 			CNtlPacket packet2(sizeof(sGU_TRADE_CANCEL_NFY));
-			sGU_TRADE_CANCEL_NFY* res2 = (sGU_TRADE_CANCEL_NFY *)packet2.GetPacketData();
+			sGU_TRADE_CANCEL_NFY* res2 = (sGU_TRADE_CANCEL_NFY*)packet2.GetPacketData();
 			res2->wOpCode = GU_TRADE_CANCEL_NFY;
 			res2->wResultCode = GAME_SUCCESS;
 			res2->hTarget = cPlayer->GetID();
@@ -14567,17 +14559,17 @@ void CClientSession::RecvTradeCancelReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		END TRADE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
+void CClientSession::RecvTradeEndReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_TRADE_END_REQ* req = (sUG_TRADE_END_REQ *)pPacket->GetPacketData();
+	sUG_TRADE_END_REQ* req = (sUG_TRADE_END_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->GetID() == req->hTarget) //hacker check
 	{
 		CNtlPacket packet(sizeof(sGU_TRADE_END_RES));
-		sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES *)packet.GetPacketData();
+		sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES*)packet.GetPacketData();
 		res->wOpCode = GU_TRADE_END_RES;
 		res->wResultCode = GAME_FAIL;
 		res->hTarget = req->hTarget;
@@ -14592,7 +14584,7 @@ void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
 		if (cPlayer->GetTrade()->IsBlocked() || company->IsBlocked())
 		{
 			CNtlPacket packet(sizeof(sGU_TRADE_END_RES));
-			sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES *)packet.GetPacketData();
+			sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES*)packet.GetPacketData();
 			res->wOpCode = GU_TRADE_END_RES;
 			res->wResultCode = GAME_TRADE_WRONG_STATE;
 			res->hTarget = req->hTarget;
@@ -14612,7 +14604,7 @@ void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
 		else if (company->GetOwner()->GetID() == cPlayer->GetID()) //hack check
 		{
 			CNtlPacket packet(sizeof(sGU_TRADE_END_RES));
-			sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES *)packet.GetPacketData();
+			sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES*)packet.GetPacketData();
 			res->wOpCode = GU_TRADE_END_RES;
 			res->wResultCode = GAME_FAIL;
 			res->hTarget = req->hTarget;
@@ -14625,7 +14617,7 @@ void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
 			if (company->GetTradeState() == eTRADE_STATE_TRADING)
 			{
 				CNtlPacket packet(sizeof(sGU_TRADE_END_RES));
-				sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES *)packet.GetPacketData();
+				sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES*)packet.GetPacketData();
 				res->wOpCode = GU_TRADE_END_RES;
 				res->wResultCode = GAME_SUCCESS;
 				res->hTarget = req->hTarget;
@@ -14641,7 +14633,7 @@ void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
 				ERR_LOG(LOG_USER, "<TRADE>Player: %u trade state is not trading", company->GetOwner()->GetCharID());
 
 				CNtlPacket packet(sizeof(sGU_TRADE_END_RES));
-				sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES *)packet.GetPacketData();
+				sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES*)packet.GetPacketData();
 				res->wOpCode = GU_TRADE_END_RES;
 				res->wResultCode = GAME_FAIL;
 				res->hTarget = req->hTarget;
@@ -14655,7 +14647,7 @@ void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
 			CPlayer* pPartner = company->GetOwner();
 
 			CNtlPacket packet(sizeof(sGU_TRADE_END_RES));
-			sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES *)packet.GetPacketData();
+			sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES*)packet.GetPacketData();
 			res->wOpCode = GU_TRADE_END_RES;
 			res->wResultCode = GAME_SUCCESS;
 			res->hTarget = req->hTarget;
@@ -14666,7 +14658,7 @@ void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
 			if (pPartner && pPartner->IsInitialized())
 			{
 				CNtlPacket packet2(sizeof(sGU_TRADE_END_NFY));
-				sGU_TRADE_END_NFY* res2 = (sGU_TRADE_END_NFY *)packet2.GetPacketData();
+				sGU_TRADE_END_NFY* res2 = (sGU_TRADE_END_NFY*)packet2.GetPacketData();
 				res2->wOpCode = GU_TRADE_END_NFY;
 				res2->wResultCode = GAME_SUCCESS;
 				res2->hTarget = cPlayer->GetID();
@@ -14679,7 +14671,7 @@ void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket packet(sizeof(sGU_TRADE_END_RES));
-		sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES *)packet.GetPacketData();
+		sGU_TRADE_END_RES* res = (sGU_TRADE_END_RES*)packet.GetPacketData();
 		res->wOpCode = GU_TRADE_END_RES;
 		res->wResultCode = GAME_TRADE_ALREADY_CLOSE;
 		res->hTarget = req->hTarget;
@@ -14692,9 +14684,9 @@ void CClientSession::RecvTradeEndReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		DENY TRADE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTradeDenyReq(CNtlPacket * pPacket)
+void CClientSession::RecvTradeDenyReq(CNtlPacket* pPacket)
 {
-	sUG_TRADE_DENY_REQ* req = (sUG_TRADE_DENY_REQ *)pPacket->GetPacketData();
+	sUG_TRADE_DENY_REQ* req = (sUG_TRADE_DENY_REQ*)pPacket->GetPacketData();
 
 
 
@@ -14705,7 +14697,7 @@ void CClientSession::RecvTradeDenyReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		WHOLE QUEST FUNCTIONS
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
+void CClientSession::RecvTsConfirmReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -14713,7 +14705,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 	CGameServer* app = (CGameServer*)g_pApp;
 
 	WORD resultcode = RESULT_SUCCESS;
-	sUG_TS_CONFIRM_STEP_REQ* req = (sUG_TS_CONFIRM_STEP_REQ *)pPacket->GetPacketData();
+	sUG_TS_CONFIRM_STEP_REQ* req = (sUG_TS_CONFIRM_STEP_REQ*)pPacket->GetPacketData();
 
 	if (cPlayer->IsGameMaster())
 	{
@@ -14749,39 +14741,32 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 				//printf("pCurCont->GetEntityType(): %s \n", pCurCont->GetClassNameA());
 				switch (pCurCont->GetEntityType())
 				{
-					case DBO_CONT_TYPE_ID_CONT_GCOND:
+				case DBO_CONT_TYPE_ID_CONT_GCOND:
+				{
+					CDboTSContGCond* pCond = (CDboTSContGCond*)pCurCont;
+					if (qinfo)
 					{
-						CDboTSContGCond* pCond = (CDboTSContGCond*)pCurCont;
-						if (qinfo)
+						if (qinfo->uData.sQInfoV0.sMainTSP.tcCurId == pCond->GetID())
 						{
-							if (qinfo->uData.sQInfoV0.sMainTSP.tcCurId == pCond->GetID())
-							{
-								qinfo->uData.sQInfoV0.sMainTSP.tcPreId = pCond->GetID();
-								qinfo->uData.sQInfoV0.sMainTSP.tcCurId = pCond->GetYesLinkID();
+							qinfo->uData.sQInfoV0.sMainTSP.tcPreId = pCond->GetID();
+							qinfo->uData.sQInfoV0.sMainTSP.tcCurId = pCond->GetYesLinkID();
 
-								if (req->tcNextId == pCond->GetYesLinkID())
+							if (req->tcNextId == pCond->GetYesLinkID())
+							{
+								for (int i = 0; i < pCurCont->GetNumOfChildEntity(); i++)
 								{
-									for (int i = 0; i < pCurCont->GetNumOfChildEntity(); i++)
+									resultcode = cPlayer->GetQuests()->ProgressTsEntity(pCond->GetChildEntity(i), req->tId, pQuest);
+									if (resultcode != RESULT_SUCCESS)
 									{
-										resultcode = cPlayer->GetQuests()->ProgressTsEntity(pCond->GetChildEntity(i), req->tId, pQuest);
-										if (resultcode != RESULT_SUCCESS)
-										{
-											nextId = pCond->GetNoLinkID();
-											qinfo->uData.sQInfoV0.sMainTSP.tcCurId = pCond->GetNoLinkID();
-											break;
-										}
+										nextId = pCond->GetNoLinkID();
+										qinfo->uData.sQInfoV0.sMainTSP.tcCurId = pCond->GetNoLinkID();
+										break;
 									}
 								}
-								else if (req->tcNextId == pCond->GetNoLinkID())
-								{
-									qinfo->uData.sQInfoV0.sMainTSP.tcCurId = req->tcNextId;
-								}
-								else
-								{
-									nextId = pCond->GetNoLinkID();
-									qinfo->uData.sQInfoV0.sMainTSP.tcCurId = pCond->GetNoLinkID();
-									resultcode = GAME_TS_ERROR_SYSTEM;
-								}
+							}
+							else if (req->tcNextId == pCond->GetNoLinkID())
+							{
+								qinfo->uData.sQInfoV0.sMainTSP.tcCurId = req->tcNextId;
 							}
 							else
 							{
@@ -14793,8 +14778,15 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 						else
 						{
 							nextId = pCond->GetNoLinkID();
+							qinfo->uData.sQInfoV0.sMainTSP.tcCurId = pCond->GetNoLinkID();
 							resultcode = GAME_TS_ERROR_SYSTEM;
 						}
+					}
+					else
+					{
+						nextId = pCond->GetNoLinkID();
+						resultcode = GAME_TS_ERROR_SYSTEM;
+					}
 				}
 				break;
 				case DBO_CONT_TYPE_ID_CONT_START:
@@ -14930,7 +14922,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 											if (basereward)
 											{
 												BYTE rewardcount = 0;
-												CQuestRewardSelectTable *selrwdtbl = g_pTableContainer->GetQuestRewardSelectTable();
+												CQuestRewardSelectTable* selrwdtbl = g_pTableContainer->GetQuestRewardSelectTable();
 
 												//Count reward items
 												for (int cnt = 0; cnt < QUEST_REWARD_DEF_MAX_CNT; cnt++)
@@ -15279,7 +15271,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 														case eREWARD_TYPE_GET_CONVERT_CLASS_RIGHT: //check if can change class
 														{
 															CNtlPacket packetChangeClass(sizeof(sGU_CHANGE_CLASS_AUTHORITY_CHANGED_NFY));
-															sGU_CHANGE_CLASS_AUTHORITY_CHANGED_NFY * res = (sGU_CHANGE_CLASS_AUTHORITY_CHANGED_NFY *)packetChangeClass.GetPacketData();
+															sGU_CHANGE_CLASS_AUTHORITY_CHANGED_NFY* res = (sGU_CHANGE_CLASS_AUTHORITY_CHANGED_NFY*)packetChangeClass.GetPacketData();
 															res->wOpCode = GU_CHANGE_CLASS_AUTHORITY_CHANGED_NFY;
 
 															if (cPlayer->GetClass() >= PC_CLASS_1_FIRST && cPlayer->GetClass() <= PC_CLASS_1_LAST)
@@ -15394,13 +15386,13 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 							//When enable this, then some items will get removed after finish quest. Example when finish master class quest, then the item to start other master class quest gets removed.
 							//if (pEnd->GetID() == 253)
 							//	pQuest->RunGroup(NTL_TS_EXCEPT_GIVEUP_ID);
-							
+
 							if (pEnd->GetEndType() == eEND_TYPE_NOT_PROGRESS) //if end quest but it didnt success finish
 							{
 								if (cPlayer->GetQuests()->CanStoreQuestInDatabase(qinfo->tId)) //only normal quests can be stored in database
 								{
 									CNtlPacket pQry(sizeof(sGQ_QUEST_PROGRESS_DATA_DELETE_REQ));
-									sGQ_QUEST_PROGRESS_DATA_DELETE_REQ * rQry = (sGQ_QUEST_PROGRESS_DATA_DELETE_REQ *)pQry.GetPacketData();
+									sGQ_QUEST_PROGRESS_DATA_DELETE_REQ* rQry = (sGQ_QUEST_PROGRESS_DATA_DELETE_REQ*)pQry.GetPacketData();
 									rQry->wOpCode = GQ_QUEST_PROGRESS_DATA_DELETE_REQ;
 									rQry->charId = cPlayer->GetCharID();
 									rQry->handle = cPlayer->GetID();
@@ -15420,7 +15412,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 								if (cPlayer->GetQuests()->CanStoreQuestInDatabase(qinfo->tId)) //only normal quests can be stored in database
 								{
 									CNtlPacket pQry(sizeof(sGQ_QUEST_PROGRESS_DATA_CREATE_REQ));
-									sGQ_QUEST_PROGRESS_DATA_CREATE_REQ * rQry = (sGQ_QUEST_PROGRESS_DATA_CREATE_REQ *)pQry.GetPacketData();
+									sGQ_QUEST_PROGRESS_DATA_CREATE_REQ* rQry = (sGQ_QUEST_PROGRESS_DATA_CREATE_REQ*)pQry.GetPacketData();
 									rQry->wOpCode = GQ_QUEST_PROGRESS_DATA_CREATE_REQ;
 									rQry->charId = cPlayer->GetCharID();
 									rQry->handle = cPlayer->GetID();
@@ -15488,7 +15480,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 						{
 							qinfo->uData.sQInfoV0.sMainTSP.tcPreId = pCont->GetID();
 
-							if(req->tcNextId == pCont->GetOkLink())
+							if (req->tcNextId == pCont->GetOkLink())
 							{
 								qinfo->uData.sQInfoV0.sMainTSP.tcCurId = req->tcNextId;
 							}
@@ -15553,7 +15545,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 				break;
 				case DBO_CONT_TYPE_ID_CONT_SWITCH:
 				{
-					ERR_LOG(LOG_USER,"QUEST-PROCESS: DBO_CONT_TYPE_ID_CONT_SWITCH - NEED TO DO -");
+					ERR_LOG(LOG_USER, "QUEST-PROCESS: DBO_CONT_TYPE_ID_CONT_SWITCH - NEED TO DO -");
 				}
 				break;
 				case DBO_CONT_TYPE_ID_CONT_UNIFIED_NARRATION: //just normal npc talk I think
@@ -15600,7 +15592,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 			}
 			else
 			{
-				if(qinfo)
+				if (qinfo)
 					ERR_LOG(LOG_USER, "PLAYER %d PROCESS QUEST %u TC (req->tcCurId %u (qinfo curid %u) req->tcNextId %u) GroupID %u FAILED. Cant find pCurCont", cPlayer->GetCharID(), req->tId, req->tcCurId, qinfo->uData.sQInfoV0.sMainTSP.tcCurId, req->tcNextId, qinfo->uData.sQInfoV0.tgExcCGroup);
 				else
 					ERR_LOG(LOG_USER, "PLAYER %d PROCESS QUEST %u TC (tcCurId %u tcNextId %u) FAILED. Cant find pCurCont", cPlayer->GetCharID(), req->tId, req->tcCurId, req->tcNextId);
@@ -15628,98 +15620,98 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 			{
 				switch (pCurCont->GetEntityType())
 				{
-					case DBO_CONT_TYPE_ID_CONT_GCOND:
+				case DBO_CONT_TYPE_ID_CONT_GCOND:
+				{
+					CDboTSContGCond* pCond = (CDboTSContGCond*)pCurCont;
+					if (pCond)
 					{
-						CDboTSContGCond* pCond = (CDboTSContGCond*)pCurCont;
-						if (pCond)
+						for (int i = 0; i < pCurCont->GetNumOfChildEntity(); i++)
 						{
-							for (int i = 0; i < pCurCont->GetNumOfChildEntity(); i++)
+							resultcode = cPlayer->GetQuests()->ProgressTsEntity(pCond->GetChildEntity(i), req->tId, NULL, NULL);
+							if (resultcode != RESULT_SUCCESS)
 							{
-								resultcode = cPlayer->GetQuests()->ProgressTsEntity(pCond->GetChildEntity(i), req->tId, NULL, NULL);
-								if (resultcode != RESULT_SUCCESS)
-								{
-									break;
-								}
+								break;
 							}
 						}
 					}
-					break;
-					case DBO_CONT_TYPE_ID_CONT_START:
+				}
+				break;
+				case DBO_CONT_TYPE_ID_CONT_START:
+				{
+					CDboTSContStart* pStartCont = (CDboTSContStart*)pTrig->GetGroup(NTL_TS_MAIN_GROUP_ID)->GetChildCont(START_CONTAINER_ID);
+					if (pStartCont)
 					{
-						CDboTSContStart* pStartCont = (CDboTSContStart*)pTrig->GetGroup(NTL_TS_MAIN_GROUP_ID)->GetChildCont(START_CONTAINER_ID);
-						if (pStartCont)
+						for (int i = 0; i < pStartCont->GetNumOfChildEntity(); i++)
 						{
-							for (int i = 0; i < pStartCont->GetNumOfChildEntity(); i++)
+							resultcode = cPlayer->GetQuests()->ProgressTsEntity(pStartCont->GetChildEntity(i), req->tId, NULL, NULL);
+							if (resultcode != RESULT_SUCCESS)
 							{
-								resultcode = cPlayer->GetQuests()->ProgressTsEntity(pStartCont->GetChildEntity(i), req->tId, NULL, NULL);
-								if (resultcode != RESULT_SUCCESS)
-								{
-									break;
-								}
+								break;
 							}
+						}
 
-							if (resultcode == RESULT_SUCCESS)
-							{
-								
-							}
-						}
-						else resultcode = GAME_TS_ERROR_TRIGGER_SYSTEM;
-					}
-					break;
-					case DBO_CONT_TYPE_ID_CONT_GACT:
-					{
-						CDboTSContGAct* pAct = (CDboTSContGAct*)pCurCont;
-						if (pAct)
+						if (resultcode == RESULT_SUCCESS)
 						{
-							for (int i = 0; i < pCurCont->GetNumOfChildEntity(); i++)
-							{
-								resultcode = cPlayer->GetQuests()->ProgressTsEntity(pAct->GetChildEntity(i), req->tId, NULL, NULL);
-								if (resultcode != RESULT_SUCCESS)
-								{
-									break;
-								}
-							}
-						}
-					}
-					break;
-					case DBO_CONT_TYPE_ID_CONT_REWARD:
-						break;
-					case DBO_CONT_TYPE_ID_CONT_END:
-					{
-						CDboTSContEnd* pEnd = (CDboTSContEnd*)pCurCont;
-						if (pEnd)
-						{
-							
-						}
-					}
-					break;
-					case DBO_CONT_TYPE_ID_CONT_USERSEL:
-					{
-						CDboTSContUsrSel* pSel = (CDboTSContUsrSel*)pCurCont;
-						if (pSel)
-						{
-						}
-						else resultcode = GAME_TS_ERROR_TRIGGER_SYSTEM;
-					}
-					break;
-					case DBO_CONT_TYPE_ID_CONT_NARRATION:
-					{
-					}break;
-					case DBO_CONT_TYPE_ID_CONT_PROPOSAL:
-					{
-					}break;
-					case DBO_CONT_TYPE_ID_CONT_SWITCH:
-					{
-					}break;
-					case DBO_CONT_TYPE_ID_CONT_UNIFIED_NARRATION:
-					{
-					}break;
 
-					default:
+						}
+					}
+					else resultcode = GAME_TS_ERROR_TRIGGER_SYSTEM;
+				}
+				break;
+				case DBO_CONT_TYPE_ID_CONT_GACT:
+				{
+					CDboTSContGAct* pAct = (CDboTSContGAct*)pCurCont;
+					if (pAct)
 					{
-						ERR_LOG(LOG_USER, "PLAYER %d PROCESS PC-TRIGGER %d TC (%d %d) FAILED. Cant find pCurCont->GetClassNameA() %s", cPlayer->GetCharID(), req->tId, req->tcCurId, req->tcNextId, pCurCont->GetClassNameA());
-						resultcode = GAME_TS_ERROR_NO_IMP_CONT_TYPE;
-					}break;
+						for (int i = 0; i < pCurCont->GetNumOfChildEntity(); i++)
+						{
+							resultcode = cPlayer->GetQuests()->ProgressTsEntity(pAct->GetChildEntity(i), req->tId, NULL, NULL);
+							if (resultcode != RESULT_SUCCESS)
+							{
+								break;
+							}
+						}
+					}
+				}
+				break;
+				case DBO_CONT_TYPE_ID_CONT_REWARD:
+					break;
+				case DBO_CONT_TYPE_ID_CONT_END:
+				{
+					CDboTSContEnd* pEnd = (CDboTSContEnd*)pCurCont;
+					if (pEnd)
+					{
+
+					}
+				}
+				break;
+				case DBO_CONT_TYPE_ID_CONT_USERSEL:
+				{
+					CDboTSContUsrSel* pSel = (CDboTSContUsrSel*)pCurCont;
+					if (pSel)
+					{
+					}
+					else resultcode = GAME_TS_ERROR_TRIGGER_SYSTEM;
+				}
+				break;
+				case DBO_CONT_TYPE_ID_CONT_NARRATION:
+				{
+				}break;
+				case DBO_CONT_TYPE_ID_CONT_PROPOSAL:
+				{
+				}break;
+				case DBO_CONT_TYPE_ID_CONT_SWITCH:
+				{
+				}break;
+				case DBO_CONT_TYPE_ID_CONT_UNIFIED_NARRATION:
+				{
+				}break;
+
+				default:
+				{
+					ERR_LOG(LOG_USER, "PLAYER %d PROCESS PC-TRIGGER %d TC (%d %d) FAILED. Cant find pCurCont->GetClassNameA() %s", cPlayer->GetCharID(), req->tId, req->tcCurId, req->tcNextId, pCurCont->GetClassNameA());
+					resultcode = GAME_TS_ERROR_NO_IMP_CONT_TYPE;
+				}break;
 				}
 			}
 			else
@@ -15750,7 +15742,7 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 	//ERR_LOG(LOG_USER,"req->byEventType %d, req->byTsType %d, req->dwEventData %d, req->dwParam %d %d %d %d, req->tcCurId %d, req->tcNextId %d, req->tId %d", req->byEventType, req->byTsType, req->dwEventData, req->adwParam[0], req->adwParam[1], req->adwParam[2], req->adwParam[3], req->tcCurId, req->tcNextId, req->tId);
 
 	CNtlPacket packet(sizeof(sGU_TS_CONFIRM_STEP_RES));
-	sGU_TS_CONFIRM_STEP_RES * res = (sGU_TS_CONFIRM_STEP_RES *)packet.GetPacketData();
+	sGU_TS_CONFIRM_STEP_RES* res = (sGU_TS_CONFIRM_STEP_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TS_CONFIRM_STEP_RES;
 	res->byTsType = req->byTsType;
 	res->tcCurId = req->tcCurId;
@@ -15767,12 +15759,12 @@ void CClientSession::RecvTsConfirmReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		WHOLE QUEST FUNCTIONS (WHEN START QUEST WITH ITEM)
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTsConfirmForUseItemReq(CNtlPacket * pPacket)
+void CClientSession::RecvTsConfirmForUseItemReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_TS_CONFIRM_STEP_FOR_USE_ITEM_REQ* req = (sUG_TS_CONFIRM_STEP_FOR_USE_ITEM_REQ *)pPacket->GetPacketData();
+	sUG_TS_CONFIRM_STEP_FOR_USE_ITEM_REQ* req = (sUG_TS_CONFIRM_STEP_FOR_USE_ITEM_REQ*)pPacket->GetPacketData();
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
@@ -15789,7 +15781,7 @@ void CClientSession::RecvTsConfirmForUseItemReq(CNtlPacket * pPacket)
 		sUSE_ITEM_TBLDAT* pUseItemTbldat = (sUSE_ITEM_TBLDAT*)g_pTableContainer->GetUseItemTable()->FindData(pItem->GetTbldat()->Use_Item_Tblidx);
 		if (pUseItemTbldat)
 		{
-			if((QUESTID)pUseItemTbldat->aSystem_Effect_Value[0] != req->tId && (QUESTID)pUseItemTbldat->aSystem_Effect_Value[1] != req->tId)
+			if ((QUESTID)pUseItemTbldat->aSystem_Effect_Value[0] != req->tId && (QUESTID)pUseItemTbldat->aSystem_Effect_Value[1] != req->tId)
 				resultcode = RESULT_FAIL;
 		}
 		else resultcode = GAME_NEEDITEM_NOT_FOUND;
@@ -15798,7 +15790,7 @@ void CClientSession::RecvTsConfirmForUseItemReq(CNtlPacket * pPacket)
 	if (resultcode != RESULT_SUCCESS)
 	{
 		CNtlPacket packet(sizeof(sGU_TS_CONFIRM_STEP_RES));
-		sGU_TS_CONFIRM_STEP_RES * res = (sGU_TS_CONFIRM_STEP_RES *)packet.GetPacketData();
+		sGU_TS_CONFIRM_STEP_RES* res = (sGU_TS_CONFIRM_STEP_RES*)packet.GetPacketData();
 		res->wOpCode = GU_TS_CONFIRM_STEP_RES;
 		res->byTsType = req->byTsType;
 		res->tId = req->tId;
@@ -15811,69 +15803,63 @@ void CClientSession::RecvTsConfirmForUseItemReq(CNtlPacket * pPacket)
 
 	switch (req->byTsType)
 	{
-		case TS_TYPE_QUEST_CS:
+	case TS_TYPE_QUEST_CS:
+	{
+		CNtlTSTrigger* pTrig = (CNtlTSTrigger*)g_pTriggerManager->FindQuestFromTS(req->tId);
+		if (pTrig != NULL)
 		{
-			CNtlTSTrigger* pTrig = (CNtlTSTrigger*)g_pTriggerManager->FindQuestFromTS(req->tId);
-			if (pTrig != NULL)
+			if (req->tcCurId == START_CONTAINER_ID) //START QUEST DIALOG
 			{
-				if (req->tcCurId == START_CONTAINER_ID) //START QUEST DIALOG
+				CDboTSContStart* pStartCont = (CDboTSContStart*)pTrig->GetGroup(NTL_TS_MAIN_GROUP_ID)->GetChildCont(START_CONTAINER_ID);
+				if (pStartCont)
 				{
-					CDboTSContStart* pStartCont = (CDboTSContStart*)pTrig->GetGroup(NTL_TS_MAIN_GROUP_ID)->GetChildCont(START_CONTAINER_ID);
-					if (pStartCont)
+					if (cPlayer->GetQuests()->GetQuestProgress(req->tId) == NULL)
 					{
-						if (cPlayer->GetQuests()->GetQuestProgress(req->tId) == NULL)
+						if (cPlayer->GetQuests()->HasBeenClearQuest(req->tId) == false || pTrig->IsRepeatQuest())
 						{
-							if (cPlayer->GetQuests()->HasBeenClearQuest(req->tId) == false || pTrig->IsRepeatQuest())
+							if (cPlayer->GetQuests()->CheckQuestCounter(req->tId))
 							{
-								if (cPlayer->GetQuests()->CheckQuestCounter(req->tId))
+								if (req->tcNextId == pStartCont->GetYesLinkID())
 								{
-									if (req->tcNextId == pStartCont->GetYesLinkID())
-									{
-										nextId = pStartCont->GetYesLinkID();
+									nextId = pStartCont->GetYesLinkID();
 
-										for (int i = 0; i < pStartCont->GetNumOfChildEntity(); i++)
+									for (int i = 0; i < pStartCont->GetNumOfChildEntity(); i++)
+									{
+										resultcode = cPlayer->GetQuests()->ProgressTsEntity(pStartCont->GetChildEntity(i), req->tId, NULL);
+										if (resultcode != RESULT_SUCCESS)
 										{
-											resultcode = cPlayer->GetQuests()->ProgressTsEntity(pStartCont->GetChildEntity(i), req->tId, NULL);
-											if (resultcode != RESULT_SUCCESS)
-											{
-												nextId = pStartCont->GetNoLinkID();
-												break;
-											}
+											nextId = pStartCont->GetNoLinkID();
+											break;
 										}
 									}
-									else if (req->tcNextId == pStartCont->GetNoLinkID())
-									{
-										nextId = pStartCont->GetNoLinkID();
-									}
-									else
-									{
-										nextId = pStartCont->GetNoLinkID();
-										resultcode = GAME_TS_ERROR_SYSTEM;
-									}
+								}
+								else if (req->tcNextId == pStartCont->GetNoLinkID())
+								{
+									nextId = pStartCont->GetNoLinkID();
 								}
 								else
 								{
 									nextId = pStartCont->GetNoLinkID();
-									resultcode = GAME_QUEST_COUNT_OVER;
+									resultcode = GAME_TS_ERROR_SYSTEM;
 								}
 							}
 							else
 							{
 								nextId = pStartCont->GetNoLinkID();
-								resultcode = GAME_QUEST_ALREADY_EXIST;
+								resultcode = GAME_QUEST_COUNT_OVER;
 							}
-
-							cPlayer->GetQuests()->StartQuest(req->tId, nextId)->GetProgressInfo(); //Start quest even when condition fail
 						}
 						else
 						{
 							nextId = pStartCont->GetNoLinkID();
-							resultcode = GAME_TS_ERROR_SYSTEM;
+							resultcode = GAME_QUEST_ALREADY_EXIST;
 						}
+
+						cPlayer->GetQuests()->StartQuest(req->tId, nextId)->GetProgressInfo(); //Start quest even when condition fail
 					}
 					else
 					{
-						nextId = 255;
+						nextId = pStartCont->GetNoLinkID();
 						resultcode = GAME_TS_ERROR_SYSTEM;
 					}
 				}
@@ -15885,77 +15871,77 @@ void CClientSession::RecvTsConfirmForUseItemReq(CNtlPacket * pPacket)
 			}
 			else
 			{
-				resultcode = RESULT_FAIL;
 				nextId = 255;
-				ERR_LOG(LOG_USER, "QUEST %d DOESNT EXIST OR NOT LOADED", req->tId);
+				resultcode = GAME_TS_ERROR_SYSTEM;
 			}
 		}
-		break;
-
-		case TS_TYPE_PC_TRIGGER_CS:
+		else
 		{
-			CNtlTSTrigger* pTrig = (CNtlTSTrigger*)g_pTriggerManager->FindPcFromTS(req->tId);
-			if (pTrig)
-			{
-				if (req->tcCurId == 0)
-				{
-					CDboTSContStart* pStartCont = (CDboTSContStart*)pTrig->GetGroup(NTL_TS_MAIN_GROUP_ID)->GetChildCont(START_CONTAINER_ID);
-					if (pStartCont)
-					{
-						if (cPlayer->GetQuests()->GetQuestProgress(req->tId) == NULL)
-						{
-							if (cPlayer->GetQuests()->HasBeenClearQuest(req->tId) == false || pTrig->IsRepeatQuest())
-							{
-								if (cPlayer->GetQuests()->CheckQuestCounter(req->tId))
-								{
-									if (req->tcNextId == pStartCont->GetYesLinkID())
-									{
-										nextId = pStartCont->GetYesLinkID();
+			resultcode = RESULT_FAIL;
+			nextId = 255;
+			ERR_LOG(LOG_USER, "QUEST %d DOESNT EXIST OR NOT LOADED", req->tId);
+		}
+	}
+	break;
 
-										for (int i = 0; i < pStartCont->GetNumOfChildEntity(); i++)
+	case TS_TYPE_PC_TRIGGER_CS:
+	{
+		CNtlTSTrigger* pTrig = (CNtlTSTrigger*)g_pTriggerManager->FindPcFromTS(req->tId);
+		if (pTrig)
+		{
+			if (req->tcCurId == 0)
+			{
+				CDboTSContStart* pStartCont = (CDboTSContStart*)pTrig->GetGroup(NTL_TS_MAIN_GROUP_ID)->GetChildCont(START_CONTAINER_ID);
+				if (pStartCont)
+				{
+					if (cPlayer->GetQuests()->GetQuestProgress(req->tId) == NULL)
+					{
+						if (cPlayer->GetQuests()->HasBeenClearQuest(req->tId) == false || pTrig->IsRepeatQuest())
+						{
+							if (cPlayer->GetQuests()->CheckQuestCounter(req->tId))
+							{
+								if (req->tcNextId == pStartCont->GetYesLinkID())
+								{
+									nextId = pStartCont->GetYesLinkID();
+
+									for (int i = 0; i < pStartCont->GetNumOfChildEntity(); i++)
+									{
+										resultcode = cPlayer->GetQuests()->ProgressTsEntity(pStartCont->GetChildEntity(i), req->tId, NULL);
+										if (resultcode != RESULT_SUCCESS)
 										{
-											resultcode = cPlayer->GetQuests()->ProgressTsEntity(pStartCont->GetChildEntity(i), req->tId, NULL);
-											if (resultcode != RESULT_SUCCESS)
-											{
-												nextId = pStartCont->GetNoLinkID();
-												break;
-											}
+											nextId = pStartCont->GetNoLinkID();
+											break;
 										}
 									}
-									else if (req->tcNextId == pStartCont->GetNoLinkID())
-									{
-										nextId = pStartCont->GetNoLinkID();
-									}
-									else
-									{
-										nextId = pStartCont->GetNoLinkID();
-										resultcode = GAME_TS_ERROR_SYSTEM;
-									}
+								}
+								else if (req->tcNextId == pStartCont->GetNoLinkID())
+								{
+									nextId = pStartCont->GetNoLinkID();
 								}
 								else
 								{
 									nextId = pStartCont->GetNoLinkID();
-									resultcode = GAME_QUEST_COUNT_OVER;
+									resultcode = GAME_TS_ERROR_SYSTEM;
 								}
 							}
 							else
 							{
 								nextId = pStartCont->GetNoLinkID();
-								resultcode = GAME_QUEST_ALREADY_EXIST;
+								resultcode = GAME_QUEST_COUNT_OVER;
 							}
-
-							cPlayer->GetQuests()->StartQuest(req->tId, nextId)->GetProgressInfo(); //Start quest even when condition fail
 						}
 						else
 						{
 							nextId = pStartCont->GetNoLinkID();
-							resultcode = GAME_TS_ERROR_SYSTEM;
+							resultcode = GAME_QUEST_ALREADY_EXIST;
 						}
+
+						cPlayer->GetQuests()->StartQuest(req->tId, nextId)->GetProgressInfo(); //Start quest even when condition fail
 					}
 					else
 					{
-						nextId = 255;
-						resultcode = GAME_TS_ERROR_TRIGGER_SYSTEM;
+						nextId = pStartCont->GetNoLinkID();
+						resultcode = GAME_TS_ERROR_SYSTEM;
 					}
 				}
 				else
@@ -15966,32 +15952,38 @@ void CClientSession::RecvTsConfirmForUseItemReq(CNtlPacket * pPacket)
 			}
 			else
 			{
-				resultcode = GAME_FAIL;
 				nextId = 255;
-				ERR_LOG(LOG_USER, "PC trigger %d not found", req->tId);
+				resultcode = GAME_TS_ERROR_TRIGGER_SYSTEM;
 			}
 		}
-		break;
-
-		case TS_TYPE_OBJECT_TRIGGER_S:
+		else
 		{
-			ERR_LOG(LOG_SYSTEM, "sUG_TS_CONFIRM_STEP_FOR_USE_ITEM_REQ: TS_TYPE_OBJECT_TRIGGER_S");
-			nextId = 255;
 			resultcode = GAME_FAIL;
+			nextId = 255;
+			ERR_LOG(LOG_USER, "PC trigger %d not found", req->tId);
 		}
-		break;
+	}
+	break;
 
-		default:
-		{
-			ERR_LOG(LOG_USER, "sUG_TS_CONFIRM_STEP_FOR_USE_ITEM_REQ: Couldnt find TS Type. Player ID %d hacker?", cPlayer->GetCharID());
-			nextId = 255;
-			resultcode = GAME_FAIL;
-		}
-		break;
+	case TS_TYPE_OBJECT_TRIGGER_S:
+	{
+		ERR_LOG(LOG_SYSTEM, "sUG_TS_CONFIRM_STEP_FOR_USE_ITEM_REQ: TS_TYPE_OBJECT_TRIGGER_S");
+		nextId = 255;
+		resultcode = GAME_FAIL;
+	}
+	break;
+
+	default:
+	{
+		ERR_LOG(LOG_USER, "sUG_TS_CONFIRM_STEP_FOR_USE_ITEM_REQ: Couldnt find TS Type. Player ID %d hacker?", cPlayer->GetCharID());
+		nextId = 255;
+		resultcode = GAME_FAIL;
+	}
+	break;
 	}
 
 	CNtlPacket packet(sizeof(sGU_TS_CONFIRM_STEP_RES));
-	sGU_TS_CONFIRM_STEP_RES * res = (sGU_TS_CONFIRM_STEP_RES *)packet.GetPacketData();
+	sGU_TS_CONFIRM_STEP_RES* res = (sGU_TS_CONFIRM_STEP_RES*)packet.GetPacketData();
 	res->wOpCode = GU_TS_CONFIRM_STEP_RES;
 	res->byTsType = req->byTsType;
 	res->tcCurId = req->tcCurId;
@@ -16007,14 +15999,14 @@ void CClientSession::RecvTsConfirmForUseItemReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		QUEST GIVE UP REQUEST
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvQuestGiveUpReq(CNtlPacket * pPacket)
+void	CClientSession::RecvQuestGiveUpReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_QUEST_GIVEUP_REQ* req = (sUG_QUEST_GIVEUP_REQ *)pPacket->GetPacketData();
+	sUG_QUEST_GIVEUP_REQ* req = (sUG_QUEST_GIVEUP_REQ*)pPacket->GetPacketData();
 	WORD wRes = GAME_QUEST_NOT_EXIST;
 
 	CQuestProgress* pQuest = cPlayer->GetQuests()->GetQuestProgress(req->tId);
@@ -16031,7 +16023,7 @@ void	CClientSession::RecvQuestGiveUpReq(CNtlPacket * pPacket)
 			if (cPlayer->GetQuests()->CanStoreQuestInDatabase(req->tId))  //only normal quests can be stored in database !
 			{
 				CNtlPacket pQry(sizeof(sGQ_QUEST_PROGRESS_DATA_DELETE_REQ));
-				sGQ_QUEST_PROGRESS_DATA_DELETE_REQ * rQry = (sGQ_QUEST_PROGRESS_DATA_DELETE_REQ *)pQry.GetPacketData();
+				sGQ_QUEST_PROGRESS_DATA_DELETE_REQ* rQry = (sGQ_QUEST_PROGRESS_DATA_DELETE_REQ*)pQry.GetPacketData();
 				rQry->wOpCode = GQ_QUEST_PROGRESS_DATA_DELETE_REQ;
 				rQry->charId = cPlayer->GetCharID();
 				rQry->handle = cPlayer->GetID();
@@ -16044,7 +16036,7 @@ void	CClientSession::RecvQuestGiveUpReq(CNtlPacket * pPacket)
 
 
 	CNtlPacket packet(sizeof(sGU_QUEST_GIVEUP_RES));
-	sGU_QUEST_GIVEUP_RES * res = (sGU_QUEST_GIVEUP_RES *)packet.GetPacketData();
+	sGU_QUEST_GIVEUP_RES* res = (sGU_QUEST_GIVEUP_RES*)packet.GetPacketData();
 	res->wOpCode = GU_QUEST_GIVEUP_RES;
 	res->wResultCode = wRes;
 	res->tId = req->tId;
@@ -16052,14 +16044,14 @@ void	CClientSession::RecvQuestGiveUpReq(CNtlPacket * pPacket)
 	app->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvQuestShare(CNtlPacket * pPacket)
+void CClientSession::RecvQuestShare(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_QUEST_SHARE* req = (sUG_QUEST_SHARE *)pPacket->GetPacketData();
+	sUG_QUEST_SHARE* req = (sUG_QUEST_SHARE*)pPacket->GetPacketData();
 
 	if (cPlayer->GetParty())
 	{
@@ -16077,7 +16069,7 @@ void CClientSession::RecvQuestShare(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		EXECUTE TRIGGER
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTSExcuteTriggerObject(CNtlPacket * pPacket)
+void CClientSession::RecvTSExcuteTriggerObject(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -16087,7 +16079,7 @@ void CClientSession::RecvTSExcuteTriggerObject(CNtlPacket * pPacket)
 	if (app->GetGsChannel() == DOJO_CHANNEL_INDEX)
 		return;
 
-	sUG_TS_EXCUTE_TRIGGER_OBJECT * req = (sUG_TS_EXCUTE_TRIGGER_OBJECT*)pPacket->GetPacketData();
+	sUG_TS_EXCUTE_TRIGGER_OBJECT* req = (sUG_TS_EXCUTE_TRIGGER_OBJECT*)pPacket->GetPacketData();
 	//printf("sUG_TS_EXCUTE_TRIGGER_OBJECT: byEvtGenType:%u hSource:%u hTarget:%u uiParam:%u\n", req->byEvtGenType, req->hSource, req->hTarget, req->uiParam);
 	if (cPlayer->GetCurWorld())
 	{
@@ -16104,7 +16096,7 @@ void CClientSession::RecvTSExcuteTriggerObject(CNtlPacket * pPacket)
 					//	printf("excute objtrigger GetTblidx %u, GetMainState %u, GetSubState %u \n", obj->GetTblidx(), obj->GetMainState(), obj->GetSubState());
 
 					CNtlPacket packet(sizeof(sGU_TS_EXCUTE_TRIGGER_OBJECT_RES));
-					sGU_TS_EXCUTE_TRIGGER_OBJECT_RES * res = (sGU_TS_EXCUTE_TRIGGER_OBJECT_RES *)packet.GetPacketData();
+					sGU_TS_EXCUTE_TRIGGER_OBJECT_RES* res = (sGU_TS_EXCUTE_TRIGGER_OBJECT_RES*)packet.GetPacketData();
 					res->wOpCode = GU_TS_EXCUTE_TRIGGER_OBJECT_RES;
 					res->wResultCode = RESULT_SUCCESS;
 					res->hTriggerObject = req->hTarget;
@@ -16118,7 +16110,7 @@ void CClientSession::RecvTSExcuteTriggerObject(CNtlPacket * pPacket)
 		}
 
 		CNtlPacket packet(sizeof(sGU_TS_EXCUTE_TRIGGER_OBJECT_RES));
-		sGU_TS_EXCUTE_TRIGGER_OBJECT_RES * res = (sGU_TS_EXCUTE_TRIGGER_OBJECT_RES *)packet.GetPacketData();
+		sGU_TS_EXCUTE_TRIGGER_OBJECT_RES* res = (sGU_TS_EXCUTE_TRIGGER_OBJECT_RES*)packet.GetPacketData();
 		res->wOpCode = GU_TS_EXCUTE_TRIGGER_OBJECT_RES;
 		res->wResultCode = RESULT_FAIL;
 		res->hTriggerObject = req->hTarget;
@@ -16130,12 +16122,12 @@ void CClientSession::RecvTSExcuteTriggerObject(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvQuestItemMoveReq(CNtlPacket * pPacket)
+void CClientSession::RecvQuestItemMoveReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_QUEST_ITEM_MOVE_REQ * req = (sUG_QUEST_ITEM_MOVE_REQ*)pPacket->GetPacketData();
+	sUG_QUEST_ITEM_MOVE_REQ* req = (sUG_QUEST_ITEM_MOVE_REQ*)pPacket->GetPacketData();
 
 	cPlayer->GetQuests()->MoveQuestItem(req->bySrcPos, req->byDestPos);
 }
@@ -16143,12 +16135,12 @@ void CClientSession::RecvQuestItemMoveReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvQuestItemDeleteReq(CNtlPacket * pPacket)
+void CClientSession::RecvQuestItemDeleteReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_QUEST_ITEM_DELETE_REQ * req = (sUG_QUEST_ITEM_DELETE_REQ*)pPacket->GetPacketData();
+	sUG_QUEST_ITEM_DELETE_REQ* req = (sUG_QUEST_ITEM_DELETE_REQ*)pPacket->GetPacketData();
 
 	cPlayer->GetQuests()->DeleteQuestItem(req->byDeletePos);
 }
@@ -16156,14 +16148,14 @@ void CClientSession::RecvQuestItemDeleteReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		QUEST OBJECT VISIT
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvQuestObjectVisitReq(CNtlPacket * pPacket)
+void CClientSession::RecvQuestObjectVisitReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_QUEST_OBJECT_VISIT_REQ * req = (sUG_QUEST_OBJECT_VISIT_REQ*)pPacket->GetPacketData();
+	sUG_QUEST_OBJECT_VISIT_REQ* req = (sUG_QUEST_OBJECT_VISIT_REQ*)pPacket->GetPacketData();
 
 	WORD resultcode = GAME_FAIL;
 	CNtlTSTrigger* pTrig = (CNtlTSTrigger*)g_pTriggerManager->FindQuestFromTS(req->qId); //get quest data
@@ -16194,7 +16186,7 @@ void CClientSession::RecvQuestObjectVisitReq(CNtlPacket * pPacket)
 									qinfo->uData.sQInfoV0.sSToCEvtData.m_aUserData[i] = req->objectTblidx;
 
 									CNtlPacket packet(sizeof(sGU_QUEST_SVREVT_UPDATE_NFY));
-									sGU_QUEST_SVREVT_UPDATE_NFY * res = (sGU_QUEST_SVREVT_UPDATE_NFY *)packet.GetPacketData();
+									sGU_QUEST_SVREVT_UPDATE_NFY* res = (sGU_QUEST_SVREVT_UPDATE_NFY*)packet.GetPacketData();
 									res->wOpCode = GU_QUEST_SVREVT_UPDATE_NFY;
 									res->taId = qinfo->uData.sQInfoV0.sSToCEvtData.taId;
 									res->tcId = qinfo->uData.sQInfoV0.sSToCEvtData.tcId;
@@ -16235,7 +16227,7 @@ void CClientSession::RecvQuestObjectVisitReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE TRIGGER SYSTEM STATE
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvTSUpdateState(CNtlPacket * pPacket)
+void CClientSession::RecvTSUpdateState(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
@@ -16286,14 +16278,14 @@ void CClientSession::SendPcTsDialogNfy(TBLIDX dialogTblidx)
 //--------------------------------------------------------------------------------------//
 //		USE ITEM
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvItemUseReq(CNtlPacket * pPacket)
+void	CClientSession::RecvItemUseReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_ITEM_USE_REQ * req = (sUG_ITEM_USE_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_USE_REQ* req = (sUG_ITEM_USE_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 	TBLIDX itemTblidx = INVALID_TBLIDX;
 
@@ -16324,11 +16316,11 @@ void	CClientSession::RecvItemUseReq(CNtlPacket * pPacket)
 
 			if (pItem && pItem->GetCount() > 0)
 			{
-				sITEM_TBLDAT * pItemTbldat = pItem->GetTbldat();
+				sITEM_TBLDAT* pItemTbldat = pItem->GetTbldat();
 
 				itemTblidx = pItemTbldat->tblidx;
 
-				sUSE_ITEM_TBLDAT * pUseItemTbldat = (sUSE_ITEM_TBLDAT*)g_pTableContainer->GetUseItemTable()->FindData(pItemTbldat->Use_Item_Tblidx);
+				sUSE_ITEM_TBLDAT* pUseItemTbldat = (sUSE_ITEM_TBLDAT*)g_pTableContainer->GetUseItemTable()->FindData(pItemTbldat->Use_Item_Tblidx);
 				if (pUseItemTbldat)
 				{
 					//printf("useWorldTblidx %u, dwUse_Allow_Rule_Bit_Flag %u \n", pUseItemTbldat->useWorldTblidx, pUseItemTbldat->dwUse_Allow_Rule_Bit_Flag);
@@ -16434,7 +16426,7 @@ void	CClientSession::RecvItemUseReq(CNtlPacket * pPacket)
 		//printf("result: %u \n", resultcode);
 
 		CNtlPacket packet(sizeof(sGU_ITEM_USE_RES));
-		sGU_ITEM_USE_RES * res = (sGU_ITEM_USE_RES *)packet.GetPacketData();
+		sGU_ITEM_USE_RES* res = (sGU_ITEM_USE_RES*)packet.GetPacketData();
 		res->wOpCode = GU_ITEM_USE_RES;
 		res->wResultCode = resultcode;
 		res->byPlace = req->byPlace;
@@ -16456,12 +16448,12 @@ void	CClientSession::RecvItemUseReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		LOAD QUICK TELEPORT
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvLoadQuickTeleportReq(CNtlPacket * pPacket)
+void	CClientSession::RecvLoadQuickTeleportReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_QUICK_TELEPORT_LOAD_REQ *req = (sUG_QUICK_TELEPORT_LOAD_REQ*)pPacket->GetPacketData();
+	sUG_QUICK_TELEPORT_LOAD_REQ* req = (sUG_QUICK_TELEPORT_LOAD_REQ*)pPacket->GetPacketData();
 
 	CItem* pItem = cPlayer->GetPlayerItemContainer()->GetItem(req->byPlace, req->byPos);
 
@@ -16487,14 +16479,14 @@ void	CClientSession::RecvLoadQuickTeleportReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		UPDATE QUICK TELEPORT
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvUpdateQuickTeleportReq(CNtlPacket * pPacket)
+void	CClientSession::RecvUpdateQuickTeleportReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_QUICK_TELEPORT_UPDATE_REQ *req = (sUG_QUICK_TELEPORT_UPDATE_REQ*)pPacket->GetPacketData();
+	sUG_QUICK_TELEPORT_UPDATE_REQ* req = (sUG_QUICK_TELEPORT_UPDATE_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_QUICK_TELEPORT_UPDATE_RES));
 	sGU_QUICK_TELEPORT_UPDATE_RES* res = (sGU_QUICK_TELEPORT_UPDATE_RES*)packet.GetPacketData();
@@ -16543,14 +16535,14 @@ void	CClientSession::RecvUpdateQuickTeleportReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		DELETE QUICK TELEPORT
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvDelQuickTeleportReq(CNtlPacket * pPacket)
+void	CClientSession::RecvDelQuickTeleportReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_QUICK_TELEPORT_DEL_REQ *req = (sUG_QUICK_TELEPORT_DEL_REQ*)pPacket->GetPacketData();
+	sUG_QUICK_TELEPORT_DEL_REQ* req = (sUG_QUICK_TELEPORT_DEL_REQ*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_QUICK_TELEPORT_DEL_RES));
 	sGU_QUICK_TELEPORT_DEL_RES* res = (sGU_QUICK_TELEPORT_DEL_RES*)packet.GetPacketData();
@@ -16571,7 +16563,7 @@ void	CClientSession::RecvDelQuickTeleportReq(CNtlPacket * pPacket)
 			res->wResultCode = GAME_SUCCESS;
 
 			CNtlPacket pQry(sizeof(sGQ_QUICK_TELEPORT_DEL_REQ));
-			sGQ_QUICK_TELEPORT_DEL_REQ * qRes = (sGQ_QUICK_TELEPORT_DEL_REQ *)pQry.GetPacketData();
+			sGQ_QUICK_TELEPORT_DEL_REQ* qRes = (sGQ_QUICK_TELEPORT_DEL_REQ*)pQry.GetPacketData();
 			qRes->wOpCode = GQ_QUICK_TELEPORT_DEL_REQ;
 			qRes->charId = cPlayer->GetCharID();
 			qRes->bySlot = req->bySlot;
@@ -16581,19 +16573,19 @@ void	CClientSession::RecvDelQuickTeleportReq(CNtlPacket * pPacket)
 		else res->wResultCode = GAME_FAIL;
 	}
 	else res->wResultCode = GAME_FAIL;
-	
+
 	packet.SetPacketLen(sizeof(sGU_QUICK_TELEPORT_DEL_RES));
 	app->Send(GetHandle(), &packet);
 }
 //--------------------------------------------------------------------------------------//
 //		USE QUICK TELEPORT (TELEPORT)
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvUseQuickTeleportReq(CNtlPacket * pPacket)
+void	CClientSession::RecvUseQuickTeleportReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_QUICK_TELEPORT_USE_REQ *req = (sUG_QUICK_TELEPORT_USE_REQ*)pPacket->GetPacketData();
+	sUG_QUICK_TELEPORT_USE_REQ* req = (sUG_QUICK_TELEPORT_USE_REQ*)pPacket->GetPacketData();
 
 	WORD rescode = GAME_SUCCESS;
 
@@ -16617,7 +16609,7 @@ void	CClientSession::RecvUseQuickTeleportReq(CNtlPacket * pPacket)
 			rescode = GAME_ITEM_CANT_USE_NOW;
 		else if (cPlayer->GetDragonballScrambleBallFlag() != 0)
 			rescode = GAME_CAN_NOT_TELEPORT;
-		else if(cPlayer->GetCombatMode())
+		else if (cPlayer->GetCombatMode())
 			rescode = GAME_CAN_NOT_TELEPORT;
 		else
 		{
@@ -16654,15 +16646,15 @@ void	CClientSession::RecvUseQuickTeleportReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		REVIVE CHARACTER WITH ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCrescentPopoRevivalReq(CNtlPacket * pPacket)
+void CClientSession::RecvCrescentPopoRevivalReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_CHAR_CRESCENT_POPO_REVIVAL_REQ * req = (sUG_CHAR_CRESCENT_POPO_REVIVAL_REQ*)pPacket->GetPacketData();
+	sUG_CHAR_CRESCENT_POPO_REVIVAL_REQ* req = (sUG_CHAR_CRESCENT_POPO_REVIVAL_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 
-	sUSE_ITEM_TBLDAT * pTableData = NULL;
+	sUSE_ITEM_TBLDAT* pTableData = NULL;
 	CItem* item = NULL;
 
 	if (IsInvenContainer(req->byPlace) == false)
@@ -16679,7 +16671,7 @@ void CClientSession::RecvCrescentPopoRevivalReq(CNtlPacket * pPacket)
 		item = cPlayer->GetPlayerItemContainer()->GetItem(req->byPlace, req->byPos);
 		if (item == NULL || item->GetCount() == 0 || item->GetTbldat()->byItem_Type != ITEM_TYPE_CRESCENT_POPO)
 			resultcode = GAME_ITEM_NOT_FOUND;
-		else if(item->IsLocked())
+		else if (item->IsLocked())
 			resultcode = GAME_ITEM_IS_LOCK;
 		else
 		{
@@ -16693,7 +16685,7 @@ void CClientSession::RecvCrescentPopoRevivalReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_CHAR_CRESCENT_POPO_REVIVAL_RES));
-	sGU_CHAR_CRESCENT_POPO_REVIVAL_RES * res = (sGU_CHAR_CRESCENT_POPO_REVIVAL_RES *)packet.GetPacketData();
+	sGU_CHAR_CRESCENT_POPO_REVIVAL_RES* res = (sGU_CHAR_CRESCENT_POPO_REVIVAL_RES*)packet.GetPacketData();
 	res->wOpCode = GU_CHAR_CRESCENT_POPO_REVIVAL_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_CHAR_CRESCENT_POPO_REVIVAL_RES));
@@ -16715,14 +16707,14 @@ void CClientSession::RecvCrescentPopoRevivalReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		RENAME CHARACTER BY ITEM
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvCharRenameReq(CNtlPacket * pPacket)
+void CClientSession::RecvCharRenameReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_CHARACTER_RENAME_REQ * req = (sUG_CHARACTER_RENAME_REQ*)pPacket->GetPacketData();
+	sUG_CHARACTER_RENAME_REQ* req = (sUG_CHARACTER_RENAME_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 
 	if (IsInvenContainer(req->byPlace))
@@ -16746,7 +16738,7 @@ void CClientSession::RecvCharRenameReq(CNtlPacket * pPacket)
 			item->SetLocked(true);
 
 			CNtlPacket pQry(sizeof(sGQ_CHARACTER_RENAME_REQ));
-			sGQ_CHARACTER_RENAME_REQ * qRes = (sGQ_CHARACTER_RENAME_REQ *)pQry.GetPacketData();
+			sGQ_CHARACTER_RENAME_REQ* qRes = (sGQ_CHARACTER_RENAME_REQ*)pQry.GetPacketData();
 			qRes->wOpCode = GQ_CHARACTER_RENAME_REQ;
 			qRes->charId = cPlayer->GetCharID();
 			qRes->accountId = cPlayer->GetAccountID();
@@ -16768,7 +16760,7 @@ void CClientSession::RecvCharRenameReq(CNtlPacket * pPacket)
 	else resultcode = GAME_FAIL;
 
 	CNtlPacket packet(sizeof(sGU_CHARACTER_RENAME_RES));
-	sGU_CHARACTER_RENAME_RES * res = (sGU_CHARACTER_RENAME_RES *)packet.GetPacketData();
+	sGU_CHARACTER_RENAME_RES* res = (sGU_CHARACTER_RENAME_RES*)packet.GetPacketData();
 	res->wOpCode = GU_CHARACTER_RENAME_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_CHARACTER_RENAME_RES));
@@ -16778,12 +16770,12 @@ void CClientSession::RecvCharRenameReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CHANGE ITEM OPTION
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemChangeOptionReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemChangeOptionReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_ITEM_CHANGE_OPTION_REQ * req = (sUG_ITEM_CHANGE_OPTION_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_CHANGE_OPTION_REQ* req = (sUG_ITEM_CHANGE_OPTION_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 
 	if (IsInvenContainer(req->byItemPlace) && IsInvenContainer(req->byKitPlace))
@@ -16794,9 +16786,9 @@ void CClientSession::RecvItemChangeOptionReq(CNtlPacket * pPacket)
 			resultcode = GAME_ITEM_NOT_FOUND;
 		else if (item->IsLocked() || kit->IsLocked())
 			resultcode = GAME_ITEM_IS_LOCK;
-		else if(CanChangeOption(item->GetTbldat()->byEquip_Type, item->GetRank(), item->GetRestrictState(), item->GetTbldat()->byNeed_Min_Level) == false)
+		else if (CanChangeOption(item->GetTbldat()->byEquip_Type, item->GetRank(), item->GetRestrictState(), item->GetTbldat()->byNeed_Min_Level) == false)
 			resultcode = GAME_FAIL;
-		else if(item->NeedToIdentify())
+		else if (item->NeedToIdentify())
 			resultcode = GAME_FAIL;
 		else if (kit->NeedToIdentify())
 			resultcode = GAME_FAIL;
@@ -16810,7 +16802,7 @@ void CClientSession::RecvItemChangeOptionReq(CNtlPacket * pPacket)
 			CGameServer* app = (CGameServer*)g_pApp;
 
 			CNtlPacket packet(sizeof(sGQ_ITEM_CHANGE_OPTION_REQ));
-			sGQ_ITEM_CHANGE_OPTION_REQ * res = (sGQ_ITEM_CHANGE_OPTION_REQ *)packet.GetPacketData();
+			sGQ_ITEM_CHANGE_OPTION_REQ* res = (sGQ_ITEM_CHANGE_OPTION_REQ*)packet.GetPacketData();
 			res->wOpCode = GQ_ITEM_CHANGE_OPTION_REQ;
 
 			if (kit->GetTblidx() == 11120093) //11120093 = silver box id. Generate random value for selected option
@@ -16851,7 +16843,7 @@ void CClientSession::RecvItemChangeOptionReq(CNtlPacket * pPacket)
 	else resultcode = GAME_FAIL;
 
 	CNtlPacket packet2(sizeof(sGU_ITEM_CHANGE_OPTION_RES));
-	sGU_ITEM_CHANGE_OPTION_RES * res2 = (sGU_ITEM_CHANGE_OPTION_RES *)packet2.GetPacketData();
+	sGU_ITEM_CHANGE_OPTION_RES* res2 = (sGU_ITEM_CHANGE_OPTION_RES*)packet2.GetPacketData();
 	res2->wOpCode = GU_ITEM_CHANGE_OPTION_RES;
 	res2->byItemPlace = req->byItemPlace;
 	res2->byItemPos = req->byItemPos;
@@ -16865,12 +16857,12 @@ void CClientSession::RecvItemChangeOptionReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		ADD BALL TO DOGI
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemSocketInsertBeadReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemSocketInsertBeadReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_ITEM_SOCKET_INSERT_BEAD_REQ * req = (sUG_ITEM_SOCKET_INSERT_BEAD_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_SOCKET_INSERT_BEAD_REQ* req = (sUG_ITEM_SOCKET_INSERT_BEAD_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_SUCCESS;
 
 	CItem* item = NULL;
@@ -16948,12 +16940,12 @@ void CClientSession::RecvItemSocketInsertBeadReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		REMOVE DOGI BALL FROM DOGI SOCKET
 //--------------------------------------------------------------------------------------//
-void CClientSession::RecvItemSocketDestroyBeadReq(CNtlPacket * pPacket)
+void CClientSession::RecvItemSocketDestroyBeadReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_ITEM_SOCKET_DESTROY_BEAD_REQ * req = (sUG_ITEM_SOCKET_DESTROY_BEAD_REQ*)pPacket->GetPacketData();
+	sUG_ITEM_SOCKET_DESTROY_BEAD_REQ* req = (sUG_ITEM_SOCKET_DESTROY_BEAD_REQ*)pPacket->GetPacketData();
 	WORD resultcode = GAME_ITEM_NOT_FOUND;
 
 	if (IsInvenContainer(req->byItemPlace))
@@ -16972,40 +16964,40 @@ void CClientSession::RecvItemSocketDestroyBeadReq(CNtlPacket * pPacket)
 	}
 
 	CNtlPacket packet(sizeof(sGU_ITEM_SOCKET_DESTROY_BEAD_RES));
-	sGU_ITEM_SOCKET_DESTROY_BEAD_RES * res = (sGU_ITEM_SOCKET_DESTROY_BEAD_RES *)packet.GetPacketData();
+	sGU_ITEM_SOCKET_DESTROY_BEAD_RES* res = (sGU_ITEM_SOCKET_DESTROY_BEAD_RES*)packet.GetPacketData();
 	res->wOpCode = GU_ITEM_SOCKET_DESTROY_BEAD_RES;
 	res->wResultCode = resultcode;
 	packet.SetPacketLen(sizeof(sGU_ITEM_SOCKET_DESTROY_BEAD_RES));
 	g_pApp->Send(GetHandle(), &packet);
 }
 
-void CClientSession::RecvDynamicFieldSystemBossPositionReq(CNtlPacket * pPacket)
+void CClientSession::RecvDynamicFieldSystemBossPositionReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_DYNAMIC_FIELD_SYSTEM_BOSS_POSITION_REQ * req = (sUG_DYNAMIC_FIELD_SYSTEM_BOSS_POSITION_REQ*)pPacket->GetPacketData();
+	sUG_DYNAMIC_FIELD_SYSTEM_BOSS_POSITION_REQ* req = (sUG_DYNAMIC_FIELD_SYSTEM_BOSS_POSITION_REQ*)pPacket->GetPacketData();
 
 	g_pDynamicFieldSystemEvent->GetBosses(cPlayer);
 }
 
-void CClientSession::RecvEventRewardLoadReq(CNtlPacket * pPacket)
+void CClientSession::RecvEventRewardLoadReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_EVENT_REWARD_LOAD_REQ * req = (sUG_EVENT_REWARD_LOAD_REQ*)pPacket->GetPacketData();
+	sUG_EVENT_REWARD_LOAD_REQ* req = (sUG_EVENT_REWARD_LOAD_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_SUCCESS;
 
 	CNpc* pNpc = g_pObjectManager->GetNpc(req->hNpcHandle);
-	if(pNpc == NULL || pNpc->IsNPC() == false)
+	if (pNpc == NULL || pNpc->IsNPC() == false)
 		wResultCode = GAME_TARGET_NOT_FOUND;
-	else if(pNpc->IsInRange(cPlayer, DBO_DISTANCE_CHECK_TOLERANCE) == false)
+	else if (pNpc->IsInRange(cPlayer, DBO_DISTANCE_CHECK_TOLERANCE) == false)
 		wResultCode = GAME_TARGET_TOO_FAR;
-	else if(pNpc->HasFunction(NPC_FUNC_FLAG_EVENT_NPC) == false)
+	else if (pNpc->HasFunction(NPC_FUNC_FLAG_EVENT_NPC) == false)
 		wResultCode = GAME_TARGET_HAS_NOT_FUNCTION;
 
 	if (wResultCode == GAME_SUCCESS)
@@ -17015,7 +17007,7 @@ void CClientSession::RecvEventRewardLoadReq(CNtlPacket * pPacket)
 			cPlayer->SetLastEventRewardLoad(app->GetCurTickCount());
 
 			CNtlPacket packet(sizeof(sGQ_EVENT_REWARD_LOAD_REQ));
-			sGQ_EVENT_REWARD_LOAD_REQ * res = (sGQ_EVENT_REWARD_LOAD_REQ *)packet.GetPacketData();
+			sGQ_EVENT_REWARD_LOAD_REQ* res = (sGQ_EVENT_REWARD_LOAD_REQ*)packet.GetPacketData();
 			res->wOpCode = GQ_EVENT_REWARD_LOAD_REQ;
 			res->accountId = cPlayer->GetAccountID();
 			res->charId = cPlayer->GetCharID();
@@ -17030,21 +17022,21 @@ void CClientSession::RecvEventRewardLoadReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket pRes(sizeof(sGU_EVENT_REWARD_LOAD_RES));
-		sGU_EVENT_REWARD_LOAD_RES * rRes = (sGU_EVENT_REWARD_LOAD_RES *)pRes.GetPacketData();
+		sGU_EVENT_REWARD_LOAD_RES* rRes = (sGU_EVENT_REWARD_LOAD_RES*)pRes.GetPacketData();
 		rRes->wOpCode = GU_EVENT_REWARD_LOAD_RES;
 		rRes->wResultCode = wResultCode;
 		app->Send(cPlayer->GetClientSessionID(), &pRes);
 	}
 }
 
-void CClientSession::RecvEventRewardSelectReq(CNtlPacket * pPacket)
+void CClientSession::RecvEventRewardSelectReq(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
 	CGameServer* app = (CGameServer*)g_pApp;
 
-	sUG_EVENT_REWARD_SELECT_REQ * req = (sUG_EVENT_REWARD_SELECT_REQ*)pPacket->GetPacketData();
+	sUG_EVENT_REWARD_SELECT_REQ* req = (sUG_EVENT_REWARD_SELECT_REQ*)pPacket->GetPacketData();
 
 	WORD wResultCode = GAME_SUCCESS;
 
@@ -17058,7 +17050,7 @@ void CClientSession::RecvEventRewardSelectReq(CNtlPacket * pPacket)
 		wResultCode = GAME_TARGET_TOO_FAR;
 	else if (pNpc->HasFunction(NPC_FUNC_FLAG_EVENT_NPC) == false)
 		wResultCode = GAME_TARGET_HAS_NOT_FUNCTION;
-	else if(cPlayer->HasEventReward(req->eventTblidx, cPlayer->GetCharID()) == false)
+	else if (cPlayer->HasEventReward(req->eventTblidx, cPlayer->GetCharID()) == false)
 		wResultCode = GAME_TARGET_HAS_NOT_FUNCTION;
 	else if (cPlayer->GetPlayerItemContainer()->CountEmptyInventory() == 0)
 		wResultCode = GAME_ITEM_INVEN_FULL;
@@ -17068,7 +17060,7 @@ void CClientSession::RecvEventRewardSelectReq(CNtlPacket * pPacket)
 		if (pEventTbldat)
 		{
 			pItemTbldat = (sITEM_TBLDAT*)g_pTableContainer->GetItemTable()->FindData(pEventTbldat->aIndex);
-			if(pItemTbldat == NULL)
+			if (pItemTbldat == NULL)
 				wResultCode = GAME_ITEM_NOT_FOUND;
 		}
 		else wResultCode = GAME_COMMON_CAN_NOT_FIND_TABLE_DATA;
@@ -17080,7 +17072,7 @@ void CClientSession::RecvEventRewardSelectReq(CNtlPacket * pPacket)
 		cPlayer->EraseEventReward(req->eventTblidx);
 
 		CNtlPacket packet(sizeof(sGQ_EVENT_REWARD_SELECT_REQ));
-		sGQ_EVENT_REWARD_SELECT_REQ * res = (sGQ_EVENT_REWARD_SELECT_REQ *)packet.GetPacketData();
+		sGQ_EVENT_REWARD_SELECT_REQ* res = (sGQ_EVENT_REWARD_SELECT_REQ*)packet.GetPacketData();
 		res->wOpCode = GQ_EVENT_REWARD_SELECT_REQ;
 		res->eventTblidx = req->eventTblidx;
 		res->accountId = cPlayer->GetAccountID();
@@ -17119,7 +17111,7 @@ void CClientSession::RecvEventRewardSelectReq(CNtlPacket * pPacket)
 	else
 	{
 		CNtlPacket pRes(sizeof(sGU_EVENT_REWARD_SELECT_RES));
-		sGU_EVENT_REWARD_SELECT_RES * rRes = (sGU_EVENT_REWARD_SELECT_RES *)pRes.GetPacketData();
+		sGU_EVENT_REWARD_SELECT_RES* rRes = (sGU_EVENT_REWARD_SELECT_RES*)pRes.GetPacketData();
 		rRes->wOpCode = GU_EVENT_REWARD_SELECT_RES;
 		rRes->wResultCode = wResultCode;
 		app->Send(cPlayer->GetClientSessionID(), &pRes);
@@ -17130,25 +17122,24 @@ void CClientSession::RecvEventRewardSelectReq(CNtlPacket * pPacket)
 //--------------------------------------------------------------------------------------//
 //		CANCEL SKILL CASTING NFY
 //--------------------------------------------------------------------------------------//
-void	CClientSession::RecvCancelSkillCastingNfy(CNtlPacket *pPacket)
+void	CClientSession::RecvCancelSkillCastingNfy(CNtlPacket* pPacket)
 {
 	if (!cPlayer || !cPlayer->IsInitialized())
 		return;
 
-	sUG_SKILL_CASTING_CANCELED_NFY * req = (sUG_SKILL_CASTING_CANCELED_NFY*)pPacket->GetPacketData();
+	sUG_SKILL_CASTING_CANCELED_NFY* req = (sUG_SKILL_CASTING_CANCELED_NFY*)pPacket->GetPacketData();
 
 	CNtlPacket packet(sizeof(sGU_SKILL_CASTING_CANCELED_NFY));
-	sGU_SKILL_CASTING_CANCELED_NFY * res = (sGU_SKILL_CASTING_CANCELED_NFY *)packet.GetPacketData();
+	sGU_SKILL_CASTING_CANCELED_NFY* res = (sGU_SKILL_CASTING_CANCELED_NFY*)packet.GetPacketData();
 	res->wOpCode = GU_SKILL_CASTING_CANCELED_NFY;
 
 	if (!cPlayer->IsCastingSkill())
 		res->wResultCode = GAME_FAIL;
 	else
 		cPlayer->SendCharStateStanding();
-	
+
 	res->handle = cPlayer->GetID();
 	packet.SetPacketLen(sizeof(sGU_SKILL_CASTING_CANCELED_NFY));
 	cPlayer->Broadcast(&packet);
 }
-
 

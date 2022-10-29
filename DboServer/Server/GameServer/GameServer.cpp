@@ -513,6 +513,7 @@ BOOL CGameServer::OnCommandInput(std::string& sCmd)
 		printf("startdbhunt - start dragonball hunt event\n");
 		printf("stopdbhunt - stop dragonball hunt event\n");
 		printf("startbossspawnevent - start boss spawn event\n");
+		printf("startdbscramble - start scramble event");
 
 		printf("\n");
 	}

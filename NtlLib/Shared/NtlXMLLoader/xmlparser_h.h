@@ -3,11 +3,11 @@
 /* this ALWAYS GENERATED file contains the definitions for the interfaces */
 
 
- /* File created by MIDL compiler version 7.00.0555 */
-/* at Sun Apr 26 12:05:17 2020
+ /* File created by MIDL compiler version 8.01.0626 */
+/* at Mon Jan 18 22:14:07 2038
  */
 /* Compiler settings for MSXML Header Files\xmlparser.idl:
-    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
+    Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 8.01.0626 
     protocol : dce , ms_ext, c_ext, robust
     error checks: allocation ref bounds_check enum stub_data 
     VC __declspec() decoration level: 
@@ -16,12 +16,11 @@
 */
 /* @@MIDL_FILE_HEADING(  ) */
 
-#pragma warning( disable: 4049 )  /* more than 64k source lines */
 
 
 /* verify that the <rpcndr.h> version is high enough to compile this file*/
 #ifndef __REQUIRED_RPCNDR_H_VERSION__
-#define __REQUIRED_RPCNDR_H_VERSION__ 475
+#define __REQUIRED_RPCNDR_H_VERSION__ 500
 #endif
 
 #include "rpc.h"
@@ -29,7 +28,7 @@
 
 #ifndef __RPCNDR_H_VERSION__
 #error this stub requires an updated version of <rpcndr.h>
-#endif // __RPCNDR_H_VERSION__
+#endif /* __RPCNDR_H_VERSION__ */
 
 
 #ifndef __xmlparser_h_h__
@@ -39,35 +38,48 @@
 #pragma once
 #endif
 
+#ifndef DECLSPEC_XFGVIRT
+#if _CONTROL_FLOW_GUARD_XFG
+#define DECLSPEC_XFGVIRT(base, func) __declspec(xfg_virtual(base, func))
+#else
+#define DECLSPEC_XFGVIRT(base, func)
+#endif
+#endif
+
 /* Forward Declarations */ 
 
 #ifndef __IXMLNodeSource_FWD_DEFINED__
 #define __IXMLNodeSource_FWD_DEFINED__
 typedef interface IXMLNodeSource IXMLNodeSource;
+
 #endif 	/* __IXMLNodeSource_FWD_DEFINED__ */
 
 
 #ifndef __IXMLParser_FWD_DEFINED__
 #define __IXMLParser_FWD_DEFINED__
 typedef interface IXMLParser IXMLParser;
+
 #endif 	/* __IXMLParser_FWD_DEFINED__ */
 
 
 #ifndef __IXMLParser2_FWD_DEFINED__
 #define __IXMLParser2_FWD_DEFINED__
 typedef interface IXMLParser2 IXMLParser2;
+
 #endif 	/* __IXMLParser2_FWD_DEFINED__ */
 
 
 #ifndef __IXMLParser3_FWD_DEFINED__
 #define __IXMLParser3_FWD_DEFINED__
 typedef interface IXMLParser3 IXMLParser3;
+
 #endif 	/* __IXMLParser3_FWD_DEFINED__ */
 
 
 #ifndef __IXMLNodeFactory_FWD_DEFINED__
 #define __IXMLNodeFactory_FWD_DEFINED__
 typedef interface IXMLNodeFactory IXMLNodeFactory;
+
 #endif 	/* __IXMLNodeFactory_FWD_DEFINED__ */
 
 
@@ -132,209 +144,215 @@ extern "C"{
 
 typedef /* [public] */ 
 enum __MIDL___MIDL_itf_xmlparser_0000_0000_0001
-    {	XML_ELEMENT	= 1,
-	XML_ATTRIBUTE	= ( XML_ELEMENT + 1 ) ,
-	XML_PI	= ( XML_ATTRIBUTE + 1 ) ,
-	XML_XMLDECL	= ( XML_PI + 1 ) ,
-	XML_DOCTYPE	= ( XML_XMLDECL + 1 ) ,
-	XML_DTDATTRIBUTE	= ( XML_DOCTYPE + 1 ) ,
-	XML_ENTITYDECL	= ( XML_DTDATTRIBUTE + 1 ) ,
-	XML_ELEMENTDECL	= ( XML_ENTITYDECL + 1 ) ,
-	XML_ATTLISTDECL	= ( XML_ELEMENTDECL + 1 ) ,
-	XML_NOTATION	= ( XML_ATTLISTDECL + 1 ) ,
-	XML_GROUP	= ( XML_NOTATION + 1 ) ,
-	XML_INCLUDESECT	= ( XML_GROUP + 1 ) ,
-	XML_PCDATA	= ( XML_INCLUDESECT + 1 ) ,
-	XML_CDATA	= ( XML_PCDATA + 1 ) ,
-	XML_IGNORESECT	= ( XML_CDATA + 1 ) ,
-	XML_COMMENT	= ( XML_IGNORESECT + 1 ) ,
-	XML_ENTITYREF	= ( XML_COMMENT + 1 ) ,
-	XML_WHITESPACE	= ( XML_ENTITYREF + 1 ) ,
-	XML_NAME	= ( XML_WHITESPACE + 1 ) ,
-	XML_NMTOKEN	= ( XML_NAME + 1 ) ,
-	XML_STRING	= ( XML_NMTOKEN + 1 ) ,
-	XML_PEREF	= ( XML_STRING + 1 ) ,
-	XML_MODEL	= ( XML_PEREF + 1 ) ,
-	XML_ATTDEF	= ( XML_MODEL + 1 ) ,
-	XML_ATTTYPE	= ( XML_ATTDEF + 1 ) ,
-	XML_ATTPRESENCE	= ( XML_ATTTYPE + 1 ) ,
-	XML_DTDSUBSET	= ( XML_ATTPRESENCE + 1 ) ,
-	XML_LASTNODETYPE	= ( XML_DTDSUBSET + 1 ) 
+    {
+        XML_ELEMENT	= 1,
+        XML_ATTRIBUTE	= ( XML_ELEMENT + 1 ) ,
+        XML_PI	= ( XML_ATTRIBUTE + 1 ) ,
+        XML_XMLDECL	= ( XML_PI + 1 ) ,
+        XML_DOCTYPE	= ( XML_XMLDECL + 1 ) ,
+        XML_DTDATTRIBUTE	= ( XML_DOCTYPE + 1 ) ,
+        XML_ENTITYDECL	= ( XML_DTDATTRIBUTE + 1 ) ,
+        XML_ELEMENTDECL	= ( XML_ENTITYDECL + 1 ) ,
+        XML_ATTLISTDECL	= ( XML_ELEMENTDECL + 1 ) ,
+        XML_NOTATION	= ( XML_ATTLISTDECL + 1 ) ,
+        XML_GROUP	= ( XML_NOTATION + 1 ) ,
+        XML_INCLUDESECT	= ( XML_GROUP + 1 ) ,
+        XML_PCDATA	= ( XML_INCLUDESECT + 1 ) ,
+        XML_CDATA	= ( XML_PCDATA + 1 ) ,
+        XML_IGNORESECT	= ( XML_CDATA + 1 ) ,
+        XML_COMMENT	= ( XML_IGNORESECT + 1 ) ,
+        XML_ENTITYREF	= ( XML_COMMENT + 1 ) ,
+        XML_WHITESPACE	= ( XML_ENTITYREF + 1 ) ,
+        XML_NAME	= ( XML_WHITESPACE + 1 ) ,
+        XML_NMTOKEN	= ( XML_NAME + 1 ) ,
+        XML_STRING	= ( XML_NMTOKEN + 1 ) ,
+        XML_PEREF	= ( XML_STRING + 1 ) ,
+        XML_MODEL	= ( XML_PEREF + 1 ) ,
+        XML_ATTDEF	= ( XML_MODEL + 1 ) ,
+        XML_ATTTYPE	= ( XML_ATTDEF + 1 ) ,
+        XML_ATTPRESENCE	= ( XML_ATTTYPE + 1 ) ,
+        XML_DTDSUBSET	= ( XML_ATTPRESENCE + 1 ) ,
+        XML_LASTNODETYPE	= ( XML_DTDSUBSET + 1 ) 
     } 	XML_NODE_TYPE;
 
 typedef /* [public] */ 
 enum __MIDL___MIDL_itf_xmlparser_0000_0000_0002
-    {	XML_VERSION	= XML_LASTNODETYPE,
-	XML_ENCODING	= ( XML_VERSION + 1 ) ,
-	XML_STANDALONE	= ( XML_ENCODING + 1 ) ,
-	XML_NS	= ( XML_STANDALONE + 1 ) ,
-	XML_XMLSPACE	= ( XML_NS + 1 ) ,
-	XML_XMLLANG	= ( XML_XMLSPACE + 1 ) ,
-	XML_SYSTEM	= ( XML_XMLLANG + 1 ) ,
-	XML_PUBLIC	= ( XML_SYSTEM + 1 ) ,
-	XML_NDATA	= ( XML_PUBLIC + 1 ) ,
-	XML_AT_CDATA	= ( XML_NDATA + 1 ) ,
-	XML_AT_ID	= ( XML_AT_CDATA + 1 ) ,
-	XML_AT_IDREF	= ( XML_AT_ID + 1 ) ,
-	XML_AT_IDREFS	= ( XML_AT_IDREF + 1 ) ,
-	XML_AT_ENTITY	= ( XML_AT_IDREFS + 1 ) ,
-	XML_AT_ENTITIES	= ( XML_AT_ENTITY + 1 ) ,
-	XML_AT_NMTOKEN	= ( XML_AT_ENTITIES + 1 ) ,
-	XML_AT_NMTOKENS	= ( XML_AT_NMTOKEN + 1 ) ,
-	XML_AT_NOTATION	= ( XML_AT_NMTOKENS + 1 ) ,
-	XML_AT_REQUIRED	= ( XML_AT_NOTATION + 1 ) ,
-	XML_AT_IMPLIED	= ( XML_AT_REQUIRED + 1 ) ,
-	XML_AT_FIXED	= ( XML_AT_IMPLIED + 1 ) ,
-	XML_PENTITYDECL	= ( XML_AT_FIXED + 1 ) ,
-	XML_EMPTY	= ( XML_PENTITYDECL + 1 ) ,
-	XML_ANY	= ( XML_EMPTY + 1 ) ,
-	XML_MIXED	= ( XML_ANY + 1 ) ,
-	XML_SEQUENCE	= ( XML_MIXED + 1 ) ,
-	XML_CHOICE	= ( XML_SEQUENCE + 1 ) ,
-	XML_STAR	= ( XML_CHOICE + 1 ) ,
-	XML_PLUS	= ( XML_STAR + 1 ) ,
-	XML_QUESTIONMARK	= ( XML_PLUS + 1 ) ,
-	XML_LASTSUBNODETYPE	= ( XML_QUESTIONMARK + 1 ) 
+    {
+        XML_VERSION	= XML_LASTNODETYPE,
+        XML_ENCODING	= ( XML_VERSION + 1 ) ,
+        XML_STANDALONE	= ( XML_ENCODING + 1 ) ,
+        XML_NS	= ( XML_STANDALONE + 1 ) ,
+        XML_XMLSPACE	= ( XML_NS + 1 ) ,
+        XML_XMLLANG	= ( XML_XMLSPACE + 1 ) ,
+        XML_SYSTEM	= ( XML_XMLLANG + 1 ) ,
+        XML_PUBLIC	= ( XML_SYSTEM + 1 ) ,
+        XML_NDATA	= ( XML_PUBLIC + 1 ) ,
+        XML_AT_CDATA	= ( XML_NDATA + 1 ) ,
+        XML_AT_ID	= ( XML_AT_CDATA + 1 ) ,
+        XML_AT_IDREF	= ( XML_AT_ID + 1 ) ,
+        XML_AT_IDREFS	= ( XML_AT_IDREF + 1 ) ,
+        XML_AT_ENTITY	= ( XML_AT_IDREFS + 1 ) ,
+        XML_AT_ENTITIES	= ( XML_AT_ENTITY + 1 ) ,
+        XML_AT_NMTOKEN	= ( XML_AT_ENTITIES + 1 ) ,
+        XML_AT_NMTOKENS	= ( XML_AT_NMTOKEN + 1 ) ,
+        XML_AT_NOTATION	= ( XML_AT_NMTOKENS + 1 ) ,
+        XML_AT_REQUIRED	= ( XML_AT_NOTATION + 1 ) ,
+        XML_AT_IMPLIED	= ( XML_AT_REQUIRED + 1 ) ,
+        XML_AT_FIXED	= ( XML_AT_IMPLIED + 1 ) ,
+        XML_PENTITYDECL	= ( XML_AT_FIXED + 1 ) ,
+        XML_EMPTY	= ( XML_PENTITYDECL + 1 ) ,
+        XML_ANY	= ( XML_EMPTY + 1 ) ,
+        XML_MIXED	= ( XML_ANY + 1 ) ,
+        XML_SEQUENCE	= ( XML_MIXED + 1 ) ,
+        XML_CHOICE	= ( XML_SEQUENCE + 1 ) ,
+        XML_STAR	= ( XML_CHOICE + 1 ) ,
+        XML_PLUS	= ( XML_STAR + 1 ) ,
+        XML_QUESTIONMARK	= ( XML_PLUS + 1 ) ,
+        XML_LASTSUBNODETYPE	= ( XML_QUESTIONMARK + 1 ) 
     } 	XML_NODE_SUBTYPE;
 
 typedef /* [public] */ 
 enum __MIDL___MIDL_itf_xmlparser_0000_0000_0003
-    {	XML_E_PARSEERRORBASE	= 0xc00ce500L,
-	XML_E_ENDOFINPUT	= XML_E_PARSEERRORBASE,
-	XML_E_MISSINGEQUALS	= ( XML_E_ENDOFINPUT + 1 ) ,
-	XML_E_MISSINGQUOTE	= ( XML_E_MISSINGEQUALS + 1 ) ,
-	XML_E_COMMENTSYNTAX	= ( XML_E_MISSINGQUOTE + 1 ) ,
-	XML_E_BADSTARTNAMECHAR	= ( XML_E_COMMENTSYNTAX + 1 ) ,
-	XML_E_BADNAMECHAR	= ( XML_E_BADSTARTNAMECHAR + 1 ) ,
-	XML_E_BADCHARINSTRING	= ( XML_E_BADNAMECHAR + 1 ) ,
-	XML_E_XMLDECLSYNTAX	= ( XML_E_BADCHARINSTRING + 1 ) ,
-	XML_E_BADCHARDATA	= ( XML_E_XMLDECLSYNTAX + 1 ) ,
-	XML_E_MISSINGWHITESPACE	= ( XML_E_BADCHARDATA + 1 ) ,
-	XML_E_EXPECTINGTAGEND	= ( XML_E_MISSINGWHITESPACE + 1 ) ,
-	XML_E_BADCHARINDTD	= ( XML_E_EXPECTINGTAGEND + 1 ) ,
-	XML_E_BADCHARINDECL	= ( XML_E_BADCHARINDTD + 1 ) ,
-	XML_E_MISSINGSEMICOLON	= ( XML_E_BADCHARINDECL + 1 ) ,
-	XML_E_BADCHARINENTREF	= ( XML_E_MISSINGSEMICOLON + 1 ) ,
-	XML_E_UNBALANCEDPAREN	= ( XML_E_BADCHARINENTREF + 1 ) ,
-	XML_E_EXPECTINGOPENBRACKET	= ( XML_E_UNBALANCEDPAREN + 1 ) ,
-	XML_E_BADENDCONDSECT	= ( XML_E_EXPECTINGOPENBRACKET + 1 ) ,
-	XML_E_INTERNALERROR	= ( XML_E_BADENDCONDSECT + 1 ) ,
-	XML_E_UNEXPECTED_WHITESPACE	= ( XML_E_INTERNALERROR + 1 ) ,
-	XML_E_INCOMPLETE_ENCODING	= ( XML_E_UNEXPECTED_WHITESPACE + 1 ) ,
-	XML_E_BADCHARINMIXEDMODEL	= ( XML_E_INCOMPLETE_ENCODING + 1 ) ,
-	XML_E_MISSING_STAR	= ( XML_E_BADCHARINMIXEDMODEL + 1 ) ,
-	XML_E_BADCHARINMODEL	= ( XML_E_MISSING_STAR + 1 ) ,
-	XML_E_MISSING_PAREN	= ( XML_E_BADCHARINMODEL + 1 ) ,
-	XML_E_BADCHARINENUMERATION	= ( XML_E_MISSING_PAREN + 1 ) ,
-	XML_E_PIDECLSYNTAX	= ( XML_E_BADCHARINENUMERATION + 1 ) ,
-	XML_E_EXPECTINGCLOSEQUOTE	= ( XML_E_PIDECLSYNTAX + 1 ) ,
-	XML_E_MULTIPLE_COLONS	= ( XML_E_EXPECTINGCLOSEQUOTE + 1 ) ,
-	XML_E_INVALID_DECIMAL	= ( XML_E_MULTIPLE_COLONS + 1 ) ,
-	XML_E_INVALID_HEXIDECIMAL	= ( XML_E_INVALID_DECIMAL + 1 ) ,
-	XML_E_INVALID_UNICODE	= ( XML_E_INVALID_HEXIDECIMAL + 1 ) ,
-	XML_E_WHITESPACEORQUESTIONMARK	= ( XML_E_INVALID_UNICODE + 1 ) ,
-	XML_E_ENDOFPE	= ( XML_E_WHITESPACEORQUESTIONMARK + 1 ) ,
-	XML_E_TOKEN_ERROR	= ( XML_E_PARSEERRORBASE + 0x50 ) ,
-	XML_E_SUSPENDED	= XML_E_TOKEN_ERROR,
-	XML_E_STOPPED	= ( XML_E_SUSPENDED + 1 ) ,
-	XML_E_UNEXPECTEDENDTAG	= ( XML_E_STOPPED + 1 ) ,
-	XML_E_UNCLOSEDTAG	= ( XML_E_UNEXPECTEDENDTAG + 1 ) ,
-	XML_E_DUPLICATEATTRIBUTE	= ( XML_E_UNCLOSEDTAG + 1 ) ,
-	XML_E_MULTIPLEROOTS	= ( XML_E_DUPLICATEATTRIBUTE + 1 ) ,
-	XML_E_INVALIDATROOTLEVEL	= ( XML_E_MULTIPLEROOTS + 1 ) ,
-	XML_E_BADXMLDECL	= ( XML_E_INVALIDATROOTLEVEL + 1 ) ,
-	XML_E_MISSINGROOT	= ( XML_E_BADXMLDECL + 1 ) ,
-	XML_E_UNEXPECTEDEOF	= ( XML_E_MISSINGROOT + 1 ) ,
-	XML_E_BADPEREFINSUBSET	= ( XML_E_UNEXPECTEDEOF + 1 ) ,
-	XML_E_PE_NESTING	= ( XML_E_BADPEREFINSUBSET + 1 ) ,
-	XML_E_INVALID_CDATACLOSINGTAG	= ( XML_E_PE_NESTING + 1 ) ,
-	XML_E_UNCLOSEDPI	= ( XML_E_INVALID_CDATACLOSINGTAG + 1 ) ,
-	XML_E_UNCLOSEDSTARTTAG	= ( XML_E_UNCLOSEDPI + 1 ) ,
-	XML_E_UNCLOSEDENDTAG	= ( XML_E_UNCLOSEDSTARTTAG + 1 ) ,
-	XML_E_UNCLOSEDSTRING	= ( XML_E_UNCLOSEDENDTAG + 1 ) ,
-	XML_E_UNCLOSEDCOMMENT	= ( XML_E_UNCLOSEDSTRING + 1 ) ,
-	XML_E_UNCLOSEDDECL	= ( XML_E_UNCLOSEDCOMMENT + 1 ) ,
-	XML_E_UNCLOSEDMARKUPDECL	= ( XML_E_UNCLOSEDDECL + 1 ) ,
-	XML_E_UNCLOSEDCDATA	= ( XML_E_UNCLOSEDMARKUPDECL + 1 ) ,
-	XML_E_BADDECLNAME	= ( XML_E_UNCLOSEDCDATA + 1 ) ,
-	XML_E_BADEXTERNALID	= ( XML_E_BADDECLNAME + 1 ) ,
-	XML_E_BADELEMENTINDTD	= ( XML_E_BADEXTERNALID + 1 ) ,
-	XML_E_RESERVEDNAMESPACE	= ( XML_E_BADELEMENTINDTD + 1 ) ,
-	XML_E_EXPECTING_VERSION	= ( XML_E_RESERVEDNAMESPACE + 1 ) ,
-	XML_E_EXPECTING_ENCODING	= ( XML_E_EXPECTING_VERSION + 1 ) ,
-	XML_E_EXPECTING_NAME	= ( XML_E_EXPECTING_ENCODING + 1 ) ,
-	XML_E_UNEXPECTED_ATTRIBUTE	= ( XML_E_EXPECTING_NAME + 1 ) ,
-	XML_E_ENDTAGMISMATCH	= ( XML_E_UNEXPECTED_ATTRIBUTE + 1 ) ,
-	XML_E_INVALIDENCODING	= ( XML_E_ENDTAGMISMATCH + 1 ) ,
-	XML_E_INVALIDSWITCH	= ( XML_E_INVALIDENCODING + 1 ) ,
-	XML_E_EXPECTING_NDATA	= ( XML_E_INVALIDSWITCH + 1 ) ,
-	XML_E_INVALID_MODEL	= ( XML_E_EXPECTING_NDATA + 1 ) ,
-	XML_E_INVALID_TYPE	= ( XML_E_INVALID_MODEL + 1 ) ,
-	XML_E_INVALIDXMLSPACE	= ( XML_E_INVALID_TYPE + 1 ) ,
-	XML_E_MULTI_ATTR_VALUE	= ( XML_E_INVALIDXMLSPACE + 1 ) ,
-	XML_E_INVALID_PRESENCE	= ( XML_E_MULTI_ATTR_VALUE + 1 ) ,
-	XML_E_BADXMLCASE	= ( XML_E_INVALID_PRESENCE + 1 ) ,
-	XML_E_CONDSECTINSUBSET	= ( XML_E_BADXMLCASE + 1 ) ,
-	XML_E_CDATAINVALID	= ( XML_E_CONDSECTINSUBSET + 1 ) ,
-	XML_E_INVALID_STANDALONE	= ( XML_E_CDATAINVALID + 1 ) ,
-	XML_E_UNEXPECTED_STANDALONE	= ( XML_E_INVALID_STANDALONE + 1 ) ,
-	XML_E_DOCTYPE_IN_DTD	= ( XML_E_UNEXPECTED_STANDALONE + 1 ) ,
-	XML_E_MISSING_ENTITY	= ( XML_E_DOCTYPE_IN_DTD + 1 ) ,
-	XML_E_ENTITYREF_INNAME	= ( XML_E_MISSING_ENTITY + 1 ) ,
-	XML_E_DOCTYPE_OUTSIDE_PROLOG	= ( XML_E_ENTITYREF_INNAME + 1 ) ,
-	XML_E_INVALID_VERSION	= ( XML_E_DOCTYPE_OUTSIDE_PROLOG + 1 ) ,
-	XML_E_DTDELEMENT_OUTSIDE_DTD	= ( XML_E_INVALID_VERSION + 1 ) ,
-	XML_E_DUPLICATEDOCTYPE	= ( XML_E_DTDELEMENT_OUTSIDE_DTD + 1 ) ,
-	XML_E_RESOURCE	= ( XML_E_DUPLICATEDOCTYPE + 1 ) ,
-	XML_E_MISSINGNAME	= ( XML_E_RESOURCE + 1 ) ,
-	XML_E_LASTERROR	= ( XML_E_MISSINGNAME + 1 ) 
+    {
+        XML_E_PARSEERRORBASE	= 0xc00ce500L,
+        XML_E_ENDOFINPUT	= XML_E_PARSEERRORBASE,
+        XML_E_MISSINGEQUALS	= ( XML_E_ENDOFINPUT + 1 ) ,
+        XML_E_MISSINGQUOTE	= ( XML_E_MISSINGEQUALS + 1 ) ,
+        XML_E_COMMENTSYNTAX	= ( XML_E_MISSINGQUOTE + 1 ) ,
+        XML_E_BADSTARTNAMECHAR	= ( XML_E_COMMENTSYNTAX + 1 ) ,
+        XML_E_BADNAMECHAR	= ( XML_E_BADSTARTNAMECHAR + 1 ) ,
+        XML_E_BADCHARINSTRING	= ( XML_E_BADNAMECHAR + 1 ) ,
+        XML_E_XMLDECLSYNTAX	= ( XML_E_BADCHARINSTRING + 1 ) ,
+        XML_E_BADCHARDATA	= ( XML_E_XMLDECLSYNTAX + 1 ) ,
+        XML_E_MISSINGWHITESPACE	= ( XML_E_BADCHARDATA + 1 ) ,
+        XML_E_EXPECTINGTAGEND	= ( XML_E_MISSINGWHITESPACE + 1 ) ,
+        XML_E_BADCHARINDTD	= ( XML_E_EXPECTINGTAGEND + 1 ) ,
+        XML_E_BADCHARINDECL	= ( XML_E_BADCHARINDTD + 1 ) ,
+        XML_E_MISSINGSEMICOLON	= ( XML_E_BADCHARINDECL + 1 ) ,
+        XML_E_BADCHARINENTREF	= ( XML_E_MISSINGSEMICOLON + 1 ) ,
+        XML_E_UNBALANCEDPAREN	= ( XML_E_BADCHARINENTREF + 1 ) ,
+        XML_E_EXPECTINGOPENBRACKET	= ( XML_E_UNBALANCEDPAREN + 1 ) ,
+        XML_E_BADENDCONDSECT	= ( XML_E_EXPECTINGOPENBRACKET + 1 ) ,
+        XML_E_INTERNALERROR	= ( XML_E_BADENDCONDSECT + 1 ) ,
+        XML_E_UNEXPECTED_WHITESPACE	= ( XML_E_INTERNALERROR + 1 ) ,
+        XML_E_INCOMPLETE_ENCODING	= ( XML_E_UNEXPECTED_WHITESPACE + 1 ) ,
+        XML_E_BADCHARINMIXEDMODEL	= ( XML_E_INCOMPLETE_ENCODING + 1 ) ,
+        XML_E_MISSING_STAR	= ( XML_E_BADCHARINMIXEDMODEL + 1 ) ,
+        XML_E_BADCHARINMODEL	= ( XML_E_MISSING_STAR + 1 ) ,
+        XML_E_MISSING_PAREN	= ( XML_E_BADCHARINMODEL + 1 ) ,
+        XML_E_BADCHARINENUMERATION	= ( XML_E_MISSING_PAREN + 1 ) ,
+        XML_E_PIDECLSYNTAX	= ( XML_E_BADCHARINENUMERATION + 1 ) ,
+        XML_E_EXPECTINGCLOSEQUOTE	= ( XML_E_PIDECLSYNTAX + 1 ) ,
+        XML_E_MULTIPLE_COLONS	= ( XML_E_EXPECTINGCLOSEQUOTE + 1 ) ,
+        XML_E_INVALID_DECIMAL	= ( XML_E_MULTIPLE_COLONS + 1 ) ,
+        XML_E_INVALID_HEXIDECIMAL	= ( XML_E_INVALID_DECIMAL + 1 ) ,
+        XML_E_INVALID_UNICODE	= ( XML_E_INVALID_HEXIDECIMAL + 1 ) ,
+        XML_E_WHITESPACEORQUESTIONMARK	= ( XML_E_INVALID_UNICODE + 1 ) ,
+        XML_E_ENDOFPE	= ( XML_E_WHITESPACEORQUESTIONMARK + 1 ) ,
+        XML_E_TOKEN_ERROR	= ( XML_E_PARSEERRORBASE + 0x50 ) ,
+        XML_E_SUSPENDED	= XML_E_TOKEN_ERROR,
+        XML_E_STOPPED	= ( XML_E_SUSPENDED + 1 ) ,
+        XML_E_UNEXPECTEDENDTAG	= ( XML_E_STOPPED + 1 ) ,
+        XML_E_UNCLOSEDTAG	= ( XML_E_UNEXPECTEDENDTAG + 1 ) ,
+        XML_E_DUPLICATEATTRIBUTE	= ( XML_E_UNCLOSEDTAG + 1 ) ,
+        XML_E_MULTIPLEROOTS	= ( XML_E_DUPLICATEATTRIBUTE + 1 ) ,
+        XML_E_INVALIDATROOTLEVEL	= ( XML_E_MULTIPLEROOTS + 1 ) ,
+        XML_E_BADXMLDECL	= ( XML_E_INVALIDATROOTLEVEL + 1 ) ,
+        XML_E_MISSINGROOT	= ( XML_E_BADXMLDECL + 1 ) ,
+        XML_E_UNEXPECTEDEOF	= ( XML_E_MISSINGROOT + 1 ) ,
+        XML_E_BADPEREFINSUBSET	= ( XML_E_UNEXPECTEDEOF + 1 ) ,
+        XML_E_PE_NESTING	= ( XML_E_BADPEREFINSUBSET + 1 ) ,
+        XML_E_INVALID_CDATACLOSINGTAG	= ( XML_E_PE_NESTING + 1 ) ,
+        XML_E_UNCLOSEDPI	= ( XML_E_INVALID_CDATACLOSINGTAG + 1 ) ,
+        XML_E_UNCLOSEDSTARTTAG	= ( XML_E_UNCLOSEDPI + 1 ) ,
+        XML_E_UNCLOSEDENDTAG	= ( XML_E_UNCLOSEDSTARTTAG + 1 ) ,
+        XML_E_UNCLOSEDSTRING	= ( XML_E_UNCLOSEDENDTAG + 1 ) ,
+        XML_E_UNCLOSEDCOMMENT	= ( XML_E_UNCLOSEDSTRING + 1 ) ,
+        XML_E_UNCLOSEDDECL	= ( XML_E_UNCLOSEDCOMMENT + 1 ) ,
+        XML_E_UNCLOSEDMARKUPDECL	= ( XML_E_UNCLOSEDDECL + 1 ) ,
+        XML_E_UNCLOSEDCDATA	= ( XML_E_UNCLOSEDMARKUPDECL + 1 ) ,
+        XML_E_BADDECLNAME	= ( XML_E_UNCLOSEDCDATA + 1 ) ,
+        XML_E_BADEXTERNALID	= ( XML_E_BADDECLNAME + 1 ) ,
+        XML_E_BADELEMENTINDTD	= ( XML_E_BADEXTERNALID + 1 ) ,
+        XML_E_RESERVEDNAMESPACE	= ( XML_E_BADELEMENTINDTD + 1 ) ,
+        XML_E_EXPECTING_VERSION	= ( XML_E_RESERVEDNAMESPACE + 1 ) ,
+        XML_E_EXPECTING_ENCODING	= ( XML_E_EXPECTING_VERSION + 1 ) ,
+        XML_E_EXPECTING_NAME	= ( XML_E_EXPECTING_ENCODING + 1 ) ,
+        XML_E_UNEXPECTED_ATTRIBUTE	= ( XML_E_EXPECTING_NAME + 1 ) ,
+        XML_E_ENDTAGMISMATCH	= ( XML_E_UNEXPECTED_ATTRIBUTE + 1 ) ,
+        XML_E_INVALIDENCODING	= ( XML_E_ENDTAGMISMATCH + 1 ) ,
+        XML_E_INVALIDSWITCH	= ( XML_E_INVALIDENCODING + 1 ) ,
+        XML_E_EXPECTING_NDATA	= ( XML_E_INVALIDSWITCH + 1 ) ,
+        XML_E_INVALID_MODEL	= ( XML_E_EXPECTING_NDATA + 1 ) ,
+        XML_E_INVALID_TYPE	= ( XML_E_INVALID_MODEL + 1 ) ,
+        XML_E_INVALIDXMLSPACE	= ( XML_E_INVALID_TYPE + 1 ) ,
+        XML_E_MULTI_ATTR_VALUE	= ( XML_E_INVALIDXMLSPACE + 1 ) ,
+        XML_E_INVALID_PRESENCE	= ( XML_E_MULTI_ATTR_VALUE + 1 ) ,
+        XML_E_BADXMLCASE	= ( XML_E_INVALID_PRESENCE + 1 ) ,
+        XML_E_CONDSECTINSUBSET	= ( XML_E_BADXMLCASE + 1 ) ,
+        XML_E_CDATAINVALID	= ( XML_E_CONDSECTINSUBSET + 1 ) ,
+        XML_E_INVALID_STANDALONE	= ( XML_E_CDATAINVALID + 1 ) ,
+        XML_E_UNEXPECTED_STANDALONE	= ( XML_E_INVALID_STANDALONE + 1 ) ,
+        XML_E_DOCTYPE_IN_DTD	= ( XML_E_UNEXPECTED_STANDALONE + 1 ) ,
+        XML_E_MISSING_ENTITY	= ( XML_E_DOCTYPE_IN_DTD + 1 ) ,
+        XML_E_ENTITYREF_INNAME	= ( XML_E_MISSING_ENTITY + 1 ) ,
+        XML_E_DOCTYPE_OUTSIDE_PROLOG	= ( XML_E_ENTITYREF_INNAME + 1 ) ,
+        XML_E_INVALID_VERSION	= ( XML_E_DOCTYPE_OUTSIDE_PROLOG + 1 ) ,
+        XML_E_DTDELEMENT_OUTSIDE_DTD	= ( XML_E_INVALID_VERSION + 1 ) ,
+        XML_E_DUPLICATEDOCTYPE	= ( XML_E_DTDELEMENT_OUTSIDE_DTD + 1 ) ,
+        XML_E_RESOURCE	= ( XML_E_DUPLICATEDOCTYPE + 1 ) ,
+        XML_E_MISSINGNAME	= ( XML_E_RESOURCE + 1 ) ,
+        XML_E_LASTERROR	= ( XML_E_MISSINGNAME + 1 ) 
     } 	XML_ERROR_CODE;
 
 typedef /* [public] */ 
 enum __MIDL___MIDL_itf_xmlparser_0000_0000_0004
-    {	XMLPARSER_IDLE	= 0,
-	XMLPARSER_WAITING	= ( XMLPARSER_IDLE + 1 ) ,
-	XMLPARSER_BUSY	= ( XMLPARSER_WAITING + 1 ) ,
-	XMLPARSER_ERROR	= ( XMLPARSER_BUSY + 1 ) ,
-	XMLPARSER_STOPPED	= ( XMLPARSER_ERROR + 1 ) ,
-	XMLPARSER_SUSPENDED	= ( XMLPARSER_STOPPED + 1 ) 
+    {
+        XMLPARSER_IDLE	= 0,
+        XMLPARSER_WAITING	= ( XMLPARSER_IDLE + 1 ) ,
+        XMLPARSER_BUSY	= ( XMLPARSER_WAITING + 1 ) ,
+        XMLPARSER_ERROR	= ( XMLPARSER_BUSY + 1 ) ,
+        XMLPARSER_STOPPED	= ( XMLPARSER_ERROR + 1 ) ,
+        XMLPARSER_SUSPENDED	= ( XMLPARSER_STOPPED + 1 ) 
     } 	XML_PARSER_STATE;
 
 typedef /* [public] */ 
 enum __MIDL___MIDL_itf_xmlparser_0000_0000_0005
-    {	XMLFLAG_FLOATINGAMP	= 0x1,
-	XMLFLAG_SHORTENDTAGS	= 0x2,
-	XMLFLAG_CASEINSENSITIVE	= 0x4,
-	XMLFLAG_NONAMESPACES	= 0x8,
-	XMLFLAG_NOWHITESPACE	= 0x10,
-	XMLFLAG_IE4QUIRKS	= 0x20,
-	XMLFLAG_NODTDNODES	= 0x40,
-	XMLFLAG_IE4COMPATIBILITY	= 0xff,
-	XMLFLAG_IGNORESXMLDECL	= 0x100,
-	XMLFLAG_SAX	= 0x200,
-	XMLFLAG_NORMALIZELB	= 0x400,
-	XMLFLAG_IGNOREENCODING	= 0x800,
-	XMLFLAG_USEWINHTTP	= 0x1000,
-	XMLFLAG_RUNBUFFERONLY	= 0x2000,
-	XMLFLAG_LAZYRESYNC	= 0x4000,
-	XMLFLAG_PROHIBIT_DTD	= 0x8000,
-	XMLFLAG_IGNOREILLEGALCHARS	= 0x10000,
-	XMLFLAG_IE5COMPATIBILITY	= 0xf0100
+    {
+        XMLFLAG_FLOATINGAMP	= 0x1,
+        XMLFLAG_SHORTENDTAGS	= 0x2,
+        XMLFLAG_CASEINSENSITIVE	= 0x4,
+        XMLFLAG_NONAMESPACES	= 0x8,
+        XMLFLAG_NOWHITESPACE	= 0x10,
+        XMLFLAG_IE4QUIRKS	= 0x20,
+        XMLFLAG_NODTDNODES	= 0x40,
+        XMLFLAG_IE4COMPATIBILITY	= 0xff,
+        XMLFLAG_IGNORESXMLDECL	= 0x100,
+        XMLFLAG_SAX	= 0x200,
+        XMLFLAG_NORMALIZELB	= 0x400,
+        XMLFLAG_IGNOREENCODING	= 0x800,
+        XMLFLAG_USEWINHTTP	= 0x1000,
+        XMLFLAG_RUNBUFFERONLY	= 0x2000,
+        XMLFLAG_LAZYRESYNC	= 0x4000,
+        XMLFLAG_PROHIBIT_DTD	= 0x8000,
+        XMLFLAG_IGNOREILLEGALCHARS	= 0x10000,
+        XMLFLAG_IE5COMPATIBILITY	= 0xf0100
     } 	XML_PARSER_FLAGS;
 
 typedef /* [public][public] */ 
 enum __MIDL___MIDL_itf_xmlparser_0000_0000_0006
-    {	XMLNF_STARTDOCUMENT	= 0,
-	XMLNF_STARTDTD	= ( XMLNF_STARTDOCUMENT + 1 ) ,
-	XMLNF_ENDDTD	= ( XMLNF_STARTDTD + 1 ) ,
-	XMLNF_STARTDTDSUBSET	= ( XMLNF_ENDDTD + 1 ) ,
-	XMLNF_ENDDTDSUBSET	= ( XMLNF_STARTDTDSUBSET + 1 ) ,
-	XMLNF_ENDPROLOG	= ( XMLNF_ENDDTDSUBSET + 1 ) ,
-	XMLNF_STARTENTITY	= ( XMLNF_ENDPROLOG + 1 ) ,
-	XMLNF_ENDENTITY	= ( XMLNF_STARTENTITY + 1 ) ,
-	XMLNF_ENDDOCUMENT	= ( XMLNF_ENDENTITY + 1 ) ,
-	XMLNF_DATAAVAILABLE	= ( XMLNF_ENDDOCUMENT + 1 ) ,
-	XMLNF_LASTEVENT	= XMLNF_DATAAVAILABLE
+    {
+        XMLNF_STARTDOCUMENT	= 0,
+        XMLNF_STARTDTD	= ( XMLNF_STARTDOCUMENT + 1 ) ,
+        XMLNF_ENDDTD	= ( XMLNF_STARTDTD + 1 ) ,
+        XMLNF_STARTDTDSUBSET	= ( XMLNF_ENDDTD + 1 ) ,
+        XMLNF_ENDDTDSUBSET	= ( XMLNF_STARTDTDSUBSET + 1 ) ,
+        XMLNF_ENDPROLOG	= ( XMLNF_ENDDTDSUBSET + 1 ) ,
+        XMLNF_STARTENTITY	= ( XMLNF_ENDPROLOG + 1 ) ,
+        XMLNF_ENDENTITY	= ( XMLNF_STARTENTITY + 1 ) ,
+        XMLNF_ENDDOCUMENT	= ( XMLNF_ENDENTITY + 1 ) ,
+        XMLNF_DATAAVAILABLE	= ( XMLNF_ENDDOCUMENT + 1 ) ,
+        XMLNF_LASTEVENT	= XMLNF_DATAAVAILABLE
     } 	XML_NODEFACTORY_EVENT;
 
 typedef struct _XML_NODE_INFO
@@ -412,61 +430,76 @@ EXTERN_C const IID IID_IXMLNodeSource;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IXMLNodeSourceVtbl
     {
         BEGIN_INTERFACE
         
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
             IXMLNodeSource * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IXMLNodeSource * This);
         
+        DECLSPEC_XFGVIRT(IUnknown, Release)
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IXMLNodeSource * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, SetFactory)
         HRESULT ( STDMETHODCALLTYPE *SetFactory )( 
             IXMLNodeSource * This,
             /* [in] */ IXMLNodeFactory *pNodeFactory);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetFactory)
         HRESULT ( STDMETHODCALLTYPE *GetFactory )( 
             IXMLNodeSource * This,
             /* [out] */ IXMLNodeFactory **ppNodeFactory);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, Abort)
         HRESULT ( STDMETHODCALLTYPE *Abort )( 
             IXMLNodeSource * This,
             /* [in] */ BSTR bstrErrorInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLineNumber)
         ULONG ( STDMETHODCALLTYPE *GetLineNumber )( 
             IXMLNodeSource * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLinePosition)
         ULONG ( STDMETHODCALLTYPE *GetLinePosition )( 
             IXMLNodeSource * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetAbsolutePosition)
         ULONG ( STDMETHODCALLTYPE *GetAbsolutePosition )( 
             IXMLNodeSource * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLineBuffer)
         HRESULT ( STDMETHODCALLTYPE *GetLineBuffer )( 
             IXMLNodeSource * This,
             /* [out] */ const WCHAR **ppwcBuf,
             /* [out] */ ULONG *pulLen,
             /* [out] */ ULONG *pulStartPos);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLastError)
         HRESULT ( STDMETHODCALLTYPE *GetLastError )( 
             IXMLNodeSource * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetErrorInfo)
         HRESULT ( STDMETHODCALLTYPE *GetErrorInfo )( 
             IXMLNodeSource * This,
             /* [out] */ BSTR *pbstrErrorInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetFlags)
         ULONG ( STDMETHODCALLTYPE *GetFlags )( 
             IXMLNodeSource * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetURL)
         HRESULT ( STDMETHODCALLTYPE *GetURL )( 
             IXMLNodeSource * This,
             /* [out] */ const WCHAR **ppwcBuf);
@@ -616,71 +649,88 @@ EXTERN_C const IID IID_IXMLParser;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IXMLParserVtbl
     {
         BEGIN_INTERFACE
         
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
             IXMLParser * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IUnknown, Release)
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, SetFactory)
         HRESULT ( STDMETHODCALLTYPE *SetFactory )( 
             IXMLParser * This,
             /* [in] */ IXMLNodeFactory *pNodeFactory);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetFactory)
         HRESULT ( STDMETHODCALLTYPE *GetFactory )( 
             IXMLParser * This,
             /* [out] */ IXMLNodeFactory **ppNodeFactory);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, Abort)
         HRESULT ( STDMETHODCALLTYPE *Abort )( 
             IXMLParser * This,
             /* [in] */ BSTR bstrErrorInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLineNumber)
         ULONG ( STDMETHODCALLTYPE *GetLineNumber )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLinePosition)
         ULONG ( STDMETHODCALLTYPE *GetLinePosition )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetAbsolutePosition)
         ULONG ( STDMETHODCALLTYPE *GetAbsolutePosition )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLineBuffer)
         HRESULT ( STDMETHODCALLTYPE *GetLineBuffer )( 
             IXMLParser * This,
             /* [out] */ const WCHAR **ppwcBuf,
             /* [out] */ ULONG *pulLen,
             /* [out] */ ULONG *pulStartPos);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLastError)
         HRESULT ( STDMETHODCALLTYPE *GetLastError )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetErrorInfo)
         HRESULT ( STDMETHODCALLTYPE *GetErrorInfo )( 
             IXMLParser * This,
             /* [out] */ BSTR *pbstrErrorInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetFlags)
         ULONG ( STDMETHODCALLTYPE *GetFlags )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetURL)
         HRESULT ( STDMETHODCALLTYPE *GetURL )( 
             IXMLParser * This,
             /* [out] */ const WCHAR **ppwcBuf);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetURL)
         HRESULT ( STDMETHODCALLTYPE *SetURL )( 
             IXMLParser * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl,
             /* [in] */ BOOL fAsync);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Load)
         HRESULT ( STDMETHODCALLTYPE *Load )( 
             IXMLParser * This,
             /* [in] */ BOOL fFullyAvailable,
@@ -688,67 +738,82 @@ EXTERN_C const IID IID_IXMLParser;
             /* [in] */ LPBC pibc,
             /* [in] */ DWORD grfMode);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetInput)
         HRESULT ( STDMETHODCALLTYPE *SetInput )( 
             IXMLParser * This,
             /* [in] */ IUnknown *pStm);
         
+        DECLSPEC_XFGVIRT(IXMLParser, PushData)
         HRESULT ( STDMETHODCALLTYPE *PushData )( 
             IXMLParser * This,
             /* [in] */ const unsigned char *pData,
             /* [in] */ ULONG ulChars,
             /* [in] */ BOOL fLastBuffer);
         
+        DECLSPEC_XFGVIRT(IXMLParser, LoadDTD)
         HRESULT ( STDMETHODCALLTYPE *LoadDTD )( 
             IXMLParser * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl);
         
+        DECLSPEC_XFGVIRT(IXMLParser, LoadEntity)
         HRESULT ( STDMETHODCALLTYPE *LoadEntity )( 
             IXMLParser * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl,
             /* [in] */ BOOL fpe);
         
+        DECLSPEC_XFGVIRT(IXMLParser, ParseEntity)
         HRESULT ( STDMETHODCALLTYPE *ParseEntity )( 
             IXMLParser * This,
             /* [in] */ const WCHAR *pwcText,
             /* [in] */ ULONG ulLen,
             /* [in] */ BOOL fpe);
         
+        DECLSPEC_XFGVIRT(IXMLParser, ExpandEntity)
         HRESULT ( STDMETHODCALLTYPE *ExpandEntity )( 
             IXMLParser * This,
             /* [in] */ const WCHAR *pwcText,
             /* [in] */ ULONG ulLen);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetRoot)
         HRESULT ( STDMETHODCALLTYPE *SetRoot )( 
             IXMLParser * This,
             /* [in] */ PVOID pRoot);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetRoot)
         HRESULT ( STDMETHODCALLTYPE *GetRoot )( 
             IXMLParser * This,
             /* [in] */ PVOID *ppRoot);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Run)
         HRESULT ( STDMETHODCALLTYPE *Run )( 
             IXMLParser * This,
             /* [in] */ long lChars);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetParserState)
         HRESULT ( STDMETHODCALLTYPE *GetParserState )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Suspend)
         HRESULT ( STDMETHODCALLTYPE *Suspend )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Reset)
         HRESULT ( STDMETHODCALLTYPE *Reset )( 
             IXMLParser * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetFlags)
         HRESULT ( STDMETHODCALLTYPE *SetFlags )( 
             IXMLParser * This,
             /* [in] */ ULONG iFlags);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetSecureBaseURL)
         HRESULT ( STDMETHODCALLTYPE *SetSecureBaseURL )( 
             IXMLParser * This,
             /* [in] */ const WCHAR *pszBaseUrl);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetSecureBaseURL)
         HRESULT ( STDMETHODCALLTYPE *GetSecureBaseURL )( 
             IXMLParser * This,
             /* [out] */ const WCHAR **ppwcBuf);
@@ -895,71 +960,88 @@ EXTERN_C const IID IID_IXMLParser2;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IXMLParser2Vtbl
     {
         BEGIN_INTERFACE
         
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
             IXMLParser2 * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IUnknown, Release)
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, SetFactory)
         HRESULT ( STDMETHODCALLTYPE *SetFactory )( 
             IXMLParser2 * This,
             /* [in] */ IXMLNodeFactory *pNodeFactory);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetFactory)
         HRESULT ( STDMETHODCALLTYPE *GetFactory )( 
             IXMLParser2 * This,
             /* [out] */ IXMLNodeFactory **ppNodeFactory);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, Abort)
         HRESULT ( STDMETHODCALLTYPE *Abort )( 
             IXMLParser2 * This,
             /* [in] */ BSTR bstrErrorInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLineNumber)
         ULONG ( STDMETHODCALLTYPE *GetLineNumber )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLinePosition)
         ULONG ( STDMETHODCALLTYPE *GetLinePosition )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetAbsolutePosition)
         ULONG ( STDMETHODCALLTYPE *GetAbsolutePosition )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLineBuffer)
         HRESULT ( STDMETHODCALLTYPE *GetLineBuffer )( 
             IXMLParser2 * This,
             /* [out] */ const WCHAR **ppwcBuf,
             /* [out] */ ULONG *pulLen,
             /* [out] */ ULONG *pulStartPos);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLastError)
         HRESULT ( STDMETHODCALLTYPE *GetLastError )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetErrorInfo)
         HRESULT ( STDMETHODCALLTYPE *GetErrorInfo )( 
             IXMLParser2 * This,
             /* [out] */ BSTR *pbstrErrorInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetFlags)
         ULONG ( STDMETHODCALLTYPE *GetFlags )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetURL)
         HRESULT ( STDMETHODCALLTYPE *GetURL )( 
             IXMLParser2 * This,
             /* [out] */ const WCHAR **ppwcBuf);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetURL)
         HRESULT ( STDMETHODCALLTYPE *SetURL )( 
             IXMLParser2 * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl,
             /* [in] */ BOOL fAsync);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Load)
         HRESULT ( STDMETHODCALLTYPE *Load )( 
             IXMLParser2 * This,
             /* [in] */ BOOL fFullyAvailable,
@@ -967,75 +1049,92 @@ EXTERN_C const IID IID_IXMLParser2;
             /* [in] */ LPBC pibc,
             /* [in] */ DWORD grfMode);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetInput)
         HRESULT ( STDMETHODCALLTYPE *SetInput )( 
             IXMLParser2 * This,
             /* [in] */ IUnknown *pStm);
         
+        DECLSPEC_XFGVIRT(IXMLParser, PushData)
         HRESULT ( STDMETHODCALLTYPE *PushData )( 
             IXMLParser2 * This,
             /* [in] */ const unsigned char *pData,
             /* [in] */ ULONG ulChars,
             /* [in] */ BOOL fLastBuffer);
         
+        DECLSPEC_XFGVIRT(IXMLParser, LoadDTD)
         HRESULT ( STDMETHODCALLTYPE *LoadDTD )( 
             IXMLParser2 * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl);
         
+        DECLSPEC_XFGVIRT(IXMLParser, LoadEntity)
         HRESULT ( STDMETHODCALLTYPE *LoadEntity )( 
             IXMLParser2 * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl,
             /* [in] */ BOOL fpe);
         
+        DECLSPEC_XFGVIRT(IXMLParser, ParseEntity)
         HRESULT ( STDMETHODCALLTYPE *ParseEntity )( 
             IXMLParser2 * This,
             /* [in] */ const WCHAR *pwcText,
             /* [in] */ ULONG ulLen,
             /* [in] */ BOOL fpe);
         
+        DECLSPEC_XFGVIRT(IXMLParser, ExpandEntity)
         HRESULT ( STDMETHODCALLTYPE *ExpandEntity )( 
             IXMLParser2 * This,
             /* [in] */ const WCHAR *pwcText,
             /* [in] */ ULONG ulLen);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetRoot)
         HRESULT ( STDMETHODCALLTYPE *SetRoot )( 
             IXMLParser2 * This,
             /* [in] */ PVOID pRoot);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetRoot)
         HRESULT ( STDMETHODCALLTYPE *GetRoot )( 
             IXMLParser2 * This,
             /* [in] */ PVOID *ppRoot);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Run)
         HRESULT ( STDMETHODCALLTYPE *Run )( 
             IXMLParser2 * This,
             /* [in] */ long lChars);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetParserState)
         HRESULT ( STDMETHODCALLTYPE *GetParserState )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Suspend)
         HRESULT ( STDMETHODCALLTYPE *Suspend )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Reset)
         HRESULT ( STDMETHODCALLTYPE *Reset )( 
             IXMLParser2 * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetFlags)
         HRESULT ( STDMETHODCALLTYPE *SetFlags )( 
             IXMLParser2 * This,
             /* [in] */ ULONG iFlags);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetSecureBaseURL)
         HRESULT ( STDMETHODCALLTYPE *SetSecureBaseURL )( 
             IXMLParser2 * This,
             /* [in] */ const WCHAR *pszBaseUrl);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetSecureBaseURL)
         HRESULT ( STDMETHODCALLTYPE *GetSecureBaseURL )( 
             IXMLParser2 * This,
             /* [out] */ const WCHAR **ppwcBuf);
         
+        DECLSPEC_XFGVIRT(IXMLParser2, SetMaxXmlSize)
         HRESULT ( STDMETHODCALLTYPE *SetMaxXmlSize )( 
             IXMLParser2 * This,
             /* [in] */ ULONG MaxSizeCch);
         
+        DECLSPEC_XFGVIRT(IXMLParser2, GetMaxXmlSize)
         HRESULT ( STDMETHODCALLTYPE *GetMaxXmlSize )( 
             IXMLParser2 * This,
             /* [out] */ ULONG *MaxSizeCch);
@@ -1191,71 +1290,88 @@ EXTERN_C const IID IID_IXMLParser3;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IXMLParser3Vtbl
     {
         BEGIN_INTERFACE
         
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
             IXMLParser3 * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IUnknown, Release)
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, SetFactory)
         HRESULT ( STDMETHODCALLTYPE *SetFactory )( 
             IXMLParser3 * This,
             /* [in] */ IXMLNodeFactory *pNodeFactory);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetFactory)
         HRESULT ( STDMETHODCALLTYPE *GetFactory )( 
             IXMLParser3 * This,
             /* [out] */ IXMLNodeFactory **ppNodeFactory);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, Abort)
         HRESULT ( STDMETHODCALLTYPE *Abort )( 
             IXMLParser3 * This,
             /* [in] */ BSTR bstrErrorInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLineNumber)
         ULONG ( STDMETHODCALLTYPE *GetLineNumber )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLinePosition)
         ULONG ( STDMETHODCALLTYPE *GetLinePosition )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetAbsolutePosition)
         ULONG ( STDMETHODCALLTYPE *GetAbsolutePosition )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLineBuffer)
         HRESULT ( STDMETHODCALLTYPE *GetLineBuffer )( 
             IXMLParser3 * This,
             /* [out] */ const WCHAR **ppwcBuf,
             /* [out] */ ULONG *pulLen,
             /* [out] */ ULONG *pulStartPos);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetLastError)
         HRESULT ( STDMETHODCALLTYPE *GetLastError )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetErrorInfo)
         HRESULT ( STDMETHODCALLTYPE *GetErrorInfo )( 
             IXMLParser3 * This,
             /* [out] */ BSTR *pbstrErrorInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetFlags)
         ULONG ( STDMETHODCALLTYPE *GetFlags )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeSource, GetURL)
         HRESULT ( STDMETHODCALLTYPE *GetURL )( 
             IXMLParser3 * This,
             /* [out] */ const WCHAR **ppwcBuf);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetURL)
         HRESULT ( STDMETHODCALLTYPE *SetURL )( 
             IXMLParser3 * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl,
             /* [in] */ BOOL fAsync);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Load)
         HRESULT ( STDMETHODCALLTYPE *Load )( 
             IXMLParser3 * This,
             /* [in] */ BOOL fFullyAvailable,
@@ -1263,84 +1379,103 @@ EXTERN_C const IID IID_IXMLParser3;
             /* [in] */ LPBC pibc,
             /* [in] */ DWORD grfMode);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetInput)
         HRESULT ( STDMETHODCALLTYPE *SetInput )( 
             IXMLParser3 * This,
             /* [in] */ IUnknown *pStm);
         
+        DECLSPEC_XFGVIRT(IXMLParser, PushData)
         HRESULT ( STDMETHODCALLTYPE *PushData )( 
             IXMLParser3 * This,
             /* [in] */ const unsigned char *pData,
             /* [in] */ ULONG ulChars,
             /* [in] */ BOOL fLastBuffer);
         
+        DECLSPEC_XFGVIRT(IXMLParser, LoadDTD)
         HRESULT ( STDMETHODCALLTYPE *LoadDTD )( 
             IXMLParser3 * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl);
         
+        DECLSPEC_XFGVIRT(IXMLParser, LoadEntity)
         HRESULT ( STDMETHODCALLTYPE *LoadEntity )( 
             IXMLParser3 * This,
             /* [in] */ const WCHAR *pszBaseUrl,
             /* [in] */ const WCHAR *pszRelativeUrl,
             /* [in] */ BOOL fpe);
         
+        DECLSPEC_XFGVIRT(IXMLParser, ParseEntity)
         HRESULT ( STDMETHODCALLTYPE *ParseEntity )( 
             IXMLParser3 * This,
             /* [in] */ const WCHAR *pwcText,
             /* [in] */ ULONG ulLen,
             /* [in] */ BOOL fpe);
         
+        DECLSPEC_XFGVIRT(IXMLParser, ExpandEntity)
         HRESULT ( STDMETHODCALLTYPE *ExpandEntity )( 
             IXMLParser3 * This,
             /* [in] */ const WCHAR *pwcText,
             /* [in] */ ULONG ulLen);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetRoot)
         HRESULT ( STDMETHODCALLTYPE *SetRoot )( 
             IXMLParser3 * This,
             /* [in] */ PVOID pRoot);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetRoot)
         HRESULT ( STDMETHODCALLTYPE *GetRoot )( 
             IXMLParser3 * This,
             /* [in] */ PVOID *ppRoot);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Run)
         HRESULT ( STDMETHODCALLTYPE *Run )( 
             IXMLParser3 * This,
             /* [in] */ long lChars);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetParserState)
         HRESULT ( STDMETHODCALLTYPE *GetParserState )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Suspend)
         HRESULT ( STDMETHODCALLTYPE *Suspend )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, Reset)
         HRESULT ( STDMETHODCALLTYPE *Reset )( 
             IXMLParser3 * This);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetFlags)
         HRESULT ( STDMETHODCALLTYPE *SetFlags )( 
             IXMLParser3 * This,
             /* [in] */ ULONG iFlags);
         
+        DECLSPEC_XFGVIRT(IXMLParser, SetSecureBaseURL)
         HRESULT ( STDMETHODCALLTYPE *SetSecureBaseURL )( 
             IXMLParser3 * This,
             /* [in] */ const WCHAR *pszBaseUrl);
         
+        DECLSPEC_XFGVIRT(IXMLParser, GetSecureBaseURL)
         HRESULT ( STDMETHODCALLTYPE *GetSecureBaseURL )( 
             IXMLParser3 * This,
             /* [out] */ const WCHAR **ppwcBuf);
         
+        DECLSPEC_XFGVIRT(IXMLParser2, SetMaxXmlSize)
         HRESULT ( STDMETHODCALLTYPE *SetMaxXmlSize )( 
             IXMLParser3 * This,
             /* [in] */ ULONG MaxSizeCch);
         
+        DECLSPEC_XFGVIRT(IXMLParser2, GetMaxXmlSize)
         HRESULT ( STDMETHODCALLTYPE *GetMaxXmlSize )( 
             IXMLParser3 * This,
             /* [out] */ ULONG *MaxSizeCch);
         
+        DECLSPEC_XFGVIRT(IXMLParser3, SetProperty)
         HRESULT ( STDMETHODCALLTYPE *SetProperty )( 
             IXMLParser3 * This,
             /* [in] */ const WCHAR *pwcName,
             /* [in] */ VARIANT value);
         
+        DECLSPEC_XFGVIRT(IXMLParser3, GetProperty)
         HRESULT ( STDMETHODCALLTYPE *GetProperty )( 
             IXMLParser3 * This,
             /* [in] */ const WCHAR *pwcName,
@@ -1521,40 +1656,48 @@ EXTERN_C const IID IID_IXMLNodeFactory;
         
     };
     
+    
 #else 	/* C style interface */
 
     typedef struct IXMLNodeFactoryVtbl
     {
         BEGIN_INTERFACE
         
+        DECLSPEC_XFGVIRT(IUnknown, QueryInterface)
         HRESULT ( STDMETHODCALLTYPE *QueryInterface )( 
             IXMLNodeFactory * This,
             /* [in] */ REFIID riid,
             /* [annotation][iid_is][out] */ 
-            __RPC__deref_out  void **ppvObject);
+            _COM_Outptr_  void **ppvObject);
         
+        DECLSPEC_XFGVIRT(IUnknown, AddRef)
         ULONG ( STDMETHODCALLTYPE *AddRef )( 
             IXMLNodeFactory * This);
         
+        DECLSPEC_XFGVIRT(IUnknown, Release)
         ULONG ( STDMETHODCALLTYPE *Release )( 
             IXMLNodeFactory * This);
         
+        DECLSPEC_XFGVIRT(IXMLNodeFactory, NotifyEvent)
         HRESULT ( STDMETHODCALLTYPE *NotifyEvent )( 
             IXMLNodeFactory * This,
             /* [in] */ IXMLNodeSource *pSource,
             /* [in] */ XML_NODEFACTORY_EVENT iEvt);
         
+        DECLSPEC_XFGVIRT(IXMLNodeFactory, BeginChildren)
         HRESULT ( STDMETHODCALLTYPE *BeginChildren )( 
             IXMLNodeFactory * This,
             /* [in] */ IXMLNodeSource *pSource,
             /* [in] */ XML_NODE_INFO *pNodeInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeFactory, EndChildren)
         HRESULT ( STDMETHODCALLTYPE *EndChildren )( 
             IXMLNodeFactory * This,
             /* [in] */ IXMLNodeSource *pSource,
             /* [in] */ BOOL fEmpty,
             /* [in] */ XML_NODE_INFO *pNodeInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeFactory, Error)
         HRESULT ( STDMETHODCALLTYPE *Error )( 
             IXMLNodeFactory * This,
             /* [in] */ IXMLNodeSource *pSource,
@@ -1562,6 +1705,7 @@ EXTERN_C const IID IID_IXMLNodeFactory;
             /* [in] */ USHORT cNumRecs,
             /* [in] */ XML_NODE_INFO **apNodeInfo);
         
+        DECLSPEC_XFGVIRT(IXMLNodeFactory, CreateNode)
         HRESULT ( STDMETHODCALLTYPE *CreateNode )( 
             IXMLNodeFactory * This,
             /* [in] */ IXMLNodeSource *pSource,

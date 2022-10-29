@@ -25,6 +25,13 @@ CNtlSLPacketGenerator::CNtlSLPacketGenerator(CNtlNetSender *pNetSender)
 
 }
 
+//bool CNtlSLPacketGenerator::(void)
+//{
+
+//}
+
+
+
 bool CNtlSLPacketGenerator::SendLoadingCompleteNfy(void)
 {
 	sUG_LOADING_COMPLETE_NFY sPacket;

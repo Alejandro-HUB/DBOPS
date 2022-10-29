@@ -1,0 +1,354 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="App">
+      <UniqueIdentifier>{adbaa8b7-98ba-4b39-b2da-b6f95c4d3d34}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Camera">
+      <UniqueIdentifier>{d8e50c15-e54e-4d3a-acbe-eadfc89b3450}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
+    </Filter>
+    <Filter Include="MFC">
+      <UniqueIdentifier>{1e5a66ac-836b-499f-bce4-8b4f1bc346c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="RW">
+      <UniqueIdentifier>{3c316045-e643-4b98-8cca-e0f05c881052}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Script">
+      <UniqueIdentifier>{0768a36a-6a1d-41a7-8536-62341d2aebc9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Doc">
+      <UniqueIdentifier>{ed84157d-7e45-417a-a318-3acd42bc7f0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Bin">
+      <UniqueIdentifier>{29c807c0-5ac8-4e15-ac06-676ab323576d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="XML">
+      <UniqueIdentifier>{4dcf0562-8681-4185-8ba6-bf844f3f8edd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="MiniDump">
+      <UniqueIdentifier>{277cb5f7-daf9-4bf5-9307-b1e42ea3935c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Control">
+      <UniqueIdentifier>{cb673916-9bcd-402f-8498-fb9f036352e4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="ModelToolApplication.cpp">
+      <Filter>App</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolCamera.cpp">
+      <Filter>Camera</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimAttrView.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="AnimToolView.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="BottomToolView.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="ColorButton.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="LeftPropSheet.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="LeftTreeView.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelTool.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelToolDoc.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="ModelToolView.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="PageClump.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="PageGround.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="PageItem.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="PageMob.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="PageNPC.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="PagePC.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="RightToolView.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="togglebutton2.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="ViewerView.cpp">
+      <Filter>MFC</Filter>
+    </ClCompile>
+    <ClCompile Include="MTCharacter.cpp">
+      <Filter>RW</Filter>
+    </ClCompile>
+    <ClCompile Include="MTCharacterInfo.cpp">
+      <Filter>RW</Filter>
+    </ClCompile>
+    <ClCompile Include="NtlMTXml.cpp">
+      <Filter>XML</Filter>
+    </ClCompile>
+    <ClCompile Include="MiniDump.cpp">
+      <Filter>MiniDump</Filter>
+    </ClCompile>
+    <ClCompile Include="property\Dib.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="ExSliderCtrl.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="MTTreeCtrl.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\N3Slider.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTree.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTreeInfo.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTreeItem.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTreeItemColor.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTreeItemCombo.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTreeItemEdit.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTreeItemSlider.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTreeItemStatic.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+    <ClCompile Include="property\PropTreeList.cpp">
+      <Filter>Control</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ModelToolApplication.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="MTDef.h">
+      <Filter>App</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolCamera.h">
+      <Filter>Camera</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimAttrView.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="AnimToolView.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="BottomToolView.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="ColorButton.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="LeftPropSheet.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="LeftTreeView.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelTool.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelToolDoc.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="ModelToolView.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="PageClump.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="PageGround.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="PageItem.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="PageMob.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="PageNPC.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="PagePC.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="RightToolView.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="togglebutton2.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="ViewerView.h">
+      <Filter>MFC</Filter>
+    </ClInclude>
+    <ClInclude Include="MTCharacter.h">
+      <Filter>RW</Filter>
+    </ClInclude>
+    <ClInclude Include="MTCharacterInfo.h">
+      <Filter>RW</Filter>
+    </ClInclude>
+    <ClInclude Include="MTScriptData.h">
+      <Filter>Script</Filter>
+    </ClInclude>
+    <ClInclude Include="NtlMTXml.h">
+      <Filter>XML</Filter>
+    </ClInclude>
+    <ClInclude Include="MiniDump.h">
+      <Filter>MiniDump</Filter>
+    </ClInclude>
+    <ClInclude Include="property\Dib.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="ExSliderCtrl.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="MTTreeCtrl.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\N3Slider.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTree.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTreeInfo.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTreeItem.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTreeItemColor.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTreeItemCombo.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTreeItemEdit.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTreeItemSlider.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTreeItemStatic.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+    <ClInclude Include="property\PropTreeList.h">
+      <Filter>Control</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\aim.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\expanddown.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\expanddown_blue.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\expandleft.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\expandleft_blue.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\hierarchy.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\icon10.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ModelTool.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ModelTool.rc2">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\ModelToolDoc.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\move4way.cur">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\MSDTX.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\rwpID_BODYDEF.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\script.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\Toolbar.bmp">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\world.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\xp_folder_closed.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\xp_folder_open.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="res\xp_people.ico">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="Indent.xsl">
+      <Filter>XML</Filter>
+    </None>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ModelTool.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

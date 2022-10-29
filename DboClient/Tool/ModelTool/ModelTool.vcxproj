@@ -1,0 +1,245 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Template|Win32">
+      <Configuration>Template</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{A590104C-EADB-4450-9581-809CFA452D2E}</ProjectGuid>
+    <RootNamespace>ModelTool</RootNamespace>
+    <SccProjectName>ModelTool</SccProjectName>
+    <SccLocalPath>.</SccLocalPath>
+    <SccProvider>MSSCCI:NXN alienbrain</SccProvider>
+    <Keyword>MFCProj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <CharacterSet>Unicode</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseOfMfc>Static</UseOfMfc>
+    <UseOfAtl>Static</UseOfAtl>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">..\..\..\DragonBall\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</LinkIncremental>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">..\..\..\DragonBall\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(Configuration)\</IntDir>
+    <LinkIncremental Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">false</LinkIncremental>
+    <IncludePath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Utilities\bin\x86;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Utilities\Source;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29;C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Renderware\Include;C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Lib\NtlCore;C:\Users\Alejandro Lopez\source\repos\DBO\NtlLib\Shared;C:\Users\Alejandro Lopez\source\repos\DBO\DboShared\NtlShared2;$(IncludePath)</IncludePath>
+    <LibraryPath Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x86;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>Disabled</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)Renderware\Include;$(SolutionDir)Lib\NtlCore;$(SolutionDir)..\DboShared\NtlNetwork;$(SolutionDir)Lib\NtlPresentation;$(SolutionDir)Lib\NtlFramework;$(SolutionDir)..\NtlLib\Shared\NtlXMLLoader;$(SolutionDir)..\DboShared\NtlShared;$(SolutionDir)Lib\NtlSimulation;..\..\Client\Main;..\..\Client\Stage;..\..\Client\Camera;..\..\..\DboShared\NtlNetwork\NtlNetClient;$(SolutionDir)..\NtlLib\Shared;.\;.\property;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;_DEBUG;RWDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>EditAndContinue</DebugInformationFormat>
+      <EnablePREfast>false</EnablePREfast>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>rtdict.lib;rtcharse.lib;rtfsyst.lib;rtbmp.lib;rtpng.lib;rtintsec.lib;rtpick.lib;rttoc.lib;rpcollis.lib;rpworld.lib;rwcore.lib;rtanim.lib;rphanim.lib;rtquat.lib;rplogo.lib;rpusrdat.lib;rpid.lib;rpmatfx.lib;rpuvanim.lib;rpprtstd.lib;rpprtadv.lib;rpptank.lib;rpskintoon.lib;rpskinmatfxtoon.lib;rprandom.lib;rtimport.lib;rtgcond.lib;rtwing.lib;Imm32.lib;Winmm.lib;rtray.lib;comsuppwd.lib;gdiplus.lib;ddraw.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Renderware\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcp.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Midl>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MkTypLibCompatible>false</MkTypLibCompatible>
+      <ValidateAllParameters>false</ValidateAllParameters>
+    </Midl>
+    <ClCompile>
+      <Optimization>MinSpace</Optimization>
+      <AdditionalIncludeDirectories>$(SolutionDir)Renderware\Include;$(SolutionDir)Lib\NtlCore;$(SolutionDir)..\DboShared\NtlNetwork;$(SolutionDir)Lib\NtlPresentation;$(SolutionDir)Lib\NtlFramework;$(SolutionDir)..\NtlLib\Shared\NtlXMLLoader;$(SolutionDir)..\DboShared\NtlShared;$(SolutionDir)Lib\NtlSimulation;..\..\Client\Main;..\..\Client\Stage;..\..\Client\Camera;..\..\..\DboShared\NtlNetwork\NtlNetClient;$(SolutionDir)..\NtlLib\Shared;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_WINDOWS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <MinimalRebuild>false</MinimalRebuild>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+    </ClCompile>
+    <ResourceCompile>
+      <PreprocessorDefinitions>NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <Culture>0x0409</Culture>
+      <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+    </ResourceCompile>
+    <Link>
+      <AdditionalDependencies>rtdict.lib;rtcharse.lib;rtfsyst.lib;rtbmp.lib;rtpng.lib;rtintsec.lib;rtpick.lib;rttoc.lib;rpcollis.lib;rpworld.lib;rwcore.lib;rtanim.lib;rphanim.lib;rtquat.lib;rplogo.lib;rpusrdat.lib;rpid.lib;rpmatfx.lib;rpuvanim.lib;rpprtstd.lib;rpprtadv.lib;rpptank.lib;rpskintoon.lib;rpskinmatfxtoon.lib;rprandom.lib;rtimport.lib;rtgcond.lib;rtwing.lib;Imm32.lib;Winmm.lib;rtray.lib;comsuppwd.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(SolutionDir)Renderware\Lib\Debug;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <IgnoreSpecificDefaultLibraries>libcp.lib ;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Windows</SubSystem>
+      <OptimizeReferences>true</OptimizeReferences>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <TargetMachine>MachineX86</TargetMachine>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="ModelToolApplication.cpp" />
+    <ClCompile Include="ToolCamera.cpp" />
+    <ClCompile Include="AnimAttrView.cpp" />
+    <ClCompile Include="AnimToolView.cpp" />
+    <ClCompile Include="BottomToolView.cpp" />
+    <ClCompile Include="ColorButton.cpp" />
+    <ClCompile Include="LeftPropSheet.cpp" />
+    <ClCompile Include="LeftTreeView.cpp" />
+    <ClCompile Include="MainFrm.cpp" />
+    <ClCompile Include="ModelTool.cpp" />
+    <ClCompile Include="ModelToolDoc.cpp" />
+    <ClCompile Include="ModelToolView.cpp" />
+    <ClCompile Include="PageClump.cpp" />
+    <ClCompile Include="PageGround.cpp" />
+    <ClCompile Include="PageItem.cpp" />
+    <ClCompile Include="PageMob.cpp" />
+    <ClCompile Include="PageNPC.cpp" />
+    <ClCompile Include="PagePC.cpp" />
+    <ClCompile Include="RightToolView.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="togglebutton2.cpp" />
+    <ClCompile Include="ViewerView.cpp" />
+    <ClCompile Include="MTCharacter.cpp" />
+    <ClCompile Include="MTCharacterInfo.cpp" />
+    <ClCompile Include="NtlMTXml.cpp" />
+    <ClCompile Include="MiniDump.cpp" />
+    <ClCompile Include="property\Dib.cpp" />
+    <ClCompile Include="ExSliderCtrl.cpp" />
+    <ClCompile Include="MTTreeCtrl.cpp" />
+    <ClCompile Include="property\N3Slider.cpp" />
+    <ClCompile Include="property\PropTree.cpp" />
+    <ClCompile Include="property\PropTreeInfo.cpp" />
+    <ClCompile Include="property\PropTreeItem.cpp" />
+    <ClCompile Include="property\PropTreeItemColor.cpp" />
+    <ClCompile Include="property\PropTreeItemCombo.cpp" />
+    <ClCompile Include="property\PropTreeItemEdit.cpp" />
+    <ClCompile Include="property\PropTreeItemSlider.cpp" />
+    <ClCompile Include="property\PropTreeItemStatic.cpp" />
+    <ClCompile Include="property\PropTreeList.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="ModelToolApplication.h" />
+    <ClInclude Include="MTDef.h" />
+    <ClInclude Include="ToolCamera.h" />
+    <ClInclude Include="AnimAttrView.h" />
+    <ClInclude Include="AnimToolView.h" />
+    <ClInclude Include="BottomToolView.h" />
+    <ClInclude Include="ColorButton.h" />
+    <ClInclude Include="LeftPropSheet.h" />
+    <ClInclude Include="LeftTreeView.h" />
+    <ClInclude Include="MainFrm.h" />
+    <ClInclude Include="ModelTool.h" />
+    <ClInclude Include="ModelToolDoc.h" />
+    <ClInclude Include="ModelToolView.h" />
+    <ClInclude Include="PageClump.h" />
+    <ClInclude Include="PageGround.h" />
+    <ClInclude Include="PageItem.h" />
+    <ClInclude Include="PageMob.h" />
+    <ClInclude Include="PageNPC.h" />
+    <ClInclude Include="PagePC.h" />
+    <ClInclude Include="Resource.h" />
+    <ClInclude Include="RightToolView.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="togglebutton2.h" />
+    <ClInclude Include="ViewerView.h" />
+    <ClInclude Include="MTCharacter.h" />
+    <ClInclude Include="MTCharacterInfo.h" />
+    <ClInclude Include="MTScriptData.h" />
+    <ClInclude Include="NtlMTXml.h" />
+    <ClInclude Include="MiniDump.h" />
+    <ClInclude Include="property\Dib.h" />
+    <ClInclude Include="ExSliderCtrl.h" />
+    <ClInclude Include="MTTreeCtrl.h" />
+    <ClInclude Include="property\N3Slider.h" />
+    <ClInclude Include="property\PropTree.h" />
+    <ClInclude Include="property\PropTreeInfo.h" />
+    <ClInclude Include="property\PropTreeItem.h" />
+    <ClInclude Include="property\PropTreeItemColor.h" />
+    <ClInclude Include="property\PropTreeItemCombo.h" />
+    <ClInclude Include="property\PropTreeItemEdit.h" />
+    <ClInclude Include="property\PropTreeItemSlider.h" />
+    <ClInclude Include="property\PropTreeItemStatic.h" />
+    <ClInclude Include="property\PropTreeList.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\aim.ico" />
+    <None Include="res\expanddown.bmp" />
+    <None Include="res\expanddown_blue.bmp" />
+    <None Include="res\expandleft.bmp" />
+    <None Include="res\expandleft_blue.bmp" />
+    <None Include="res\hierarchy.ico" />
+    <None Include="res\icon10.ico" />
+    <None Include="res\ModelTool.ico" />
+    <None Include="res\ModelTool.rc2" />
+    <None Include="res\ModelToolDoc.ico" />
+    <None Include="res\move4way.cur" />
+    <None Include="res\MSDTX.ico" />
+    <None Include="res\rwpID_BODYDEF.ico" />
+    <None Include="res\script.ico" />
+    <None Include="res\Toolbar.bmp" />
+    <None Include="res\world.ico" />
+    <None Include="res\xp_folder_closed.ico" />
+    <None Include="res\xp_folder_open.ico" />
+    <None Include="res\xp_people.ico" />
+    <None Include="Indent.xsl" />
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ModelTool.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+  <ProjectExtensions>
+    <VisualStudio>
+      <UserProperties DevPartner_IsInstrumented="0" RESOURCE_FILE="ModelTool.rc" _x007B_8BD21D60-EC42-11CE-9E0D-00AA006002F3_x007D_="CTogglebutton2" />
+    </VisualStudio>
+  </ProjectExtensions>
+</Project>

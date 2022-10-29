@@ -85,6 +85,7 @@
 #include "FriendListGui.h"
 #include "InterfaceShakeGui.h"
 #include "RankBoardGui.h"
+#include "MascotGui.h"
 #include "CommuTargetGui.h"
 #include "TimeNotifyGui.h"
 #include "SideDialogControlGui.h"
@@ -267,6 +268,7 @@ CGameGuiGroup::CGameGuiGroup()
 , m_pFriendListGui(NULL)
 , m_pInterfaceShakeGui(NULL)
 , m_pRankBoardGui(NULL)
+, m_pMascotGui(NULL)
 , m_pCommuTargetGui(NULL)
 , m_pTimeNotifyGui(NULL)
 , m_pCinematicGui(NULL)
@@ -677,12 +679,15 @@ RwBool CGameGuiGroup::Create(void)
 
 	// RankBoard Gui
 	AddDialog(m_pRankBoardGui, CRankBoardGui, "RankBoardGui", DIALOG_RANKBOARD );
-
+	
 	AddDialog(m_pTBGambleResult, CTBGambleResultGui, "TBGambleResultGui", DIALOG_TBGAMBLERESULT );
 
 	AddDialog(m_pChannelChange, CChannelChangeGui, "ChannelChangeGui", DIALOG_CHANNGEL_CHANGE );	
 
 	//AddDialog(m_pGroupChatManager, CGroupChatManager, "GroupChatManager", DIALOG_GROUP_CHAT_MANAGER );	
+
+	// Mascot Gui
+	AddDialog(m_pMascotGui, CMascotGui, "MascotGui", DIALOG_MASCOT);
 
 	// party
 	AddDialog(m_pPartyMenu, CPartyMenu, "PartyMenuGui", DIALOG_PARTYMENU );	
@@ -895,6 +900,7 @@ void CGameGuiGroup::Destroy(void)
     RemoveDialog(m_pFriendListGui);
 	RemoveDialog(m_pInterfaceShakeGui);
 	RemoveDialog(m_pRankBoardGui);
+	RemoveDialog(m_pMascotGui);
     RemoveDialog(m_pCommuTargetGui);
 	RemoveDialog(m_pTimeNotifyGui);
     //RemoveDialog(m_pNetConnectBox);

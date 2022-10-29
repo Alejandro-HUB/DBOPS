@@ -52,17 +52,17 @@ protected:
     VOID    OnMailBtnClicked(gui::CComponent* pComponent);
     VOID    OnWhisperClicked(gui::CComponent* pComponent);
     VOID    OnBlockClicked(gui::CComponent* pComponent);
-    VOID    OnDeleteClicked(gui::CComponent* pComponent);    
-    VOID	OnScrollChanged( RwInt32 nNewOffset );
-    VOID	OnTabChanged( RwInt32 nIndex, RwInt32 nOldIndex );
+    VOID    OnDeleteClicked(gui::CComponent* pComponent);
+    VOID	OnScrollChanged(RwInt32 nNewOffset);
+    VOID	OnTabChanged(RwInt32 nIndex, RwInt32 nOldIndex);
     VOID	OnPaint();
     VOID	OnMove(RwInt32 iOldX, RwInt32 iOldY);
     VOID	OnMouseMove(RwInt32 nFlags, RwInt32 nX, RwInt32 nY);
-    VOID	OnMouseLeave(gui::CComponent* pComponent);    
+    VOID	OnMouseLeave(gui::CComponent* pComponent);
     VOID    OnToggled(gui::CComponent* pComponent, bool bToggled);
-    VOID	OnCaptureWheelMove( RwInt32 nFlag, RwInt16 sDelta, CPos& pos );
-	VOID	OnClickedBtnHelp(gui::CComponent* pComponent);
-	void	OnCaptureMouseDown(const CKey& key);
+    VOID	OnCaptureWheelMove(RwInt32 nFlag, RwInt16 sDelta, CPos& pos);
+    VOID	OnClickedBtnHelp(gui::CComponent* pComponent);
+    void	OnCaptureMouseDown(const CKey& key);
     
     gui::CButton*	OnCreateItem();
     void			OnDestroyItem(gui::CButton* pButton);

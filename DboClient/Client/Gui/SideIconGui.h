@@ -59,6 +59,10 @@ class CSCSSideViewGui;
 class CHLSSideIconGui;
 class CHLSSideViewGui;
 
+//DBS
+//class CDBSSideIconGui;
+//class CDBSSideViewGui;
+
 
 /**
 * \ingroup client
@@ -163,6 +167,10 @@ protected:
 
 	CHLSSideIconGui*			m_pHLSSideIconGui;
 	CHLSSideViewGui*			m_pHLSSideViewGui;
+
+	//DBS
+	//CDBSSideIconGui* m_pDBSSideIconGui;
+	//CDBSSideViewGui* m_pDBSSideViewGui;
 };
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

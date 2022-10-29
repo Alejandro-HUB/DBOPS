@@ -14,6 +14,7 @@ enum eSideIconType
 	SIDEICON_DOJO,						///< 도장 사이드 아이콘
     SIDEICON_NETPY,                     ///< NetPy 사이드 아이콘
 	SIDEICON_HLS,
+	SIDEICON_DBS,                  ///< This is the DBS EVENT
 
 	SIDEICON_NUMS,
 	INVALID_SIDEICON
@@ -35,6 +36,7 @@ enum eSideViewType
 	SIDEVIEW_DOJO,						///< 도장 뷰
     SIDEVIEW_NETPY,                     ///< NetPy 뷰
 	SIDEVIEW_HLS,
+	SIDEVIEW_DBS,					///< This is the DBS EVENT
 
 	SIDEVIEW_NUMS,
 	INVALID_SIDEVIEW
@@ -46,6 +48,11 @@ enum eDBCSideIconType
 	E_ICON_NO_SEASON,					///< 드래곤볼 수집 기간이 아닐때
 	E_ICON_SEASON,						///< 드래곤볼 수집 기간일때
 	E_ICON_COLLECT,						///< 드래곤볼 수집을 완료 했을때
+};
+
+enum eDBSSideIconType
+{
+	E_ICON_DBS,
 };
 
 enum eNetPySideViewType

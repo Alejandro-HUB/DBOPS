@@ -40,6 +40,8 @@
 #include "HLSSideIconGui.h"
 #include "HLSSideView.h"
 
+#include "DBSSideIconGui.h"
+
 #include "SCSSideIconGui.h"
 
 // SideIcon을 생성하고 SideIconGui에 등록하는 매크로
@@ -125,6 +127,8 @@ CSideIconGui::CSideIconGui(const RwChar* pName) : CNtlPLGui(pName), m_pPresentIc
 ,m_pDojoSideViewGui(NULL)
 ,m_pHLSSideIconGui(NULL)
 ,m_pHLSSideViewGui(NULL)
+//,m_pDBSSideIconGui(NULL)
+//,m_pDBSSideViewGui(NULL)
 {
 	m_nPresentViewType = INVALID_SIDEVIEW;
 	s_pSideIconGui = this;
@@ -196,10 +200,16 @@ RwBool CSideIconGui::Create()
 	RegisterSideIcon(m_pHLSSideIconGui, CHLSSideIconGui, "CHLSSideIconGui", SIDEICON_HLS);
 	RegisterSideView(m_pHLSSideViewGui, CHLSSideViewGui, "CHLSSideViewGui", SIDEVIEW_HLS);
 
+	//DBS
+	//RegisterSideIcon(m_pDBSSideIconGui, CDBSSideIconGui, "DBSIconGui", SIDEICON_DBS);
+	//RegisterSideView(m_pDBSSideViewGui, CDBSSideViewGui, "DBSSideViewGui", SIDEVIEW_DBS);
+
 
 	SAvatarInfo* pAvatarInfo = GetNtlSLGlobal()->GetAvatarInfo();
 	if( pAvatarInfo->sCharPf.bIsGameMaster )
 		m_pGMSideIconGui->Show(true);
+
+	//** CONDITIONS FOR DBS HERE **
 
 	LinkMsg(g_EventTMQCleintState);
 	LinkMsg(g_EventChangeWorldConceptState);
@@ -250,6 +260,8 @@ void CSideIconGui::Destroy()
 	UnRegisterSideView( m_pDojoSideViewGui, SIDEVIEW_DOJO );
 	UnRegisterSideIcon(m_pHLSSideIconGui, SIDEICON_HLS);
 	UnRegisterSideView(m_pHLSSideViewGui, SIDEVIEW_HLS);
+	//UnRegisterSideIcon( m_pDBSSideIconGui, SIDEICON_DBS);
+	//UnRegisterSideView( m_pDBSSideViewGui, SIDEVIEW_DBS);
 
 	if (m_pThis)
 	{
@@ -364,10 +376,24 @@ void CSideIconGui::HandleEvents(RWS::CMsg &msg)
 
 		if( pEvent->uiState == WORLD_STATE_TMQ_TERRAIN_READY )
 		{
+			//DB HUNT
 			CSideIconBase* pSideIcon = GetSideIcon(SIDEICON_DBC);
 			if( pSideIcon->IsDisplay() )
 				pSideIcon->Show(false);
 		}
+
+		/*
+		if (pEvent->uiState == WORLD_STATE_TMQ_TERRAIN_READY)
+		{
+
+			//DBS
+			CSideIconBase* pSideIcon = GetSideIcon(SIDEICON_DBS);
+			if (pSideIcon->IsDisplay())
+				pSideIcon->Show(false);
+		}
+		*/
+		
+
 
 		if( pEvent->uiState == WORLD_STATE_TMQ_PREPARE )
 		{
@@ -400,6 +426,7 @@ void CSideIconGui::HandleEvents(RWS::CMsg &msg)
 	else if( msg.Id == g_EventChangeWorldConceptState )
 	{
 		SNtlEventWorldConceptState* pEvent = reinterpret_cast<SNtlEventWorldConceptState*>( msg.pData );
+		bool done = false;
 
 		if( pEvent->eWorldConcept != WORLD_PLAY_TUTORIAL )
 			NTL_RETURNVOID();
@@ -409,10 +436,22 @@ void CSideIconGui::HandleEvents(RWS::CMsg &msg)
 			UnRegisterSideIcon( m_pTutorialSideIconGui, SIDEICON_TUTORIAL );
 			UnRegisterSideView( m_pTutorialSideViewGui, SIDEVIEW_TUTORIAL );
 
+			//DB HUNT
 			CSideIconBase* pSideIcon = GetSideIcon(SIDEICON_DBC);
 			if( !pSideIcon->IsDisplay() )
 				pSideIcon->Show(true);
+				done = true;
 
+			//DBS
+				/*
+			if (done)
+			{
+				CSideIconBase* pSideIcon = GetSideIcon(SIDEICON_DBS);
+				if (!pSideIcon->IsDisplay())
+					pSideIcon->Show(true);
+			}
+			*/
+			
             // NetPy Side Icon            
            // if(GetServiceInterface()->GetPublisherID() == eDBO_SERVICE_PUBLISHER_CJI_KOR) // BY DANEOS
             {

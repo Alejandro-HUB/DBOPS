@@ -1,0 +1,38 @@
+﻿How to compile the DBO Korean client (Assuming you already have the server created):
+
+1) Download the following files:
+DirectX9: https://www.microsoft.com/en-us/download/details.aspx?id=23549
+Tools: https://drive.google.com/drive/folders/1eITPtDifloOwp1q63H2HEeau6UqGNdfD?usp=sharing
+Client: https://drive.google.com/drive/folders/1eITPtDifloOwp1q63H2HEeau6UqGNdfD?usp=sharing
+Downloaded v142 build tools (C++ MFC) via Visual Studio Installer
+2) Go to the following path: "source\repos\DBOGLOBAL" and extract the Tools in there
+	◘The rar file should contain a folder called 3rd party
+	◘Extract the rar files inside 3rdParty and keep the Xtreme Toolkit in there
+3) Move the GFx SDK 3.3 folder into "source\repos\DBOGLOBAL\DBOClient\Lib\NtlFlasher"
+4) Go inside the GFx SDK 3.3 folder you just copied
+	◘Go to "source\repos\DBOGLOBAL\DBOClient\Lib\NtlFlasher\GFx SDK 3.3\3rdParty\jpeg-6b\gfx_projects\Win32"
+	◘Change the name of the folder called "Msvc80" into "Msvc142"
+5) Go inside the Msvc142 folder and open the project "libjpeg.sln"
+6) The solution configuration of VS 2019 should be "Release and win32" if not change it
+7) Right click libjpg then go to properties and in Windows SDK version change it to the latest (10.0)
+	◘Then change the Platform Toolset to (v142)
+	◘Right click libjpg -> Build
+8) Go to the folder "source\repos\DBOGLOBAL\DboClient\DragonBall" and extract the content of the client
+	◘The downloaded rar file should contain a folder called DragonBall, copy and paste its contents into the above path
+	◘This rar file is from the link "Client" above
+9) Go to folder "source\repos\DBOGLOBAL\DboClient" and open "DboClient.sln"
+10) On the solution explorer go to DBO\Client.vcxproj and repeat step 7)
+11) On solution explorer go to Tools\2DParticleEditor and right click it then unload it
+12) Right click Client.vcxproj -> Build
+	◘You should get only one error after compiling: 'libjpeg.lob'
+13) Right click Client.vcxproj then properties
+	◘Go to Linker -> General -> Additional Library Directories
+	◘You should see "$(SolutionDir)Lib\NtlFlasher\GFx SDK 3.3\Lib\$(PlatformName)\Msvc80\Release
+	◘Change this path to the one in your pc, should be the same one as the one above ^
+	◘Then you should see $(SolutionDir)Lib\NTlFlasher\GFx SDK 3.3\3rdParty\jpeg-6b\lib\$(PlatformName)\Msvc142\Release
+	◘Change that path to the one on your pc
+14) Right click Client.vcxproj -> Rebuild
+15) Client should have compiled
+
+
+

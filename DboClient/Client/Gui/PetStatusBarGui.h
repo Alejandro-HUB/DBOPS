@@ -1,12 +1,12 @@
-/*****************************************************************************
+ï»¿/*****************************************************************************
 *
 * File			: PetStatusBarGui.h
 * Author		: agebreak
-* Copyright	: (ÁÖ)NTL
-* Date			: 2007. 8. 16	
+* Copyright	: (ì£¼)NTL
+* Date			: 2007. 8. 16
 * Abstract		: DBO Pet HP/MP gui.
 *****************************************************************************
-* Desc         : Summon PetÀÇ StatusBar GUI¸¦ Ç¥½ÃÇÏ´Â Å¬·¡½º
+* Desc         : Summon Petì˜ StatusBar GUIë¥¼ í‘œì‹œí•˜ëŠ” í´ë˜ìŠ¤
 *
 *****************************************************************************/
 
@@ -35,70 +35,70 @@ public:
 	virtual void	Update(RwReal fElapsed);
 	virtual void	UpdateBeforeCamera(RwReal fElapsed);
 	virtual RwInt32	SwitchDialog(bool bOpen);
-    virtual void    HandleEvents(RWS::CMsg &pMsg);
+	virtual void    HandleEvents(RWS::CMsg& pMsg);
 
 	static CPetStatusBarGui* GetInstance();
 	static void				 DeleteInstance();
 
-	void			SetPetID(RwUInt32 uiSerialId);			///< ¼ÒÈ¯ÇÑ PetÀÇ ID¸¦ ¼³Á¤ÇÑ´Ù.
+	void			SetPetID(RwUInt32 uiSerialId);			///< ì†Œí™˜í•œ Petì˜ IDë¥¼ ì„¤ì •í•œë‹¤.
 	RwUInt32		GetPetID();
 
 protected:
-	VOID	OnMove( RwInt32 iOldX, RwInt32 iOldY );
+	VOID	OnMove(RwInt32 iOldX, RwInt32 iOldY);
 	VOID	OnPaint(VOID);
 	VOID	OnPaintLast(VOID);
-   /* VOID    OnPaintPower(VOID);
-    VOID    OnMovePower( RwInt32 nOldX, RwInt32 nOldY );*/
-    VOID	OnClickInfoBtn(gui::CComponent* pComponent);
-    VOID	OnCaptureMouseDown(const CKey& key);
+	//VOID    OnPaintPower(VOID);
+	//VOID    OnMovePower( RwInt32 nOldX, RwInt32 nOldY );
+	VOID	OnClickInfoBtn(gui::CComponent* pComponent);
+	VOID	OnCaptureMouseDown(const CKey& key);
 	VOID	OnCaptureMouseUp(const CKey& key);
-    
-	void	UpdatePetInfo();						///< PetÀÇ Á¤º¸¸¦ UI¿¡ ¾÷µ¥ÀÌÆ®ÇÑ´Ù.
-	//void	UpdatePetPowerValue();					///< PetÀÇ ÀüÅõ·ÂÀ» UI¿¡ ¾÷µ¥ÀÌÆ®ÇÑ´Ù.
-    void    ToggleInfo();                           ///< »ó¼¼ Á¤º¸Ã¢À» Åä±ÛÇÑ´Ù	
+
+	void	UpdatePetInfo();						///< Petì˜ ì •ë³´ë¥¼ UIì— ì—…ë°ì´íŠ¸í•œë‹¤.
+	//void	UpdatePetPowerValue();					///< Petì˜ ì „íˆ¬ë ¥ì„ UIì— ì—…ë°ì´íŠ¸í•œë‹¤.
+	void    ToggleInfo();                           ///< ìƒì„¸ ì •ë³´ì°½ì„ í† ê¸€í•œë‹¤	
 
 protected:
-	static CPetStatusBarGui* m_pInstance;			///< ½Ì±ÛÅæ °´Ã¼
-    
-	gui::CProgressBar*	m_ppgbHp;
-	gui::CProgressBar*	m_ppgbEp;		
-	gui::CStaticBox*	m_sttHp;
-	gui::CStaticBox*	m_sttMp;	
-	gui::CButton*		m_pbtnPetInfo;	
-	gui::CStaticBox*    m_psttNickName;
+	static CPetStatusBarGui* m_pInstance;			///< ì‹±ê¸€í†¤ ê°ì²´
+
+	gui::CProgressBar* m_ppgbHp;
+	gui::CProgressBar* m_ppgbEp;
+	gui::CStaticBox* m_sttHp;
+	gui::CStaticBox* m_sttMp;
+	gui::CButton* m_pbtnPetInfo;
+	gui::CStaticBox* m_psttNickName;
 
 	// disable by daneos
-    /*gui::CPanel*		m_ppnlPowerText;
-    CNumberGui			m_numPower;*/
+	gui::CPanel* m_ppnlPowerText;
+	CNumberGui			m_numPower;
 
-    gui::CPanel*        m_pPnlInfoBack;
-    gui::CStaticBox*    m_pSttInfoLPLabel;
-    gui::CStaticBox*    m_pSttInfoEPLabel;    
-    gui::CStaticBox*    m_pSttInfoHRLabel;
-    gui::CStaticBox*    m_pSttInfoDRLabel;
-    gui::CStaticBox*    m_pSttInfoPOLabel;
-    gui::CStaticBox*    m_pSttInfoPDLabel;    
-    gui::CStaticBox*    m_pSttInfoEDLabel;
-    gui::CStaticBox*    m_pSttInfoLP;
-    gui::CStaticBox*    m_pSttInfoEP;    
-    gui::CStaticBox*    m_pSttInfoHR;           // °ø°İ ¼º°øÀ²
-    gui::CStaticBox*    m_pSttInfoDR;           // È¸ÇÇÀ²
-    gui::CStaticBox*    m_pSttInfoPO;           // °ø°İ·Â
-    gui::CStaticBox*    m_pSttInfoPD;           // Å¸°İ ¹æ¾î·Â    
-    gui::CStaticBox*    m_pSttInfoED;           // ±â°ø ¹æ¾î·Â
+	gui::CPanel* m_pPnlInfoBack;
+	gui::CStaticBox* m_pSttInfoLPLabel;
+	gui::CStaticBox* m_pSttInfoEPLabel;
+	gui::CStaticBox* m_pSttInfoHRLabel;
+	gui::CStaticBox* m_pSttInfoDRLabel;
+	gui::CStaticBox* m_pSttInfoPOLabel;
+	gui::CStaticBox* m_pSttInfoPDLabel;
+	gui::CStaticBox* m_pSttInfoEDLabel;
+	gui::CStaticBox* m_pSttInfoLP;
+	gui::CStaticBox* m_pSttInfoEP;
+	gui::CStaticBox* m_pSttInfoHR;           // ê³µê²© ì„±ê³µìœ¨
+	gui::CStaticBox* m_pSttInfoDR;           // íšŒí”¼ìœ¨
+	gui::CStaticBox* m_pSttInfoPO;           // ê³µê²©ë ¥
+	gui::CStaticBox* m_pSttInfoPD;           // íƒ€ê²© ë°©ì–´ë ¥    
+	gui::CStaticBox* m_pSttInfoED;           // ê¸°ê³µ ë°©ì–´ë ¥
 
-	/*CFilteredSurfaceGui m_surCharacter;
-	gui::CTexture		m_texCharacter;*/
-	CSurfaceGui			m_surCharacter;			///< Pet Illust -by Kell
+	CFilteredSurfaceGui m_surCharacter;
+	gui::CTexture		m_texCharacter;
+	//CSurfaceGui			m_surCharacter;			///< Pet Illust -by Kell
 
 	gui::CSlot			m_slotMove;
-	gui::CSlot	        m_slotPaint;	
-    gui::CSlot          m_slotPaintLast;
-    gui::CSlot          m_slotInfoBtnClick;
-    gui::CSlot          m_slotCaptureMouseDown;
+	gui::CSlot	        m_slotPaint;
+	gui::CSlot          m_slotPaintLast;
+	gui::CSlot          m_slotInfoBtnClick;
+	gui::CSlot          m_slotCaptureMouseDown;
 	gui::CSlot			m_slotCaptureMouseUp;
-    /*gui::CSlot          m_slotPowerPaint;
-    gui::CSlot          m_slotPowerMove;*/
+	//gui::CSlot          m_slotPowerPaint;
+	//gui::CSlot          m_slotPowerMove;
 
 	// Emergency Effect
 	gui::CFlickerEffect	m_feEmergency;
@@ -109,9 +109,9 @@ protected:
 	RwInt32	m_nMaxValue;
 
 	// Buff
-	CBuffDispGui*	m_pBuff;
+	CBuffDispGui* m_pBuff;
 
 	RwBool			m_bDelete;
 	RwUInt32		m_uiPetID;
-    bool            m_bShowInfo;                ///< Á¤º¸ À©µµ¿ìÀÇ Ç¥½Ã ¿©ºÎ
+	bool            m_bShowInfo;                ///< ì •ë³´ ìœˆë„ìš°ì˜ í‘œì‹œ ì—¬ë¶€
 };

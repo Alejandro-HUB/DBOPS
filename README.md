@@ -1,5 +1,5 @@
 # DBOGLOBAL
- DBOG Client & Server Emulator
+ DBOPS Client & Server Emulator
 
 ## 3rd Party
 - MySQL 5.7.18 - Required for Server
@@ -10,6 +10,6 @@
 - DirectX9 SDK
 - Visual Studio 2019
 
-
 # Info
- All requirements and 3rd Party can be found in our website https://forum.dboglobal.to
+- To Set Up Server Go To File: ServerSetUp.txt
+- To Compile Client Go To: CompilingClient.txt

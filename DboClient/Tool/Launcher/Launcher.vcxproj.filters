@@ -14,16 +14,16 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav</Extensions>
     </Filter>
     <Filter Include="Common">
-      <UniqueIdentifier>{dfd872a1-b670-4f89-abe8-9bc2a052958a}</UniqueIdentifier>
+      <UniqueIdentifier>{70fe88b0-aca9-46f1-bf5e-60efb41574ae}</UniqueIdentifier>
     </Filter>
     <Filter Include="Patcher">
-      <UniqueIdentifier>{fcf3a108-1f5c-48e6-b0cd-cb34737f2887}</UniqueIdentifier>
+      <UniqueIdentifier>{626edcc9-e8df-41ff-a28d-e863863b35b2}</UniqueIdentifier>
     </Filter>
     <Filter Include="Manager%28Process%29">
-      <UniqueIdentifier>{48ea9110-cdbb-44fd-8fd8-dc3eb8dbef19}</UniqueIdentifier>
+      <UniqueIdentifier>{feadcacf-adde-49fd-bfd6-983b76e007ea}</UniqueIdentifier>
     </Filter>
     <Filter Include="DownLoader">
-      <UniqueIdentifier>{0a4c1724-5716-4ac0-8df4-9725b27b7cb2}</UniqueIdentifier>
+      <UniqueIdentifier>{29543735-eaf5-4259-83cc-372cb9dc3c3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -160,51 +160,47 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="res\Background.bmp">
+    <None Include="res\Background.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\ClosesBtnDown.bmp">
+    </None>
+    <None Include="res\ClosesBtnDown.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\ClosesBtnFocus.bmp">
+    </None>
+    <None Include="res\ClosesBtnFocus.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\ClosesBtnUp.bmp">
+    </None>
+    <None Include="res\ClosesBtnUp.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\HtmlBack.bmp">
+    </None>
+    <None Include="res\HtmlBack.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\Launcher.ico">
+    </None>
+    <None Include="res\Launcher.ico">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\PachProgress.bmp">
+    </None>
+    <None Include="res\Launcher.rc2">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\Start BtnStand.bmp">
+    </None>
+    <None Include="res\PachProgress.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\StartBtnDown.bmp">
+    </None>
+    <None Include="res\Start BtnStand.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\StartBtnFocus.bmp">
+    </None>
+    <None Include="res\StartBtnDown.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
-    <Image Include="res\StartBtnUp.bmp">
+    </None>
+    <None Include="res\StartBtnFocus.bmp">
       <Filter>리소스 파일</Filter>
-    </Image>
+    </None>
+    <None Include="res\StartBtnUp.bmp">
+      <Filter>리소스 파일</Filter>
+    </None>
+    <None Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Launcher.rc">
       <Filter>리소스 파일</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="res\Launcher.rc2">
-      <Filter>리소스 파일</Filter>
-    </None>
-  </ItemGroup>
-  <ItemGroup>
-    <Text Include="ReadMe.txt" />
   </ItemGroup>
 </Project>

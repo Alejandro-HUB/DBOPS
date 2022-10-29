@@ -1,0 +1,40 @@
+﻿C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets(39,5): warning MSB4211: The property "IntermediateOutputPath" is being set to a value for the first time, but it was already consumed at "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets (38,5)".
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.BuildSteps.Targets(29,5): warning MSB4211: The property "DebugType" is being set to a value for the first time, but it was already consumed at "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.BuildSteps.Targets (28,5)".
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Current\Bin\Microsoft.Common.CurrentVersion.targets(370,5): warning MSB4211: The property "CleanFile" is being set to a value for the first time, but it was already consumed at "C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppCommon.targets (38,5)".
+cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  stdafx.cpp
+cl : command line warning D9035: option 'Gm' has been deprecated and will be removed in a future release
+  Test2.cpp
+  OutputBox.cpp
+  NtlRtPatcher.cpp
+  NtlPatchXmlSave.cpp
+  NtlPatchServerConfig.cpp
+  NtlPatchManager.cpp
+  NtlPatcher.cpp
+  NtlPatchData.cpp
+  NtlLauncherConfig.cpp
+  NtlHttpDownLoader.cpp
+  NtlDownLoader.cpp
+  LauncherDlg.cpp
+  Launcher.cpp
+  ImageTextButton.cpp
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\ImageTextButton.cpp(247,3): warning C4996: 'strcpy': This function or variable may be unsafe. Consider using strcpy_s instead. To disable deprecation, use _CRT_SECURE_NO_WARNINGS. See online help for details.
+  HTTPTransparent.cpp
+  explorer_information.cpp
+  Dib.cpp
+  BitmapDlg.cpp
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\BitmapDlg.cpp(19,1): warning C4005: 'LWA_COLORKEY': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winuser.h(4632): message : see previous definition of 'LWA_COLORKEY'
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\BitmapDlg.cpp(20,1): warning C4005: 'LWA_ALPHA': macro redefinition
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.19041.0\um\winuser.h(4633): message : see previous definition of 'LWA_ALPHA'
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\BitmapDlg.cpp(60,17): warning C4018: '<': signed/unsigned mismatch
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\BitmapDlg.cpp(262,10): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\BitmapDlg.cpp(265,52): warning C4244: '=': conversion from 'float' to 'int', possible loss of data
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\BitmapDlg.cpp(277,10): warning C4018: '>=': signed/unsigned mismatch
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\BitmapDlg.cpp(353,17): warning C4018: '<': signed/unsigned mismatch
+  Generating Code...
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1369,5): warning MSB8012: TargetPath(C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\Debug\Launcher.exe) does not match the Linker's OutputFile property value (C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\Test\DBOLauncherD.exe). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\MSBuild\Microsoft\VC\v160\Microsoft.CppBuild.targets(1371,5): warning MSB8012: TargetName(Launcher) does not match the Linker's OutputFile property value (DBOLauncherD). This may cause your project to build incorrectly. To correct this, please make sure that $(OutDir), $(TargetName) and $(TargetExt) property values match the value specified in %(Link.OutputFile).
+BitmapDlg.obj : warning LNK4075: ignoring '/EDITANDCONTINUE' due to '/SAFESEH' specification
+patchw32.lib(PATCHW32.dll) : error LNK2026: module unsafe for SAFESEH image.
+C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\Launcher\\Test\DBOLauncherD.exe : fatal error LNK1281: Unable to generate SAFESEH image.

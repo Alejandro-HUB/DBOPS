@@ -1,4 +1,4 @@
-#include "precomp_dboclient.h"
+Ôªø#include "precomp_dboclient.h"
 #include "PetSkillWindowGui.h"
 
 // core
@@ -36,8 +36,8 @@ CPetSkillWindowGui::CPetSkillWindowGui()
     Init();
 }
 
-CPetSkillWindowGui::CPetSkillWindowGui( const RwChar* pName )
-: CNtlPLGui(pName)
+CPetSkillWindowGui::CPetSkillWindowGui(const RwChar* pName)
+    : CNtlPLGui(pName)
 {
     Init();
 }
@@ -50,11 +50,11 @@ CPetSkillWindowGui::~CPetSkillWindowGui()
 void CPetSkillWindowGui::Init()
 {
     m_uiSummonPetID = INVALID_SERIAL_ID;
-    m_uiItemPetID   = INVALID_SERIAL_ID;
-    m_bVisibeFocus  = FALSE;
-    m_uiInfoFlag    = NULL;
+    m_uiItemPetID = INVALID_SERIAL_ID;
+    m_bVisibeFocus = FALSE;
+    m_uiInfoFlag = NULL;
 
-    for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+    for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
     {
         m_pSobSkillIcon[i] = NULL;
     }
@@ -62,37 +62,37 @@ void CPetSkillWindowGui::Init()
 
 RwBool CPetSkillWindowGui::Create()
 {
-    if(!CNtlPLGui::Create("", "gui\\PetSkillBar.srf", "gui\\PetSkillBar.frm"))
+    if (!CNtlPLGui::Create("", "gui\\PetSkillBar.srf", "gui\\PetSkillBar.frm"))
         return FALSE;
 
     CNtlPLGui::CreateComponents(CNtlPLGuiManager::GetInstance()->GetGuiManager());
 
-    m_pThis              = (gui::CDialog*)GetComponent("dlgPetSlot");
-    m_pPnlSummonPetBack  = (gui::CPanel*)GetComponent("pnlSummonPetBack");
-    m_pPnlItemPetBack    = (gui::CPanel*)GetComponent("pnlItemPetBack");
+    m_pThis = (gui::CDialog*)GetComponent("dlgPetSlot");
+    m_pPnlSummonPetBack = (gui::CPanel*)GetComponent("pnlSummonPetBack");
+    m_pPnlItemPetBack = (gui::CPanel*)GetComponent("pnlItemPetBack");
     m_pPnlTransformCancelBack = (gui::CPanel*)GetComponent("pnlTransformCancelBack");
-    m_pBtnSummonClose    = (gui::CButton*)GetComponent("btnSummonClose");
-    m_pBtnItemClose      = (gui::CButton*)GetComponent("btnItemClose");
-    m_pBtnSummonAttack   = (gui::CButton*)GetComponent("btnSummonAttack");
+    m_pBtnSummonClose = (gui::CButton*)GetComponent("btnSummonClose");
+    m_pBtnItemClose = (gui::CButton*)GetComponent("btnItemClose");
+    m_pBtnSummonAttack = (gui::CButton*)GetComponent("btnSummonAttack");
     m_pBtnTransformCancel = (gui::CButton*)GetComponent("btnTransformCancel");
 
-    m_slotPaint          = m_pBtnSummonAttack->SigPaint().Connect(this, &CPetSkillWindowGui::OnPaint);    
+    m_slotPaint = m_pBtnSummonAttack->SigPaint().Connect(this, &CPetSkillWindowGui::OnPaint);
     m_slotClickCloseBtn1 = m_pBtnSummonClose->SigClicked().Connect(this, &CPetSkillWindowGui::OnClickSummonCloseBtn);
     m_slotClickCloseBtn2 = m_pBtnItemClose->SigClicked().Connect(this, &CPetSkillWindowGui::OnClickItemCloseBtn);
     m_slotClickTransformCancel = m_pBtnTransformCancel->SigClicked().Connect(this, &CPetSkillWindowGui::OnClickTransformCancel);
     m_slotClickSummonAttack = m_pBtnSummonAttack->SigMouseUp().Connect(this, &CPetSkillWindowGui::OnClickSummonAttack);
     m_slotMouseDownSummonAttack = m_pBtnSummonAttack->SigMouseDown().Connect(this, &CPetSkillWindowGui::OnMouseDownSummonAttack);
     m_slotMouseEnter = m_pBtnSummonAttack->SigMouseEnter().Connect(this, &CPetSkillWindowGui::OnMouseEnter);
-	m_slotMove	= m_pThis->SigMove().Connect( this, &CPetSkillWindowGui::OnMove );
+    m_slotMove = m_pThis->SigMove().Connect(this, &CPetSkillWindowGui::OnMove);
     m_slotMouseLeave = m_pBtnSummonAttack->SigMouseLeave().Connect(this, &CPetSkillWindowGui::OnMouseLeave);
-    m_slotMouseMove  = m_pThis->SigMouseMove().Connect(this, &CPetSkillWindowGui::OnMouseMove);
+    m_slotMouseMove = m_pThis->SigMouseMove().Connect(this, &CPetSkillWindowGui::OnMouseMove);
     m_slotMouseDialogLeave = m_pThis->SigMouseLeave().Connect(this, &CPetSkillWindowGui::OnMouseDialogLeave);
-    
-    // Surface º≥¡§
+
+    // Surface ÏÑ§Ï†ï
     m_surFocus.SetSurface(GetNtlGuiManager()->GetSurfaceManager()->GetSurface("GameCommon.srf", "srfSlotFocusEffect"));
-    for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+    for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
     {
-        m_CoolTimeEffect[i].SetSurface(GetNtlGuiManager()->GetSurfaceManager()->GetSurface("GameCommon.srf", "srfSlotGrayedEffect" ));
+        m_CoolTimeEffect[i].SetSurface(GetNtlGuiManager()->GetSurfaceManager()->GetSurface("GameCommon.srf", "srfSlotGrayedEffect"));
     }
 
     m_surAttackBtnUp = GetNtlGuiManager()->GetSurfaceManager()->GetSurface("PetSkillBar.srf", "srfSummonPetAttackBtn");
@@ -102,13 +102,13 @@ RwBool CPetSkillWindowGui::Create()
     m_surTransformMajin = GetNtlGuiManager()->GetSurfaceManager()->GetSurface("PetSkillBar.srf", "srfTransformCancelSaiya");
 
     LinkMsg(g_EventSobInfoUpdate);
-    LinkMsg(g_EventSummonPet);            
+    LinkMsg(g_EventSummonPet);
 
     // Update Link
-    GetNtlGuiManager()->AddUpdateBeforeFunc( this );
-    GetNtlGuiManager()->AddUpdateFunc( this );
+    GetNtlGuiManager()->AddUpdateBeforeFunc(this);
+    GetNtlGuiManager()->AddUpdateFunc(this);
 
-    Show( false );
+    Show(false);
 
     return TRUE;
 }
@@ -116,92 +116,92 @@ RwBool CPetSkillWindowGui::Create()
 void CPetSkillWindowGui::Destroy()
 {
     UnLinkMsg(g_EventSobInfoUpdate);
-    UnLinkMsg(g_EventSummonPet);    
+    UnLinkMsg(g_EventSummonPet);
 
     // Update Unlink
-    GetNtlGuiManager()->RemoveUpdateBeforeFunc( this );
-    GetNtlGuiManager()->RemoveUpdateFunc( this );
+    GetNtlGuiManager()->RemoveUpdateBeforeFunc(this);
+    GetNtlGuiManager()->RemoveUpdateFunc(this);
 
     CNtlPLGui::DestroyComponents();
-    CNtlPLGui::Destroy();     
+    CNtlPLGui::Destroy();
 }
 
-void CPetSkillWindowGui::Update( RwReal fElapsed )
+void CPetSkillWindowGui::Update(RwReal fElapsed)
 {
     UpdateSkillIcon(fElapsed);
 }
 
-RwInt32 CPetSkillWindowGui::SwitchDialog( bool bOpen )
+RwInt32 CPetSkillWindowGui::SwitchDialog(bool bOpen)
 {
-	Show( bOpen );
+    Show(bOpen);
 
-    if(bOpen)
+    if (bOpen)
     {
         AdjustDialog();
-		UpdatePetInfo();
+        UpdatePetInfo();
     }
 
     return TRUE;
 }
 
-void CPetSkillWindowGui::HandleEvents( RWS::CMsg &pMsg )
+void CPetSkillWindowGui::HandleEvents(RWS::CMsg& pMsg)
 {
-    if(pMsg.Id == g_EventSobInfoUpdate)    // Pet¿« ¡§∫∏∞° Update µ«æ˙¿ª∂ß
+    if (pMsg.Id == g_EventSobInfoUpdate)    // PetÏùò Ï†ïÎ≥¥Í∞Ä Update ÎêòÏóàÏùÑÎïå
     {
 
     }
-    else if(pMsg.Id == g_EventSummonPet)   // Pet¿Ã ¡◊æ˙¿ª∂ß
+    else if (pMsg.Id == g_EventSummonPet)   // PetÏù¥ Ï£ΩÏóàÏùÑÎïå
     {
         SDboEventSummonPet* pData = reinterpret_cast<SDboEventSummonPet*>(pMsg.pData);
-        if(!pData->bCreate)
+        if (!pData->bCreate)
         {
-            if(pData->uiSerialID == m_uiSummonPetID)
+            if (pData->uiSerialID == m_uiSummonPetID)
             {
                 m_uiSummonPetID = INVALID_SERIAL_ID;
                 m_uiInfoFlag &= ~E_PET_TYPE_SUMMON;
             }
-            else if(pData->uiSerialID == m_uiItemPetID)
+            else if (pData->uiSerialID == m_uiItemPetID)
             {
                 m_uiItemPetID = INVALID_SERIAL_ID;
                 m_uiInfoFlag &= ~E_PET_TYPE_ITEM;
             }
 
-			for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
-			{
-				m_pSobSkillIcon[i] = NULL;
-			}
+            for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+            {
+                m_pSobSkillIcon[i] = NULL;
+            }
 
-			if( m_uiInfoFlag )
-			{
-				AdjustDialog();
-			}
-			else
-				GetDialogManager()->CloseDialog( DIALOG_PET_SKILL_SLOT );
+            if (m_uiInfoFlag)
+            {
+                AdjustDialog();
+            }
+            else
+                GetDialogManager()->CloseDialog(DIALOG_PET_SKILL_SLOT);
         }
     }
-    else if(pMsg.Id == g_EventTransform)
+    else if (pMsg.Id == g_EventTransform)
     {
         SNtlEventTransform* pData = reinterpret_cast<SNtlEventTransform*>(pMsg.pData);
-        if(pData->hSerialId == GetNtlSLGlobal()->GetSobAvatar()->GetSerialID())
+        if (pData->hSerialId == GetNtlSLGlobal()->GetSobAvatar()->GetSerialID())
         {
             RwBool bTransForm = pData->sApsectState.sAspectStateBase.byAspectStateId != ASPECTSTATE_INVALID ? TRUE : FALSE;
-            SetTransformCancel(bTransForm);		
+            SetTransformCancel(bTransForm);
         }
 
-		if( m_uiInfoFlag )
-		{
-			AdjustDialog();
-		}
-		else
-			GetDialogManager()->CloseDialog( DIALOG_PET_SKILL_SLOT );
-    }    
+        if (m_uiInfoFlag)
+        {
+            AdjustDialog();
+        }
+        else
+            GetDialogManager()->CloseDialog(DIALOG_PET_SKILL_SLOT);
+    }
 }
 
 void CPetSkillWindowGui::AdjustDialog()
 {
-    if(m_uiInfoFlag)
+    if (m_uiInfoFlag)
     {
-        if(m_uiInfoFlag & E_PET_TYPE_SUMMON)
+        if (m_uiInfoFlag & E_PET_TYPE_SUMMON)
         {
             m_pPnlSummonPetBack->Show(TRUE);
             m_pBtnSummonClose->Show(TRUE);
@@ -214,10 +214,10 @@ void CPetSkillWindowGui::AdjustDialog()
             m_pBtnSummonAttack->Show(FALSE);
         }
 
-        if(m_uiInfoFlag & E_TRANSFORM_CANCEL)
+        if (m_uiInfoFlag & E_TRANSFORM_CANCEL)
         {
-            // ¿ßƒ°
-            if(m_uiInfoFlag & E_PET_TYPE_SUMMON)
+            // ÏúÑÏπò
+            if (m_uiInfoFlag & E_PET_TYPE_SUMMON)
             {
                 m_pPnlTransformCancelBack->SetPosition(179, 0);
                 m_pBtnTransformCancel->SetPosition(179, 0);
@@ -228,11 +228,11 @@ void CPetSkillWindowGui::AdjustDialog()
                 m_pBtnTransformCancel->SetPosition(0, 0);
             }
 
-            // º≠∆‰¿ÃΩ∫
+            // ÏÑúÌéòÏù¥Ïä§
             m_pBtnTransformCancel->GetSurfaceFocus()->clear();
             m_pBtnTransformCancel->GetSurfaceUp()->clear();
-            m_pBtnTransformCancel->GetSurfaceDown()->clear();            
-            switch(Logic_GetPlayerRace(GetNtlSLGlobal()->GetSobAvatar()))
+            m_pBtnTransformCancel->GetSurfaceDown()->clear();
+            switch (Logic_GetPlayerRace(GetNtlSLGlobal()->GetSobAvatar()))
             {
             case RACE_HUMAN:
                 m_pBtnTransformCancel->AddSurfaceFocus(m_surTransformSaiya);
@@ -260,8 +260,8 @@ void CPetSkillWindowGui::AdjustDialog()
             m_pBtnTransformCancel->Show(FALSE);
         }
 
-        // NOTE: æ∆¿Ã≈€∆Í¿∫ æ∆¡˜ æ¯¥Ÿ.
-        if(m_uiInfoFlag & E_PET_TYPE_ITEM)
+        // NOTE: ÏïÑÏù¥ÌÖúÌé´ÏùÄ ÏïÑÏßÅ ÏóÜÎã§.
+        if (m_uiInfoFlag & E_PET_TYPE_ITEM)
         {
             m_pPnlItemPetBack->Show(TRUE);
             m_pBtnItemClose->Show(TRUE);
@@ -274,16 +274,16 @@ void CPetSkillWindowGui::AdjustDialog()
     }
 }
 
-VOID CPetSkillWindowGui::OnPaint( VOID )
+VOID CPetSkillWindowGui::OnPaint(VOID)
 {
-    if(m_uiSummonPetID)
+    if (m_uiSummonPetID)
     {
-        if(m_bVisibeFocus) 
+        if (m_bVisibeFocus)
             m_surFocus.Render();
 
-        for(int i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+        for (int i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
         {
-            if(m_surSummonSkill[i].GetTexture())
+            if (m_surSummonSkill[i].GetTexture())
             {
                 m_surSummonSkill[i].Render();
             }
@@ -295,14 +295,14 @@ VOID CPetSkillWindowGui::OnPaint( VOID )
 
 CPetSkillWindowGui* CPetSkillWindowGui::GetInstance()
 {
-    if(!m_pInstance)
+    if (!m_pInstance)
     {
         m_pInstance = NTL_NEW CPetSkillWindowGui("Pet Skill Bar");
-        if(!m_pInstance->Create())
+        if (!m_pInstance->Create())
         {
             NTL_DELETE(m_pInstance);
             return NULL;
-        }        
+        }
     }
 
     return m_pInstance;
@@ -313,35 +313,35 @@ void CPetSkillWindowGui::DeleteInstance()
     NTL_DELETE(m_pInstance);
 }
 
-void CPetSkillWindowGui::SetPetID( RwUInt32 uiSerialID, EPetType ePetType )
+void CPetSkillWindowGui::SetPetID(RwUInt32 uiSerialID, EPetType ePetType)
 {
     m_uiInfoFlag |= ePetType;
 
-    if(ePetType == E_PET_TYPE_SUMMON)
+    if (ePetType == E_PET_TYPE_SUMMON)
     {
         m_uiSummonPetID = uiSerialID;
     }
-    else if(ePetType == E_PET_TYPE_ITEM)
+    else if (ePetType == E_PET_TYPE_ITEM)
     {
         m_uiItemPetID = uiSerialID;
     }
 
-	if( !GetDialogManager()->IsOpenDialog( DIALOG_PET_SKILL_SLOT ) )
-		GetDialogManager()->OpenDialog( DIALOG_PET_SKILL_SLOT );
-	else
-	{
-		AdjustDialog();
-		UpdatePetInfo();
-	}
+    if (!GetDialogManager()->IsOpenDialog(DIALOG_PET_SKILL_SLOT))
+        GetDialogManager()->OpenDialog(DIALOG_PET_SKILL_SLOT);
+    else
+    {
+        AdjustDialog();
+        UpdatePetInfo();
+    }
 }
 
-void CPetSkillWindowGui::SetTransformCancel( RwBool bEnable ) 
+void CPetSkillWindowGui::SetTransformCancel(RwBool bEnable)
 {
-    if(bEnable)
+    if (bEnable)
     {
         m_uiInfoFlag |= E_TRANSFORM_CANCEL;
-		
-		GetDialogManager()->OpenDialog( DIALOG_PET_SKILL_SLOT );
+
+        GetDialogManager()->OpenDialog(DIALOG_PET_SKILL_SLOT);
     }
     else
     {
@@ -349,11 +349,11 @@ void CPetSkillWindowGui::SetTransformCancel( RwBool bEnable )
     }
 }
 
-VOID CPetSkillWindowGui::OnClickSummonCloseBtn( gui::CComponent* pComponent )
+VOID CPetSkillWindowGui::OnClickSummonCloseBtn(gui::CComponent* pComponent)
 {
-    // ≈¨∑Œ¡Ó πˆ∆∞¿ª ¥©∏£∏È º“»Ø √Îº“ µ»¥Ÿ.    
+    // ÌÅ¥Î°úÏ¶à Î≤ÑÌäºÏùÑ ÎàÑÎ•¥Î©¥ ÏÜåÌôò Ï∑®ÏÜå ÎêúÎã§.    
     CNtlSobPet* pSobPet = reinterpret_cast<CNtlSobPet*>(GetNtlSobManager()->GetSobObject(m_uiSummonPetID));
-    if(!pSobPet)
+    if (!pSobPet)
         return;
 
     API_GetSLPacketGenerator()->SendPetDismissReq(pSobPet->GetServerSyncAvatarType());
@@ -363,11 +363,11 @@ VOID CPetSkillWindowGui::OnClickSummonCloseBtn( gui::CComponent* pComponent )
     AdjustDialog();
 }
 
-VOID CPetSkillWindowGui::OnClickItemCloseBtn( gui::CComponent* pComponent )
+VOID CPetSkillWindowGui::OnClickItemCloseBtn(gui::CComponent* pComponent)
 {
-    // ≈¨∑Œ¡Ó πˆ∆∞¿ª ¥©∏£∏È º“»Ø √Îº“ µ»¥Ÿ.
+    // ÌÅ¥Î°úÏ¶à Î≤ÑÌäºÏùÑ ÎàÑÎ•¥Î©¥ ÏÜåÌôò Ï∑®ÏÜå ÎêúÎã§.
     CNtlSobPet* pSobPet = reinterpret_cast<CNtlSobPet*>(GetNtlSobManager()->GetSobObject(m_uiItemPetID));
-    if(!pSobPet)
+    if (!pSobPet)
         return;
 
     API_GetSLPacketGenerator()->SendPetDismissReq(pSobPet->GetServerSyncAvatarType());
@@ -379,22 +379,22 @@ VOID CPetSkillWindowGui::OnClickItemCloseBtn( gui::CComponent* pComponent )
 
 void CPetSkillWindowGui::UpdatePetInfo()
 {
-    // ∆Í¿« Ω∫≈≥¡§∫∏∏¶ ∞°¡ÆøÕº≠ Skill Windowø° «•Ω√«—¥Ÿ. 
+    // Ìé´Ïùò Ïä§ÌÇ¨Ï†ïÎ≥¥Î•º Í∞ÄÏ†∏ÏôÄÏÑú Skill WindowÏóê ÌëúÏãúÌïúÎã§. 
     SetSkillIcon();
 }
 
 VOID CPetSkillWindowGui::OnMouseDownSummonAttack(const CKey& key)
 {
-    // πˆ∆∞¿ßø° ∏∂øÏΩ∫ øÏ≈¨∏ØΩ√ πˆ∆∞ ¥ŸøÓ ¿ÃπÃ¡ˆ «•Ω√
-    if(!m_uiSummonPetID)
+    // Î≤ÑÌäºÏúÑÏóê ÎßàÏö∞Ïä§ Ïö∞ÌÅ¥Î¶≠Ïãú Î≤ÑÌäº Îã§Ïö¥ Ïù¥ÎØ∏ÏßÄ ÌëúÏãú
+    if (!m_uiSummonPetID)
         return;
 
-    if(key.m_nID != UD_RIGHT_BUTTON)
+    if (key.m_nID != UD_RIGHT_BUTTON)
         return;
-    
-    //m_pBtnSummonAttack->SetPosition(2, 2);            
-    //m_pBtnSummonAttack->SetWidth(NTL_ITEM_ICON_SIZE - 4);
-    //m_pBtnSummonAttack->SetHeight(NTL_ITEM_ICON_SIZE - 4);
+
+    m_pBtnSummonAttack->SetPosition(2, 2);            
+    m_pBtnSummonAttack->SetWidth(NTL_ITEM_ICON_SIZE - 4);
+    m_pBtnSummonAttack->SetHeight(NTL_ITEM_ICON_SIZE - 4);
 
     m_pBtnSummonAttack->GetSurfaceFocus()->clear();
     m_pBtnSummonAttack->AddSurfaceFocus(m_surAttackBtnDown);
@@ -403,146 +403,146 @@ VOID CPetSkillWindowGui::OnMouseDownSummonAttack(const CKey& key)
 
 VOID CPetSkillWindowGui::OnClickSummonAttack(const CKey& key)
 {
-    if(!m_uiSummonPetID)
+    if (!m_uiSummonPetID)
         return;
 
-    // ∏∂øÏΩ∫ øÏ√¯ ≈¨∏ØΩ√ø°∏∏ ∞¯∞›«œµµ∑œ «—¥Ÿ.
-    if(key.m_nID != UD_RIGHT_BUTTON)
+    // ÎßàÏö∞Ïä§ Ïö∞Ï∏° ÌÅ¥Î¶≠ÏãúÏóêÎßå Í≥µÍ≤©ÌïòÎèÑÎ°ù ÌïúÎã§.
+    if (key.m_nID != UD_RIGHT_BUTTON)
         return;
 
     m_pBtnSummonAttack->GetSurfaceFocus()->clear();
-    m_pBtnSummonAttack->AddSurfaceFocus(m_surAttackBtnUp);    
+    m_pBtnSummonAttack->AddSurfaceFocus(m_surAttackBtnUp);
     m_pBtnSummonAttack->ReleaseMouse();
 
-	// peessi: MouseCapture ªÛ≈¬ø°º≠ UI∞° ªÁ∂Û¡¯ ∞ÊøÏø°, ƒ›πÈø° µ˚∏• ¿€µø¿ª ∏∑¥¬¥Ÿ. 
-	if( !m_pBtnSummonAttack->IsVisibleTruly() )
-		return;
+    // peessi: MouseCapture ÏÉÅÌÉúÏóêÏÑú UIÍ∞Ä ÏÇ¨ÎùºÏßÑ Í≤ΩÏö∞Ïóê, ÏΩúÎ∞±Ïóê Îî∞Î•∏ ÏûëÎèôÏùÑ ÎßâÎäîÎã§. 
+    if (!m_pBtnSummonAttack->IsVisibleTruly())
+        return;
 
-    //// º≥¡§«— ≈∏∞Ÿ¿ª ∆Í¿Ã ∞¯∞›«œ∞‘ «—¥Ÿ.  
-	// º≠πˆ∑Œ Pet¿ª ø≈±‚¥¬ ¿€æ˜ ¡ﬂ
+    //// ÏÑ§Ï†ïÌïú ÌÉÄÍ≤üÏùÑ Ìé´Ïù¥ Í≥µÍ≤©ÌïòÍ≤å ÌïúÎã§.  
+    // ÏÑúÎ≤ÑÎ°ú PetÏùÑ ÏòÆÍ∏∞Îäî ÏûëÏóÖ Ï§ë
     CNtlSobPet* pSobPet = reinterpret_cast<CNtlSobPet*>(GetNtlSobManager()->GetSobObject(m_uiSummonPetID));
-    if(!pSobPet)
+    if (!pSobPet)
         return;
 
     SERIAL_HANDLE hTarget = Logic_GetAvatarTargetHandle();
-    if(hTarget == INVALID_SERIAL_ID)
+    if (hTarget == INVALID_SERIAL_ID)
         return;
 
-    if(!Logic_IsEnemyTagetFromPetActor(pSobPet, hTarget))   // ∞¯∞›«“ºˆ ¿÷¥¬ ¥ÎªÛ¿Œ¡ˆ »Æ¿Œ
+    if (!Logic_IsEnemyTagetFromPetActor(pSobPet, hTarget))   // Í≥µÍ≤©Ìï†Ïàò ÏûàÎäî ÎåÄÏÉÅÏù∏ÏßÄ ÌôïÏù∏
         return;
 
-	API_GetSLPacketGenerator()->SendPetAttackTargetNfy( pSobPet->GetServerSyncAvatarType() );
+    API_GetSLPacketGenerator()->SendPetAttackTargetNfy(pSobPet->GetServerSyncAvatarType());
 
-    /*CNtlSLEventGenerator::SobPetBeginAttack(m_uiSummonPetID, hTarget);    */
+    CNtlSLEventGenerator::SobPetBeginAttack(m_uiSummonPetID, hTarget);    
 }
 
-VOID CPetSkillWindowGui::OnMouseEnter( gui::CComponent* pComponent )
+VOID CPetSkillWindowGui::OnMouseEnter(gui::CComponent* pComponent)
 {
-    m_bVisibeFocus = TRUE;      // æ∆¿Ãƒ‹ ∆˜ƒøΩ∫∏¶ ±◊∏∞¥Ÿ.
+    m_bVisibeFocus = TRUE;      // ÏïÑÏù¥ÏΩò Ìè¨Ïª§Ïä§Î•º Í∑∏Î¶∞Îã§.
 
-    // ≈¯∆¡¿ª ∂ŸøÓ¥Ÿ    
+    // Ìà¥ÌåÅÏùÑ Îõ∞Ïö¥Îã§    
     RwInt32 nX = m_pThis->GetPosition().left;
     RwInt32 nY = m_pThis->GetPosition().top - 60;
-    GetInfoWndManager()->ShowInfoWindow(TRUE, CInfoWndManager::INFOWND_JUST_WTEXT, nX, nY, (void*)GetDisplayStringManager()->GetString("DST_PET_TOOLTIP_ATTACK"), DIALOG_PET_SKILL_SLOT); 
+    GetInfoWndManager()->ShowInfoWindow(TRUE, CInfoWndManager::INFOWND_JUST_WTEXT, nX, nY, (void*)GetDisplayStringManager()->GetString("DST_PET_TOOLTIP_ATTACK"), DIALOG_PET_SKILL_SLOT);
 }
 
-VOID CPetSkillWindowGui::OnMove( RwInt32 iOldX, RwInt32 iOldY )
+VOID CPetSkillWindowGui::OnMove(RwInt32 iOldX, RwInt32 iOldY)
 {
-	CNtlPLGui* pQuickSlotGui = GetDialogManager()->GetDialog(DIALOG_QUICKSLOT);
-	CRectangle rect = pQuickSlotGui->GetPosition();
-	RwInt32 nPosX = rect.left;
-	RwInt32 nPosY = rect.top - 38;
+    CNtlPLGui* pQuickSlotGui = GetDialogManager()->GetDialog(DIALOG_QUICKSLOT);
+    CRectangle rect = pQuickSlotGui->GetPosition();
+    RwInt32 nPosX = rect.left;
+    RwInt32 nPosY = rect.top - 38;
 
-	m_surFocus.SetRectWH(nPosX, nPosY, NTL_ITEM_ICON_SIZE, NTL_ITEM_ICON_SIZE);        
-	for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
-	{
-		RwInt32 nX = nPosX + (i + 1) * 35;
-		m_surSummonSkill[i].SetRectWH(nX, nPosY, NTL_ITEM_ICON_SIZE, NTL_ITEM_ICON_SIZE);
-		m_CoolTimeEffect[i].SetPosition(nX, nPosY);
-	}
+    m_surFocus.SetRectWH(nPosX, nPosY, NTL_ITEM_ICON_SIZE, NTL_ITEM_ICON_SIZE);
+    for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+    {
+        RwInt32 nX = nPosX + (i + 1) * 35;
+        m_surSummonSkill[i].SetRectWH(nX, nPosY, NTL_ITEM_ICON_SIZE, NTL_ITEM_ICON_SIZE);
+        m_CoolTimeEffect[i].SetPosition(nX, nPosY);
+    }
 }
 
-VOID CPetSkillWindowGui::OnMouseLeave( gui::CComponent* pComponent )
+VOID CPetSkillWindowGui::OnMouseLeave(gui::CComponent* pComponent)
 {
     m_bVisibeFocus = FALSE;
 
-    // ≈¯∆¡¿ª æ¯æÿ¥Ÿ.
-    if(GetInfoWndManager()->GetRequestGui() == DIALOG_PET_SKILL_SLOT)
+    // Ìà¥ÌåÅÏùÑ ÏóÜÏï§Îã§.
+    if (GetInfoWndManager()->GetRequestGui() == DIALOG_PET_SKILL_SLOT)
     {
         GetInfoWndManager()->ShowInfoWindow(FALSE);
     }
 }
 
-void CPetSkillWindowGui::SetSkillIcon() 
+void CPetSkillWindowGui::SetSkillIcon()
 {
-    if(!m_uiSummonPetID)
+    if (!m_uiSummonPetID)
     {
-        for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+        for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
             m_pSobSkillIcon[i] = NULL;
         return;
     }
 
     CNtlSobPet* pSobPet = (CNtlSobPet*)GetNtlSobManager()->GetSobObject(m_uiSummonPetID);
-    if(!pSobPet)
+    if (!pSobPet)
         return;
 
-    for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+    for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
     {
         CNtlSobSkill* pSobSkill = pSobPet->GetSkillContainer()->GetSkill(i);
-        if(!pSobSkill)
-		{
-			m_pSobSkillIcon[i] = NULL;
-			m_surSummonSkill[i].UnsetTexture();
+        if (!pSobSkill)
+        {
+            m_pSobSkillIcon[i] = NULL;
+            m_surSummonSkill[i].UnsetTexture();
             continue;
-		}
+        }
 
         m_pSobSkillIcon[i] = pSobSkill->GetIcon();
         m_surSummonSkill[i].SetTexture(reinterpret_cast<gui::CTexture*>(m_pSobSkillIcon[i]->GetImage()));
     }
 }
 
-void CPetSkillWindowGui::UpdateSkillIcon( RwReal fElapsedTime ) 
+void CPetSkillWindowGui::UpdateSkillIcon(RwReal fElapsedTime)
 {
-    for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+    for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
     {
-        if(m_pSobSkillIcon[i])
+        if (m_pSobSkillIcon[i])
         {
-            if(m_pSobSkillIcon[i]->GetIconState() == CNtlSobIcon::ICON_STATE_COOLING && !m_CoolTimeEffect[i].IsWork())            
+            if (m_pSobSkillIcon[i]->GetIconState() == CNtlSobIcon::ICON_STATE_COOLING && !m_CoolTimeEffect[i].IsWork())
             {
                 m_CoolTimeEffect[i].StartProc(m_pSobSkillIcon[i]->GetMaxCoolingTime());
             }
-            else if(m_pSobSkillIcon[i]->GetIconState() != CNtlSobIcon::ICON_STATE_COOLING && m_CoolTimeEffect[i].IsWork())
+            else if (m_pSobSkillIcon[i]->GetIconState() != CNtlSobIcon::ICON_STATE_COOLING && m_CoolTimeEffect[i].IsWork())
             {
                 m_CoolTimeEffect[i].EndProc();
             }
         }
     }
 
-    for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+    for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
     {
-        if(m_CoolTimeEffect[i].IsWork() && m_pSobSkillIcon[i])
+        if (m_CoolTimeEffect[i].IsWork() && m_pSobSkillIcon[i])
         {
             RwReal fCurrentTime = 0.0f;
 
-            // Ω∫≈≥¿« ≥≤¿∫ ƒ≈∏¿”¿ª ∞°¡Æø¬¥Ÿ.
-            fCurrentTime = m_pSobSkillIcon[i]->GetCoolingTime();            
-            m_CoolTimeEffect[i].Update(fCurrentTime);            
+            // Ïä§ÌÇ¨Ïùò ÎÇ®ÏùÄ Ïø®ÌÉÄÏûÑÏùÑ Í∞ÄÏ†∏Ïò®Îã§.
+            fCurrentTime = m_pSobSkillIcon[i]->GetCoolingTime();
+            m_CoolTimeEffect[i].Update(fCurrentTime);
         }
     }
 
 }
 
-VOID CPetSkillWindowGui::OnMouseMove( RwInt32 nFlags, RwInt32 nX, RwInt32 nY ) 
+VOID CPetSkillWindowGui::OnMouseMove(RwInt32 nFlags, RwInt32 nX, RwInt32 nY)
 {
     nX += m_pThis->GetPosition().left;
     nY += m_pThis->GetPosition().top;
 
     RwBool bIn = FALSE;
-    for(RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
+    for (RwInt32 i = 0; i < SUMMON_PET_MAX_SKILL; ++i)
     {
-        if(m_pSobSkillIcon[i] && m_surSummonSkill[i].GetTexture())
+        if (m_pSobSkillIcon[i] && m_surSummonSkill[i].GetTexture())
         {
-            if(m_surSummonSkill[i].PtInRect(nX, nY))
+            if (m_surSummonSkill[i].PtInRect(nX, nY))
             {
                 GetInfoWndManager()->ShowInfoWindow(TRUE, CInfoWndManager::INFOWND_SKILL, nX, nY, (void*)m_pSobSkillIcon[i]->GetSobObj(), DIALOG_PET_SKILL_SLOT);
                 bIn = TRUE;
@@ -551,29 +551,29 @@ VOID CPetSkillWindowGui::OnMouseMove( RwInt32 nFlags, RwInt32 nX, RwInt32 nY )
         }
     }
 
-    if(!bIn)
+    if (!bIn)
     {
-        if(GetInfoWndManager()->GetRequestGui() == DIALOG_PET_SKILL_SLOT)
+        if (GetInfoWndManager()->GetRequestGui() == DIALOG_PET_SKILL_SLOT)
         {
             GetInfoWndManager()->ShowInfoWindow(FALSE);
         }
     }
 }
 
-VOID CPetSkillWindowGui::OnMouseDialogLeave( gui::CComponent* pComponent ) 
+VOID CPetSkillWindowGui::OnMouseDialogLeave(gui::CComponent* pComponent)
 {
-    if(GetInfoWndManager()->GetRequestGui() == DIALOG_PET_SKILL_SLOT)
+    if (GetInfoWndManager()->GetRequestGui() == DIALOG_PET_SKILL_SLOT)
     {
         GetInfoWndManager()->ShowInfoWindow(FALSE);
     }
 }
 
-VOID CPetSkillWindowGui::OnClickTransformCancel( gui::CComponent* pComponent ) 
+VOID CPetSkillWindowGui::OnClickTransformCancel(gui::CComponent* pComponent)
 {
     GetDboGlobal()->GetGamePacketGenerator()->SendTransformCancelReq();
 }
 
 RwUInt32 CPetSkillWindowGui::GetInfoFlag()
 {
-	return m_uiInfoFlag;
+    return m_uiInfoFlag;
 }

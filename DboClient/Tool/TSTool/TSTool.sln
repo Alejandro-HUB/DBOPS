@@ -1,0 +1,17 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TSTool", "TSTool.vcxproj", "{76814177-7FC9-46C0-9415-8A7A6DE32B13}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Release4Tools|Win32 = Release4Tools|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{76814177-7FC9-46C0-9415-8A7A6DE32B13}.Release4Tools|Win32.ActiveCfg = Release4Tools|Win32
+		{76814177-7FC9-46C0-9415-8A7A6DE32B13}.Release4Tools|Win32.Build.0 = Release4Tools|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

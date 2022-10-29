@@ -1,0 +1,84 @@
+# How to Set Up Server
+Requirements:
+Windows 10
+8 GB or RAM
+
+Find the IP address of the computer you want to install the “private server” on:
+- Use “Windows Search”
+- Find and open “Cmd.exe”
+- Type “netstat”. You’ll get a list. The address at the bottom that’s repeated several times after “TCP” is the local IP address. It resembles something like xxx.xxx.x.xxx.
+- The “local adress” is also shown at the top: 127.0.0.1 (important for later).
+
+Open ports
+- For this I’ll refer to https://www.youtube.com/watch?v=O74GatVRIK8&list=WL, (the important info starts around 2:35). Watch this for details.
+- You’ll need to open the necessary Ipv4 ports of the IP address you've found in the previous step.
+- Open ports as follows: “Start”: 2000. “End”: 60.000. “Protocol:” Both. “Status”: active.
+- Save this setting.
+
+Download and install Visual Studio 2019.
+- https://visualstudio.microsoft.com/downloads/
+- I downloaded the “Community - Free Download”: you’ll get the “installer app”.
+- Open the “installer app”. Look at the top of the screen:
+-> From “Workloads” I selected and installed both “Desktop development with c++”, and “Game development with c++”. I don’t know if this is necessary, but by doing this, the next steps worked for me.
+-> From “Individual components” I also selected and installed “C++ Clang-cl for v142 build tools (x64/x86)” (as per Daneos’ Instructions, saying you need the v142 Toolset: there’s several other v142 compilers you can select, but they didn't seem to be necessary)
+- Click “Install while downloading” and wait for it to finish.
+
+Download and extract the DBOGLOBAL Masterfile
+- https://github.com/dboglobal. Click “Code” -> Download zip
+- Extract the zip-file to the main folder: “DBOGLOBAL”
+
+Download and install/extract additional programs
+- DirectX9 SDK: https://www.microsoft.com/en-u…oad/details.aspx?id=23549
+- GFx SDK: GFx SDK 3.3 -> Extract the “GFx SDK” folder into "DBOGLOBAL/DboClient/Lib/NtlFlasher"
+- Xtreme ToolkitPro: Xtreme ToolkitPro v15.2.1 -> Extract folder into “DBOGLOBAL/3rdParty”
+
+Compile the private server using Visual Studio 2019.
+- Within the “DBOGLOBAL” main folder, go to the subfolder “Dboserver”
+- Double click “Dboserver.sln”: it will open in Visual Studio 2019 (that you installed in a previous step)
+- On the top bar, make sure "Release" and "x64" are selected
+- On the right side of the screen, find “Solution Explorer”. Under “Server”, right click each server (AuthServer, CharServer, etc.) and click “Build” one by one.
+- The server executable files will start compiling one by one: wait until it’s done.
+
+Download and install XAMPP.
+- If User Account Control (UAC) is activated on your system, you should deactivate it, as otherwise XAMPP might be restricted. For this, search windows for “msconfig” and open this app. Go to the “tools” tab, highlight “Disable UAC” and choose “launch”. There are four levels: the bottom one completely disables UAC. Restart your computer.
+- Download and install XAMPP here: https://www.apachefriends.org/de/index.html
+- Find C:/xampp/apache/conf/httpd.conf in Explorer
+- Open “httpd.conf” in Notepad. Find the line saying “Listen” and change the port to “Listen 8080”. Scroll down to “ServerName localhost:” also change this to “ServerName localhost:8080”
+- Open the XAMPP Control Panel: click “Shell” (on the right) and in the prompt, type “mysqladmin.exe -u root password test” to change the server root password to ‘test’ (or something else, depending on your password preference)
+- In Explorer, now go to “c:/xampp/phpadmin” and look for “config.inc”
+- Open “config.inc” with Notepad and change the server root password here as well: after “$cfg (‘Servers”) ($i) (‘password’) =” fill in ‘test’ like above.
+- In the XAMPP Control Panel, start “Apache” and “MySQL” (these will lit green when active)
+- Make sure your antivirus accepts XAMPP.
+
+Open your browser of choice and type: “localhost:8080/phpmyadmin/”
+- In the left column, click “New”
+- Add database name “dbo_acc” -> click “make”.
+- Look at the top bar: click “import” -> choose file -> go to “DBOGLOBAL/ DboServer/ Database” and select “dbo_acc.sql”.
+- Press “Start” at the bottom of the screen.
+- Repeat this for “dbo_char” and “dbo_log”.
+- Within “dbo_acc”, find “accounts”, and click it
+- At the top: click “insert”.
+- Fill in a username and Password that you’ll use later.
+- For the password, you’ll need to generate a MD5 Hash. Visit https://www.md5hashgenerator.com and fill in the password of choice, click generate. Copy the generated password, go back to “localhost:8080/phpMyAdmin”, and next to “Paddword_hash” change (varchar(32)) to MD5 and paste the password next to it.
+- Click “Start” at the bottom of the page.
+
+Change the server *ini files.
+- Go to “DBOGLOBAL/DboServer/ExecutionEnv/Config”
+- Open “AuthServer.ini”, “CharServer.ini”, and so on… with Notepad.
+- Make sure all the IP addresses are “127.0.0.1” (should be default)
+- Change the password to the same password as the root of the server, in this case: test.
+
+Run the server executables
+- Go to “DBOGLOBAL/DboServer/ExecutionEnv”
+- Run “start_master_server.bat”
+- Run “start_query_server.bat” and wait until its done.
+- Run “start_char_server_0.bat”
+- Run ‘”start_auth_server.bat”
+- Run “start_channel_0.bat” and wait until it finished. Then close it.
+- Run “start_chat_server.bat” and wait until its done.
+- Run “start_channel_0.bat” again, “start_channel_1.bat” (if you need 2 channels) and “start_channel_9.bat”
+
+Download and extract the DBO Client Files
+- Development Client/Server Access
+- In the main folder look for “Configoptions.xml” and open it with met notepad: change the IP to: 127.0.0.1 on each line, and save.
+- Run the client, enter your username and password and you’re good to go.

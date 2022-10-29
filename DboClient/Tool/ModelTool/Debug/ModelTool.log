@@ -1,0 +1,16 @@
+﻿Build started 5/19/2021 1:10:49 AM.
+     1>Project "C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\ModelTool.vcxproj" on node 2 (rebuild target(s)).
+     1>_PrepareForClean:
+         Deleting file "Debug\ModelTool.lastbuildstate".
+       InitializeBuildStatus:
+         Touching "Debug\ModelTool.unsuccessfulbuild".
+       ClCompile:
+         c:\Program Files (x86)\Microsoft Visual Studio 10.0\VC\bin\CL.exe /c /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\Renderware\Include" /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\Lib\NtlCore" /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\..\DboShared\NtlNetwork" /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\Lib\NtlPresentation" /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\Lib\NtlFramework" /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\..\NtlLib\Shared\NtlXMLLoader" /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\..\DboShared\NtlShared" /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\Lib\NtlSimulation" /I..\..\Client\Main /I..\..\Client\Stage /I..\..\Client\Camera /I..\..\..\DboShared\NtlNetwork\NtlNetClient /I"C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\..\NtlLib\Shared" /I.\ /I.\property /ZI /nologo /W3 /WX- /Od /Oy- /D WIN32 /D _WINDOWS /D _DEBUG /D RWDEBUG /D _UNICODE /D UNICODE /D _ATL_STATIC_REGISTRY /Gm /EHsc /RTC1 /MTd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Yc"StdAfx.h" /Fp"Debug\ModelTool.pch" /Fo"Debug\\" /Fd"Debug\vc100.pdb" /Gd /TP /analyze- /errorReport:prompt stdafx.cpp
+         stdafx.cpp
+         c:\program files (x86)\microsoft sdks\windows\v7.0a\include\dinput.h: DIRECTINPUT_VERSION undefined. Defaulting to version 0x0800
+     1>c:\users\alejandro lopez\source\repos\dbo\dboclient\lib\ntlcore\precomp_ntlplatform.h(71): fatal error C1083: Cannot open include file: 'd3dx9math.h': No such file or directory
+     1>Done Building Project "C:\Users\Alejandro Lopez\source\repos\DBO\DboClient\Tool\ModelTool\ModelTool.vcxproj" (rebuild target(s)) -- FAILED.
+
+Build FAILED.
+
+Time Elapsed 00:00:01.61
